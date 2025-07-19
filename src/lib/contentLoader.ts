@@ -166,25 +166,37 @@ export const parseEnhancedMetadata = (content: string, slug: string): ContentLis
     }
   }
 
-  // Parse links from metadata section (for projects that might have them)
-  const lines = content.split('\n');
-  const metadataStartIndex = lines.findIndex(line => line.trim() === '### Metadata');
+  // Parse links from frontmatter first, then fallback to old metadata section
   const links: ContentListItem['links'] = {};
   
-  if (metadataStartIndex > -1) {
-    const metadataLines = lines.slice(metadataStartIndex + 1);
+  // Extract links from frontmatter
+  const linkFields = ['github_link', 'huggingface_link', 'webpage_link'];
+  for (const field of linkFields) {
+    if (frontmatter[field]) {
+      links[field as keyof NonNullable<ContentListItem['links']>] = frontmatter[field];
+    }
+  }
+  
+  // Fallback: Parse links from old metadata section format (for backward compatibility)
+  if (Object.keys(links).length === 0) {
+    const lines = content.split('\n');
+    const metadataStartIndex = lines.findIndex(line => line.trim() === '### Metadata');
     
-    for (const line of metadataLines) {
-      const trimmedLine = line.trim();
-      if (trimmedLine.startsWith('- ')) {
-        const metaLine = trimmedLine.substring(2);
-        
-        // Parse links
-        const linkPrefixes = ['github_link:', 'huggingface_link:', 'webpage_link:'];
-        for (const prefix of linkPrefixes) {
-          if (metaLine.startsWith(prefix)) {
-            const linkKey = prefix.replace(':', '') as keyof NonNullable<ContentListItem['links']>;
-            links[linkKey] = metaLine.substring(prefix.length).trim();
+    if (metadataStartIndex > -1) {
+      const metadataLines = lines.slice(metadataStartIndex + 1);
+      
+      for (const line of metadataLines) {
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('- ')) {
+          const metaLine = trimmedLine.substring(2);
+          
+          // Parse links
+          const linkPrefixes = ['github_link:', 'huggingface_link:', 'webpage_link:'];
+          for (const prefix of linkPrefixes) {
+            if (metaLine.startsWith(prefix)) {
+              const linkKey = prefix.replace(':', '') as keyof NonNullable<ContentListItem['links']>;
+              links[linkKey] = metaLine.substring(prefix.length).trim();
+            }
           }
         }
       }
