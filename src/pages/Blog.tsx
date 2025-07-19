@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Blog = () => {
   // Sample blog posts - replace with real content
@@ -19,7 +19,7 @@ const Blog = () => {
     },
     {
       id: 3,
-      title: "Reflections on Technology and Society",
+      title: "Reflections on Technology",
       excerpt: "Exploring the intersection between technological advancement and human connection in our increasingly digital world.",
       date: "2024-01-05",
       readTime: "7 min read"
@@ -72,7 +72,7 @@ const Blog = () => {
             More Coming Soon
           </h2>
           <p className="abbey-text text-muted-foreground">
-            This space will grow with more thoughts and reflections. 
+            This space will grow with more thoughts and reflections.
             Check back regularly for new posts and insights.
           </p>
         </div>
