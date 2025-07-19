@@ -21,22 +21,12 @@ const About = () => {
           <div className="order-1 lg:order-2">
             <div className="space-y-6 text-foreground/80 leading-relaxed">
               <p className="text-xl">
-                I like to build stuff on computers.
+                I build thinking machines
               </p>
               <p>
-                I'd like to make it useful.
+                What better time to live in? We're at a turning point for human history, and my craft is the lever that can lift the world.
+                I try to put these skills to good use.
               </p>
-            </div>
-            <div className="flex items-center space-x-8 mt-8">
-              <Link to="/readings" className="abbey-link text-lg">
-                Explore Readings
-              </Link>
-              <Link to="/projects" className="abbey-link text-lg">
-                View Projects
-              </Link>
-              <Link to="/blog" className="abbey-link text-lg">
-                Read Blog
-              </Link>
             </div>
           </div>
         </div>
@@ -49,7 +39,7 @@ const About = () => {
               <h3 className="abbey-heading text-lg">Readings</h3>
             </div>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              Papers and articles that have shaped my thinking and understanding of complex problems.
+              Papers and articles that have shaped my understanding of AI.
             </p>
             <Link to="/readings" className="abbey-link text-sm">
               View all readings →
@@ -62,7 +52,7 @@ const About = () => {
               <h3 className="abbey-heading text-lg">Projects</h3>
             </div>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              Research, development, and creative work spanning multiple disciplines and interests.
+              Open source libraries, Research efforts, websites.
             </p>
             <Link to="/projects" className="abbey-link text-sm">
               View all projects →
@@ -75,7 +65,7 @@ const About = () => {
               <h3 className="abbey-heading text-lg">Thoughts</h3>
             </div>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              Reflections on technology, design, research, and the intersection of human and artificial intelligence.
+              Beware, this is all extremely scale-pilled.
             </p>
             <Link to="/blog" className="abbey-link text-sm">
               Read thoughts →
