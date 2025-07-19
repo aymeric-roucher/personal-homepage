@@ -21,10 +21,11 @@ const About = () => {
           <div className="order-1 lg:order-2">
             <div className="space-y-6 text-foreground/80 leading-relaxed">
               <p className="text-xl">
-                I like to build stuff on computers.
+                I build thinking machines
               </p>
               <p>
-                I'd like to make it useful.
+                What better time to live in? We're at a turning point for human history, and my craft is the lever that can lift the world.
+                I try to put these skills to good use.
               </p>
             </div>
           </div>
