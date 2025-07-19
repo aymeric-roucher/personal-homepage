@@ -1,10 +1,12 @@
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 const Blog = () => {
   // Sample blog posts - replace with real content
   const blogPosts = [
     {
       id: 1,
+      slug: "post-1",
       title: "Building Modern Web Applications",
       excerpt: "Thoughts on the current state of web development and emerging trends that are shaping the future of digital experiences.",
       date: "2024-01-15",
@@ -12,6 +14,7 @@ const Blog = () => {
     },
     {
       id: 2,
+      slug: "post-2",
       title: "The Art of Minimalist Design",
       excerpt: "Why less is often more in digital design, and how minimalism can enhance user experience and functionality.",
       date: "2024-01-10",
@@ -19,6 +22,7 @@ const Blog = () => {
     },
     {
       id: 3,
+      slug: "post-3",
       title: "Reflections on Technology",
       excerpt: "Exploring the intersection between reasingly digital world.",
       date: "2024-01-05",
@@ -44,8 +48,8 @@ const Blog = () => {
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex-1">
-                    <CardTitle className="abbey-heading text-xl mb-2 hover:text-primary transition-colors cursor-pointer">
-                      {post.title}
+                    <CardTitle className="abbey-heading text-xl mb-2 hover:text-primary transition-colors">
+                      <Link to={`/blog/${post.slug}`}>{post.title}</Link>
                     </CardTitle>
                     <CardDescription className="abbey-text text-muted-foreground">
                       {post.excerpt}

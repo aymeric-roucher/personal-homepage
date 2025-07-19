@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Readings = () => {
   return (
     <div className="min-h-screen bg-background">
@@ -10,7 +12,13 @@ const Readings = () => {
         </div>
 
         {/* Notion Embed Placeholder */}
-        <iframe src="https://bird-warrior-9c6.notion.site/ebd/2338d6bd102f803dbe58e51fa114d223?v=2338d6bd102f80c59938000c6ad84962" width="100%" height="600" frameborder="0" allowfullscreen />
+        <iframe
+          src="https://bird-warrior-9c6.notion.site/ebd/2338d6bd102f803dbe58e51fa114d223?v=2338d6bd102f80c59938000c6ad84962"
+          width="100%"
+          height="600"
+          frameBorder={0}
+          allowFullScreen
+        />
 
         {/* Sample reading entries for demonstration */}
         <div className="space-y-6">
@@ -19,7 +27,7 @@ const Readings = () => {
               <div className="w-2 h-2 bg-primary rounded-full mt-3 flex-shrink-0"></div>
               <div className="flex-1">
                 <h3 className="abbey-heading text-lg mb-2 group-hover:text-primary transition-colors">
-                  Example Paper Title
+                  <Link to="/readings/reading-1">Example Paper Title</Link>
                 </h3>
                 <p className="text-muted-foreground text-sm mb-2">Author Name • Journal • Year</p>
                 <p className="text-foreground/80 leading-relaxed">
@@ -34,7 +42,7 @@ const Readings = () => {
               <div className="w-2 h-2 bg-primary rounded-full mt-3 flex-shrink-0"></div>
               <div className="flex-1">
                 <h3 className="abbey-heading text-lg mb-2 group-hover:text-primary transition-colors">
-                  Another Interesting Article
+                  <Link to="/readings/reading-2">Another Interesting Article</Link>
                 </h3>
                 <p className="text-muted-foreground text-sm mb-2">Author Name • Publication • Year</p>
                 <p className="text-foreground/80 leading-relaxed">

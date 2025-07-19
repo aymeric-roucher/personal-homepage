@@ -1,7 +1,8 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
-import { Search, FileText, Code, BookOpen } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { allContent } from "@/data/content";
+import { BookOpen, Code, FileText, Search } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Navigation = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -9,17 +10,7 @@ const Navigation = () => {
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Sample individual content items - replace with real data
-  const contentItems = [
-    { title: "Machine Learning Paper Review", url: "/readings/ml-paper", type: "reading", excerpt: "Analysis of transformer architecture improvements..." },
-    { title: "React Performance Optimization", url: "/blog/react-optimization", type: "blog", excerpt: "Tips for optimizing React applications..." },
-    { title: "E-commerce Platform", url: "/projects/ecommerce", type: "project", excerpt: "Full-stack e-commerce solution built with React and Node.js..." },
-    { title: "Database Design Patterns", url: "/readings/db-patterns", type: "reading", excerpt: "Common patterns for designing scalable databases..." },
-    { title: "Building a CLI Tool", url: "/blog/cli-tool", type: "blog", excerpt: "How to create command-line tools with Node.js..." },
-    { title: "Mobile App Portfolio", url: "/projects/mobile-app", type: "project", excerpt: "Cross-platform mobile application using React Native..." },
-  ];
-
-  const filteredItems = contentItems.filter(item =>
+  const filteredItems = allContent.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -54,13 +45,13 @@ const Navigation = () => {
     <nav className="bg-background border-b border-border">
       <div className="max-w-4xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-            <NavLink 
-              to="/" 
-              className="abbey-heading text-xl font-medium hover:text-primary transition-colors"
-            >
-              Aymeric Roucher
-            </NavLink>
-          
+          <NavLink
+            to="/"
+            className="abbey-heading text-xl font-medium hover:text-primary transition-colors"
+          >
+            Aymeric Roucher
+          </NavLink>
+
           <div className="flex items-center space-x-6">
             <div className="relative" ref={searchRef}>
               <div className="relative">
@@ -76,7 +67,7 @@ const Navigation = () => {
                   className="w-64 pl-10"
                 />
               </div>
-              
+
               {showDropdown && searchQuery && (
                 <div className="absolute top-full mt-1 w-full bg-background border border-border rounded-md shadow-lg z-50 max-h-80 overflow-y-auto">
                   {filteredItems.length > 0 ? (
@@ -114,35 +105,27 @@ const Navigation = () => {
                 </div>
               )}
             </div>
-            
+
             <div className="flex items-center space-x-8">
-              <NavLink 
-                to="/" 
-                className={({ isActive }) => 
-                  `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
-                }
-              >
-                About
-              </NavLink>
-              <NavLink 
-                to="/readings" 
-                className={({ isActive }) => 
+              <NavLink
+                to="/readings"
+                className={({ isActive }) =>
                   `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
                 }
               >
                 Readings
               </NavLink>
-              <NavLink 
-                to="/projects" 
-                className={({ isActive }) => 
+              <NavLink
+                to="/projects"
+                className={({ isActive }) =>
                   `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
                 }
               >
                 Projects
               </NavLink>
-              <NavLink 
-                to="/blog" 
-                className={({ isActive }) => 
+              <NavLink
+                to="/blog"
+                className={({ isActive }) =>
                   `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
                 }
               >
