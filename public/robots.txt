@@ -12,3 +12,6 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: ${DOMAIN}/sitemap.xml
+Sitemap: ${DOMAIN}/sitemap.txt
