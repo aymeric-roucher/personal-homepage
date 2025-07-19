@@ -1,4 +1,4 @@
-# Will Bordeaux Vineyards Survive Climate Change?
+# Will the Bordeaux vineyard dry up tomorrow?
 
 Exploring how global warming threatens traditional viticulture and the innovative adaptations reshaping wine country.
 

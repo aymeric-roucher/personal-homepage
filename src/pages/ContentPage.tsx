@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { loadMarkdownContent } from "@/lib/contentLoader";
+import { loadMarkdownContent, parseContentForDisplay } from "@/lib/contentLoader";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -12,7 +12,7 @@ const ContentPage = () => {
   // If :type param is not in the route definition (e.g. /blog/:slug), infer it from pathname
   const type = typeParam || location.pathname.split("/")[1];
   const navigate = useNavigate();
-  const [content, setContent] = useState<string>("");
+  const [parsedContent, setParsedContent] = useState<{title: string; date: string; content: string} | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +25,8 @@ const ContentPage = () => {
         if (!type || !slug) return;
 
         const raw = await loadMarkdownContent(type, slug);
-        setContent(raw);
+        const parsed = parseContentForDisplay(raw);
+        setParsedContent(parsed);
       } catch (err) {
         setError("Failed to load content");
         console.error("Error loading content:", err);
@@ -113,14 +114,33 @@ const ContentPage = () => {
           Back to {getPageTitle()}
         </Button>
 
+        {/* Title and Date */}
+        <div className="mb-8">
+          <h1 className="abbey-heading text-4xl font-bold mb-4 text-foreground">
+            {parsedContent?.title}
+          </h1>
+          {parsedContent?.date && (
+            <time 
+              dateTime={parsedContent.date} 
+              className="text-muted-foreground text-sm"
+            >
+              {new Date(parsedContent.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </time>
+          )}
+        </div>
+
         <article className="prose prose-slate dark:prose-invert max-w-none">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
               h1: ({ children }) => (
-                <h1 className="abbey-heading text-4xl font-bold mb-6 text-foreground">
+                <h2 className="abbey-heading text-2xl font-semibold mt-8 mb-4 text-foreground">
                   {children}
-                </h1>
+                </h2>
               ),
               h2: ({ children }) => (
                 <h2 className="abbey-heading text-2xl font-semibold mt-8 mb-4 text-foreground">
@@ -184,7 +204,7 @@ const ContentPage = () => {
               )
             }}
           >
-            {content}
+            {parsedContent?.content || ''}
           </ReactMarkdown>
         </article>
       </div>

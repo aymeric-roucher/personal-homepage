@@ -67,6 +67,51 @@ export const parseMarkdownMetadata = (content: string) => {
   };
 };
 
+// Helper function to parse content for display on content pages
+export const parseContentForDisplay = (content: string) => {
+  const lines = content.split('\n');
+  
+  // Extract title (first line)
+  const title = lines[0]?.replace(/^#\s*/, '').trim() || '';
+  
+  // Extract date (line 5, index 4)
+  const date = lines[4]?.trim() || '';
+  
+  // Find the --- separator and start content from there
+  const separatorIndex = lines.findIndex(line => line.trim() === '---');
+  let mainContent = '';
+  
+  if (separatorIndex > -1) {
+    // Get content after the --- separator
+    let contentLines = lines.slice(separatorIndex + 1);
+    
+    // Remove metadata section at the end
+    const metadataIndex = contentLines.findIndex(line => line.trim() === '### Metadata');
+    if (metadataIndex > -1) {
+      contentLines = contentLines.slice(0, metadataIndex);
+    }
+    
+    mainContent = contentLines.join('\n').trim();
+  } else {
+    // Fallback: skip first 6 lines (title, description, date, separator)
+    let contentLines = lines.slice(6);
+    
+    // Remove metadata section at the end
+    const metadataIndex = contentLines.findIndex(line => line.trim() === '### Metadata');
+    if (metadataIndex > -1) {
+      contentLines = contentLines.slice(0, metadataIndex);
+    }
+    
+    mainContent = contentLines.join('\n').trim();
+  }
+
+  return {
+    title,
+    date,
+    content: mainContent
+  };
+};
+
 // Interface for content list items
 export interface ContentListItem {
   slug: string;

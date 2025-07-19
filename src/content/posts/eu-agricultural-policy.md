@@ -1,4 +1,4 @@
-# Europe's Agricultural Revolution: Unpacking the Common Agricultural Policy
+# The EU's Common Agricultural Policy
 
 Decoding the massive €300+ billion policy shaping European farming, environment, and food security for the next decade.
 

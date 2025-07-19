@@ -1,4 +1,4 @@
-# Cut Your ChatGPT Costs by 90%: Build Your Own API Interface
+# Divide your ChatGPT costs by 10 by directly calling the API
 
 How I built a simple notebook interface to access GPT-4 directly and slashed my AI costs from $20/month to under $1/day.
 

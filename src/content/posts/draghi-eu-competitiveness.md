@@ -1,4 +1,4 @@
-# Europe's AI Dilemma: The Draghi Report's Stark Warning
+# Draghi report
 
 How regulatory fragmentation and startup brain drain threaten Europe's position in the global AI race - and what the continent must do to compete.
 

@@ -1,4 +1,4 @@
-# From Neurons to ChatGPT: The Untold Story of AI
+# A Brief History of Artificial Intelligence
 
 A journey through seven decades of artificial intelligence breakthroughs, from simple perceptrons to the transformers revolutionizing our world today.
 
