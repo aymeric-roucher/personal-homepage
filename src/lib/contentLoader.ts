@@ -5,9 +5,8 @@ export const loadMarkdownContent = async (type: string, slug: string): Promise<s
   let folderName = type;
   if (type === "blog") folderName = "posts";
 
-  // Use Vite's glob import to eager-load all markdown files as raw strings.
-  // This allows us to safely look up any file at runtime while still enabling
-  // the bundler to include them in the build output.
+  // Use Vite's glob import to lazy-load individual markdown files as raw strings.
+  // This allows us to load content on-demand without bloating the initial bundle.
   const modules = import.meta.glob("../content/**/*.md", { as: "raw" });
 
   const key = `../content/${folderName}/${slug}.md`;
@@ -223,7 +222,7 @@ export const loadContentList = async (type: string): Promise<ContentListItem[]> 
   let folderName = type;
   if (type === "blog") folderName = "posts";
 
-  // Use Vite's glob import to eager-load all markdown files as raw strings
+  // Use Vite's glob import to lazy-load all markdown files as raw strings
   const modules = import.meta.glob("../content/**/*.md", { as: "raw" });
   
   // Filter modules for the specific content type

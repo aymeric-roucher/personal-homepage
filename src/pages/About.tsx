@@ -20,10 +20,10 @@ const About = () => {
           {/* Name and bio on the right */}
           <div className="order-1 lg:order-2">
             <div className="space-y-6 text-foreground/80 leading-relaxed">
-              <p className="text-xl">
-                I build thinking machines
-              </p>
-              <p>
+              <h1 className="text-2xl font-light mb-4">
+                Building thinking machines
+              </h1>
+              <p className="text-lg mb-4">
                 What better time to live in? We're at a turning point for human history, and my craft is the lever that can lift the world.
                 I try to put these skills to good use.
               </p>
@@ -42,7 +42,7 @@ const About = () => {
               Papers and articles that have shaped my understanding of AI.
             </p>
             <Link to="/readings" className="abbey-link text-sm">
-              View all readings →
+              View all readings ☞
             </Link>
           </div>
 
@@ -55,7 +55,7 @@ const About = () => {
               Open source libraries, Research efforts, websites.
             </p>
             <Link to="/projects" className="abbey-link text-sm">
-              View all projects →
+              View all projects ☞
             </Link>
           </div>
 
@@ -68,7 +68,7 @@ const About = () => {
               Beware, this is all extremely scale-pilled.
             </p>
             <Link to="/blog" className="abbey-link text-sm">
-              Read thoughts →
+              Read thoughts ☞
             </Link>
           </div>
         </div>

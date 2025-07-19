@@ -44,7 +44,7 @@ const Navigation = () => {
   return (
     <nav className="bg-background border-b border-border">
       <div className="max-w-4xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <NavLink
             to="/"
             className="abbey-heading text-xl font-medium hover:text-primary transition-colors"
@@ -52,7 +52,7 @@ const Navigation = () => {
             Aymeric Roucher
           </NavLink>
 
-          <div className="flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-6">
             <div className="relative" ref={searchRef}>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -110,7 +110,7 @@ const Navigation = () => {
               <NavLink
                 to="/readings"
                 className={({ isActive }) =>
-                  `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
+                  `abbey-link text-base ${isActive ? 'text-primary' : ''}`
                 }
               >
                 Readings
@@ -118,7 +118,7 @@ const Navigation = () => {
               <NavLink
                 to="/projects"
                 className={({ isActive }) =>
-                  `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
+                  `abbey-link text-base ${isActive ? 'text-primary' : ''}`
                 }
               >
                 Projects
@@ -126,12 +126,39 @@ const Navigation = () => {
               <NavLink
                 to="/blog"
                 className={({ isActive }) =>
-                  `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
+                  `abbey-link text-base ${isActive ? 'text-primary' : ''}`
                 }
               >
                 Blog
               </NavLink>
             </div>
+          </div>
+
+          <div className="flex md:hidden items-center space-x-4">
+            <NavLink
+              to="/readings"
+              className={({ isActive }) =>
+                `abbey-link text-xs ${isActive ? 'text-primary' : ''}`
+              }
+            >
+              Readings
+            </NavLink>
+            <NavLink
+              to="/projects"
+              className={({ isActive }) =>
+                `abbey-link text-xs ${isActive ? 'text-primary' : ''}`
+              }
+            >
+              Projects
+            </NavLink>
+            <NavLink
+              to="/blog"
+              className={({ isActive }) =>
+                `abbey-link text-xs ${isActive ? 'text-primary' : ''}`
+              }
+            >
+              Blog
+            </NavLink>
           </div>
         </div>
       </div>
