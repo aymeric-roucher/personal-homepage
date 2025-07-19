@@ -12,6 +12,8 @@ const Footer = () => {
             <span>LinkedIn</span>
           </a>
 
+          <span className="text-muted-foreground">✯</span>
+
           <a
             href="https://twitter.com/aymericroucher"
             target="_blank"
@@ -20,6 +22,8 @@ const Footer = () => {
           >
             <span>Twitter</span>
           </a>
+
+          <span className="text-muted-foreground">✯</span>
 
           <a
             href="https://huggingface.co/m-ric"

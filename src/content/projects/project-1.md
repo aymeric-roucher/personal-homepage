@@ -15,6 +15,6 @@ This article is currently in development. Check back soon for the full content.
 ### Metadata
 - Type: project
 - URL: /projects#project-1
-
-
+- github_link: https://github.com/example/project-one
+- webpage_link: https://project-one.example.com
 - Info: Technology • Year
