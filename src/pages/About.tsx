@@ -27,17 +27,6 @@ const About = () => {
                 I'd like to make it useful.
               </p>
             </div>
-            <div className="flex items-center space-x-8 mt-8">
-              <Link to="/readings" className="abbey-link text-lg">
-                Explore Readings
-              </Link>
-              <Link to="/projects" className="abbey-link text-lg">
-                View Projects
-              </Link>
-              <Link to="/blog" className="abbey-link text-lg">
-                Read Blog
-              </Link>
-            </div>
           </div>
         </div>
 
