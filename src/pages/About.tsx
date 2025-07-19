@@ -24,12 +24,7 @@ const About = () => {
                 I like to build stuff on computers.
               </p>
               <p>
-                My work spans across machine learning research, software development, and exploring
-                how technology can augment human capabilities while preserving the essence of human creativity and connection.
-              </p>
-              <p>
-                This digital space serves as both a repository of my intellectual journey and a platform
-                for sharing discoveries that might inspire others on similar paths.
+                I'd like to make it useful.
               </p>
             </div>
             <div className="flex items-center space-x-8 mt-8">
@@ -89,7 +84,7 @@ const About = () => {
         </div>
 
         {/* Philosophy Section */}
-        <div className="text-center">
+        {/* <div className="text-center">
           <h2 className="abbey-heading text-2xl font-light mb-6">Philosophy</h2>
           <div className="max-w-3xl mx-auto">
             <p className="text-foreground/80 leading-relaxed mb-6">
@@ -102,7 +97,7 @@ const About = () => {
               and meaningful engagement with ideas that matter.
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
