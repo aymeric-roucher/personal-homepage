@@ -1,9 +1,9 @@
-# Divide your ChatGPT costs by 10 by directly calling the API
-
-How I built a simple notebook interface to access GPT-4 directly and slashed my AI costs from $20/month to under $1/day.
-
-2023-09-23
-
+---
+title: Divide your ChatGPT costs by 10 by directly calling the API
+thumbnail: How I built a simple notebook interface to access GPT-4 directly and slashed my AI costs from $20/month to under $1/day.
+date: 2023-09-23
+type: blog
+url: /blog#gpt-api-interface
 ---
 
 # Why an UI for the GPT API?
@@ -64,7 +64,3 @@ def get_user_input(self, b) -> None:
 
 Clone [this repo](https://github.com/aymeric-roucher/gpt_api_ui), copy your [OpenAI API key](https://platform.openai.com/account/api-keys), run the notebook cell, and you're good to go!
 
-### Metadata
-- Type: blog
-- URL: /blog#gpt-api-interface
-- Date: 2023-09-23

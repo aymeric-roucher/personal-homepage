@@ -67,47 +67,57 @@ export const parseMarkdownMetadata = (content: string) => {
   };
 };
 
-// Helper function to parse content for display on content pages
-export const parseContentForDisplay = (content: string) => {
+// Helper function to parse frontmatter and content
+export const parseFrontmatter = (content: string) => {
   const lines = content.split('\n');
   
-  // Extract title (first line)
-  const title = lines[0]?.replace(/^#\s*/, '').trim() || '';
-  
-  // Extract date (line 5, index 4)
-  const date = lines[4]?.trim() || '';
-  
-  // Find the --- separator and start content from there
-  const separatorIndex = lines.findIndex(line => line.trim() === '---');
-  let mainContent = '';
-  
-  if (separatorIndex > -1) {
-    // Get content after the --- separator
-    let contentLines = lines.slice(separatorIndex + 1);
-    
-    // Remove metadata section at the end
-    const metadataIndex = contentLines.findIndex(line => line.trim() === '### Metadata');
-    if (metadataIndex > -1) {
-      contentLines = contentLines.slice(0, metadataIndex);
-    }
-    
-    mainContent = contentLines.join('\n').trim();
-  } else {
-    // Fallback: skip first 6 lines (title, description, date, separator)
-    let contentLines = lines.slice(6);
-    
-    // Remove metadata section at the end
-    const metadataIndex = contentLines.findIndex(line => line.trim() === '### Metadata');
-    if (metadataIndex > -1) {
-      contentLines = contentLines.slice(0, metadataIndex);
-    }
-    
-    mainContent = contentLines.join('\n').trim();
+  // Check if content starts with frontmatter
+  if (lines[0]?.trim() !== '---') {
+    return {
+      frontmatter: {},
+      content: content
+    };
   }
-
+  
+  // Find the closing --- separator
+  const closingIndex = lines.findIndex((line, index) => index > 0 && line.trim() === '---');
+  
+  if (closingIndex === -1) {
+    return {
+      frontmatter: {},
+      content: content
+    };
+  }
+  
+  // Parse frontmatter
+  const frontmatterLines = lines.slice(1, closingIndex);
+  const frontmatter: Record<string, string> = {};
+  
+  for (const line of frontmatterLines) {
+    const colonIndex = line.indexOf(':');
+    if (colonIndex > -1) {
+      const key = line.slice(0, colonIndex).trim();
+      const value = line.slice(colonIndex + 1).trim();
+      frontmatter[key] = value;
+    }
+  }
+  
+  // Get content after frontmatter
+  const mainContent = lines.slice(closingIndex + 1).join('\n').trim();
+  
   return {
-    title,
-    date,
+    frontmatter,
+    content: mainContent
+  };
+};
+
+// Helper function to parse content for display on content pages
+export const parseContentForDisplay = (content: string) => {
+  const { frontmatter, content: mainContent } = parseFrontmatter(content);
+  
+  return {
+    title: frontmatter.title || '',
+    date: frontmatter.date || '',
     content: mainContent
   };
 };
@@ -130,17 +140,37 @@ export interface ContentListItem {
 
 // Enhanced function to extract metadata including links for projects
 export const parseEnhancedMetadata = (content: string, slug: string): ContentListItem => {
-  const lines = content.split('\n');
-  const title = lines[0]?.replace(/^#\s*/, '').trim() || '';
-  const description = lines[2]?.trim() || '';
-  const metadata = lines[4]?.trim() || '';
+  const { frontmatter, content: mainContent } = parseFrontmatter(content);
+  
+  // Extract data from frontmatter or fallback to old parsing method
+  let title = frontmatter.title || '';
+  let description = frontmatter.thumbnail || '';
+  let date = frontmatter.date || '';
+  
+  // If no frontmatter, try old format
+  if (!title) {
+    const lines = content.split('\n');
+    title = lines[0]?.replace(/^#\s*/, '').trim() || '';
+    description = lines[2]?.trim() || '';
+    
+    // Find metadata section for old format
+    const metadataStartIndex = lines.findIndex(line => line.trim() === '### Metadata');
+    if (metadataStartIndex > -1) {
+      const metadataLines = lines.slice(metadataStartIndex + 1);
+      for (const line of metadataLines) {
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('- Date: ')) {
+          date = trimmedLine.substring(8);
+        }
+      }
+    }
+  }
 
-  // Find the metadata section for extracting links and additional info
+  // Parse links from metadata section (for projects that might have them)
+  const lines = content.split('\n');
   const metadataStartIndex = lines.findIndex(line => line.trim() === '### Metadata');
   const links: ContentListItem['links'] = {};
-  let date: string | undefined;
-  let readTime: string | undefined;
-
+  
   if (metadataStartIndex > -1) {
     const metadataLines = lines.slice(metadataStartIndex + 1);
     
@@ -148,16 +178,6 @@ export const parseEnhancedMetadata = (content: string, slug: string): ContentLis
       const trimmedLine = line.trim();
       if (trimmedLine.startsWith('- ')) {
         const metaLine = trimmedLine.substring(2);
-        
-        // Parse date
-        if (metaLine.startsWith('Date: ')) {
-          date = metaLine.substring(6);
-        }
-        
-        // Parse read time (but we'll calculate it dynamically now)
-        if (metaLine.startsWith('Read time: ')) {
-          readTime = metaLine.substring(11);
-        }
         
         // Parse links
         const linkPrefixes = ['github_link:', 'huggingface_link:', 'webpage_link:'];
@@ -171,16 +191,14 @@ export const parseEnhancedMetadata = (content: string, slug: string): ContentLis
     }
   }
 
-  // Calculate read time dynamically if not provided
-  if (!readTime) {
-    readTime = calculateReadTime(content);
-  }
+  // Calculate read time dynamically
+  const readTime = calculateReadTime(content);
 
   return {
     slug,
     title,
     description,
-    metadata,
+    metadata: date, // Keep metadata for backward compatibility
     date,
     readTime,
     links: Object.keys(links).length > 0 ? links : undefined

@@ -1,9 +1,9 @@
-# Will the Bordeaux vineyard dry up tomorrow?
-
-Exploring how global warming threatens traditional viticulture and the innovative adaptations reshaping wine country.
-
-2022-11-29
-
+---
+title: Will the Bordeaux vineyard dry up tomorrow?
+thumbnail: Exploring how global warming threatens traditional viticulture and the innovative adaptations reshaping wine country.
+date: 2022-11-29
+type: blog
+url: /blog#bordeaux-vineyard-climate
 ---
 
 In 2013, an [American study led by Professor Lee Hannah](https://www.pnas.org/doi/10.1073/pnas.1210127110) made a big splash: the average temperature in the Mediterranean climate increasingly exceeding the needs of the vine, large areas would become unfit for viticulture in the next forty years, especially on the Mediterranean rim. So, are our vineyards doomed?
@@ -68,7 +68,3 @@ So, is the Bordeaux vineyard safe? It seems that the work in the vineyard - and 
 
 The French viticulture world has wholly measured the threats that loom ahead : a partnership including the great state research organism INRAE has built [a national strategy of the winemaking indsutry against climate change](https://innovin.fr/wp-content/uploads/2021/08/Strat%C3%A9gie-de-la-fili%C3%A8re-viticole-face-au-changement-climatique.pdf). Among the four scenarios envisaged for 2050, a "nomadic" scenario, which would involve relocating vineyards, thus calling into question our terroirs. To avoid this scenario, the industry will have to rely on a number of pillars, the last of which goes back to the root of the problem: since global warming is a societal problem, and since the wine industry will be asking the government for help in the difficulties to come, it will have to be exemplary in mitigating this warming.
 
-### Metadata
-- Type: blog
-- URL: /blog#bordeaux-vineyard-climate
-- Date: 2022-11-29

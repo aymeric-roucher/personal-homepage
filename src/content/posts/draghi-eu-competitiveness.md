@@ -1,9 +1,9 @@
-# Draghi report
-
-How regulatory fragmentation and startup brain drain threaten Europe's position in the global AI race - and what the continent must do to compete.
-
-2024-11-12
-
+---
+title: Draghi report
+thumbnail: How regulatory fragmentation and startup brain drain threaten Europe's position in the global AI race - and what the continent must do to compete.
+date: 2024-11-12
+type: blog
+url: /blog#draghi-eu-competitiveness
 ---
 
 {% include image.html url="/assets/images/2024-11-12-Draghi-report/image.png" description="image.png" %}
@@ -58,7 +58,3 @@ Répété plus bas:
 
 It can choose to reassert the principle of harmonisation enshrined in regulatory frameworks like the GDPR, and offer a modern interpretation of GDPR provisions that still respects its underlying values, so that AI innovation happens here at the same scale and speed as elsewhere.
 
-### Metadata
-- Type: blog
-- URL: /blog#draghi-eu-competitiveness
-- Date: 2024-11-12

@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/personal-homepage/' : '/',
+  base: '/',
   build: {
     outDir: 'dist'
   },

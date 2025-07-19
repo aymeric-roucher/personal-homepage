@@ -1,9 +1,9 @@
-# The EU's Common Agricultural Policy
-
-Decoding the massive €300+ billion policy shaping European farming, environment, and food security for the next decade.
-
-2023-04-02
-
+---
+title: The EU's Common Agricultural Policy
+thumbnail: Decoding the massive €300+ billion policy shaping European farming, environment, and food security for the next decade.
+date: 2023-04-02
+type: blog
+url: /blog#eu-agricultural-policy
 ---
 
 The next iteration of the Common Agricultural Policy (CAP) was [approved in December 2021](https://www.consilium.europa.eu/en/policies/cap-introduction/cap-future-2020-common-agricultural-policy-2023-2027/) after three years of tough discussions between EU governments: it will come into force in 2023, and will be effective until 2027.
@@ -136,7 +136,3 @@ As is to be expected for a policy of this magnitude, the new CAP is already attr
 
 [^psn_france]: Struna, H. (2022) 'PAC : un plan national stratégique vert pâle'. EURACTIV France. [https://www.euractiv.fr/section/agriculture-alimentation/news/pac-un-plan-national-strategique-vert-pale/](https://www.euractiv.fr/section/agriculture-alimentation/news/pac-un-plan-national-strategique-vert-pale/)
 
-### Metadata
-- Type: blog
-- URL: /blog#eu-agricultural-policy
-- Date: 2023-04-02
