@@ -38,7 +38,7 @@ const About = () => {
               <h3 className="abbey-heading text-lg">Readings</h3>
             </div>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              Papers and articles that have shaped my thinking and understanding of complex problems.
+              Papers and articles that have shaped my understanding of AI.
             </p>
             <Link to="/readings" className="abbey-link text-sm">
               View all readings →
@@ -51,7 +51,7 @@ const About = () => {
               <h3 className="abbey-heading text-lg">Projects</h3>
             </div>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              Research, development, and creative work spanning multiple disciplines and interests.
+              Open source libraries, Research efforts, websites.
             </p>
             <Link to="/projects" className="abbey-link text-sm">
               View all projects →
@@ -64,7 +64,7 @@ const About = () => {
               <h3 className="abbey-heading text-lg">Thoughts</h3>
             </div>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              Reflections on technology, design, research, and the intersection of human and artificial intelligence.
+              Beware, this is all extremely scale-pilled.
             </p>
             <Link to="/blog" className="abbey-link text-sm">
               Read thoughts →
