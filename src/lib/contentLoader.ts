@@ -23,6 +23,29 @@ export const loadMarkdownContent = async (type: string, slug: string): Promise<s
   return rawMarkdown as unknown as string;
 };
 
+// Helper function to calculate read time based on word count
+export const calculateReadTime = (content: string): string => {
+  // Average reading speed is about 200-250 words per minute
+  // We'll use 225 words per minute as a middle ground
+  const wordsPerMinute = 225;
+  
+  // Remove markdown syntax and count words
+  const cleanContent = content
+    .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+    .replace(/`[^`]*`/g, '') // Remove inline code
+    .replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
+    .replace(/\[.*?\]\(.*?\)/g, '') // Remove links
+    .replace(/#{1,6}\s/g, '') // Remove headers
+    .replace(/[*_~`]/g, '') // Remove markdown formatting
+    .replace(/---[\s\S]*?---/g, '') // Remove frontmatter
+    .replace(/\n/g, ' '); // Replace newlines with spaces
+  
+  const wordCount = cleanContent.trim().split(/\s+/).filter(word => word.length > 0).length;
+  const readTimeMinutes = Math.ceil(wordCount / wordsPerMinute);
+  
+  return `${readTimeMinutes} min read`;
+};
+
 // Helper function to extract metadata from markdown content
 export const parseMarkdownMetadata = (content: string) => {
   const lines = content.split('\n');
@@ -86,7 +109,7 @@ export const parseEnhancedMetadata = (content: string, slug: string): ContentLis
           date = metaLine.substring(6);
         }
         
-        // Parse read time
+        // Parse read time (but we'll calculate it dynamically now)
         if (metaLine.startsWith('Read time: ')) {
           readTime = metaLine.substring(11);
         }
@@ -101,6 +124,11 @@ export const parseEnhancedMetadata = (content: string, slug: string): ContentLis
         }
       }
     }
+  }
+
+  // Calculate read time dynamically if not provided
+  if (!readTime) {
+    readTime = calculateReadTime(content);
   }
 
   return {
