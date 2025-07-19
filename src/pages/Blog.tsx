@@ -20,7 +20,7 @@ const Blog = () => {
     {
       id: 3,
       title: "Reflections on Technology",
-      excerpt: "Exploring the intersection between technological advancement and human connection in our increasingly digital world.",
+      excerpt: "Exploring the intersection between reasingly digital world.",
       date: "2024-01-05",
       readTime: "7 min read"
     }
