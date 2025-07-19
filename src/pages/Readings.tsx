@@ -10,22 +10,7 @@ const Readings = () => {
         </div>
 
         {/* Notion Embed Placeholder */}
-        <div className="abbey-card mb-8">
-          <div className="text-center py-12">
-            <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-            </div>
-            <h3 className="abbey-heading text-xl mb-2">Notion Embed Placeholder</h3>
-            <p className="text-muted-foreground mb-4">
-              This section will contain your Notion readings page embed.
-            </p>
-            <div className="text-sm text-muted-foreground bg-muted/50 rounded p-4 inline-block">
-              Add your Notion embed code here
-            </div>
-          </div>
-        </div>
+        <iframe src="https://bird-warrior-9c6.notion.site/ebd/2338d6bd102f803dbe58e51fa114d223?v=2338d6bd102f80c59938000c6ad84962" width="100%" height="600" frameborder="0" allowfullscreen />
 
         {/* Sample reading entries for demonstration */}
         <div className="space-y-6">

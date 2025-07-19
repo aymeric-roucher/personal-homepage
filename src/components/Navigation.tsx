@@ -51,7 +51,7 @@ const Navigation = () => {
   }, []);
 
   return (
-    <nav className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border z-50">
+    <nav className="bg-background border-b border-border">
       <div className="max-w-4xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
             <NavLink 

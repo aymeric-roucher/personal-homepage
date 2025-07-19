@@ -14,23 +14,19 @@ const About = () => {
               </svg>
             </div>
           </div>
-          
+
           {/* Name and bio on the right */}
           <div className="order-1 lg:order-2">
-            <h1 className="abbey-heading text-5xl font-light mb-6">
-              Aymeric Roucher
-            </h1>
             <div className="space-y-6 text-foreground/80 leading-relaxed">
               <p className="text-xl">
-                A researcher and developer passionate about the intersection of artificial intelligence, 
-                human-computer interaction, and the creation of meaningful digital experiences.
+                I like to build stuff on computers.
               </p>
               <p>
-                My work spans across machine learning research, software development, and exploring 
+                My work spans across machine learning research, software development, and exploring
                 how technology can augment human capabilities while preserving the essence of human creativity and connection.
               </p>
               <p>
-                This digital space serves as both a repository of my intellectual journey and a platform 
+                This digital space serves as both a repository of my intellectual journey and a platform
                 for sharing discoveries that might inspire others on similar paths.
               </p>
             </div>
@@ -53,7 +49,7 @@ const About = () => {
           <div className="abbey-card">
             <div className="flex items-center mb-4">
               <div className="w-3 h-3 bg-primary rounded-full mr-3"></div>
-              <h3 className="abbey-heading text-lg">Recent Readings</h3>
+              <h3 className="abbey-heading text-lg">Readings</h3>
             </div>
             <p className="text-foreground/80 leading-relaxed mb-4">
               Papers and articles that have shaped my thinking and understanding of complex problems.
@@ -66,7 +62,7 @@ const About = () => {
           <div className="abbey-card">
             <div className="flex items-center mb-4">
               <div className="w-3 h-3 bg-primary rounded-full mr-3"></div>
-              <h3 className="abbey-heading text-lg">Latest Projects</h3>
+              <h3 className="abbey-heading text-lg">Projects</h3>
             </div>
             <p className="text-foreground/80 leading-relaxed mb-4">
               Research, development, and creative work spanning multiple disciplines and interests.
@@ -95,12 +91,12 @@ const About = () => {
           <h2 className="abbey-heading text-2xl font-light mb-6">Philosophy</h2>
           <div className="max-w-3xl mx-auto">
             <p className="text-foreground/80 leading-relaxed mb-6">
-              I believe in the power of thoughtful technology—systems that amplify human potential 
-              rather than replace human judgment. My work is guided by the principle that the best 
+              I believe in the power of thoughtful technology—systems that amplify human potential
+              rather than replace human judgment. My work is guided by the principle that the best
               technologies are those that feel natural and enhance our capabilities seamlessly.
             </p>
             <p className="text-foreground/80 leading-relaxed">
-              This space embodies that philosophy: minimal, purposeful, and designed for contemplation 
+              This space embodies that philosophy: minimal, purposeful, and designed for contemplation
               and meaningful engagement with ideas that matter.
             </p>
           </div>
