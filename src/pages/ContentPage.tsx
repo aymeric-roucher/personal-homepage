@@ -83,14 +83,13 @@ const ContentPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <div className="max-w-4xl mx-auto px-6 py-12">
-          <Button
-            variant="ghost"
+          <button
             onClick={() => navigate(getBackPath())}
-            className="mb-8"
+            className="abbey-link mb-8 flex items-center"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to {getPageTitle()}
-          </Button>
+          </button>
           <div className="text-center">
             <h1 className="abbey-heading text-2xl font-bold mb-4">Content Not Found</h1>
             <p className="text-muted-foreground">
@@ -105,14 +104,13 @@ const ContentPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-6 py-12">
-        <Button
-          variant="ghost"
+        <button
           onClick={() => navigate(getBackPath())}
-          className="mb-8"
+          className="abbey-link mb-8 flex items-center"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to {getPageTitle()}
-        </Button>
+        </button>
 
         {/* Title and Date */}
         <div className="mb-8">
