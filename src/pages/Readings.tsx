@@ -1,6 +1,6 @@
+import { ContentListItem, loadContentList } from "@/lib/contentLoader";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { loadContentList, ContentListItem } from "@/lib/contentLoader";
 
 const Readings = () => {
   const [readings, setReadings] = useState<ContentListItem[]>([]);
@@ -27,8 +27,7 @@ const Readings = () => {
         {/* Notion Embed Placeholder */}
         <iframe
           src="https://bird-warrior-9c6.notion.site/ebd/2338d6bd102f803dbe58e51fa114d223?v=2338d6bd102f80c59938000c6ad84962"
-          width="100%"
-          height="600"
+          style={{ width: "100%", height: "90vh" }}
           frameBorder={0}
           allowFullScreen
         />
@@ -68,7 +67,8 @@ const Readings = () => {
             ))
           ) : (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">No readings found.</p>
+              {/* <p className="text-muted-foreground">No readings found.</p> */}
+              {/* Nothing for now */}
             </div>
           )}
         </div>

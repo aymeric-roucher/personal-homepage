@@ -5,11 +5,15 @@ const About = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-6 py-20">
         {/* Main About Section */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+        <div className="grid lg:grid-cols-2 gap-10 items-center mb-20">
           {/* Image on the left */}
-          <div className="order-2 lg:order-1">
-            <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
-              <img src="/Plan_Soissons_upright_clean.png" alt="Aymeric Roucher" className="w-full h-full object-cover rounded-lg" />
+          <div className="order-2 lg:order-1 flex items-center justify-center h-full">
+            <div className="aspect-square flex items-center justify-center max-w-md max-h-md">
+              <img
+                src="/Plan_Soissons_upright_clean.png"
+                alt="Aymeric Roucher"
+                className="w-full h-full object-contain rounded-lg"
+              />
             </div>
           </div>
 
