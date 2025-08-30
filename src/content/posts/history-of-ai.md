@@ -87,7 +87,7 @@ This algorithm has undergone some tweaks since then, but it is still the same on
 
 </div>
 
-### ⚙️ Technical Building Block: Optimization - Finding the Lowest Valley
+<div class="technical-block" data-title="Technical Building Block: Optimization - Finding the Lowest Valley">
 
 A bit too many barbarisms here, isn't it? Don't worry, after this technical point, I'll leave you in peace for a few pages! And we'll explain below why deep neural networks are harder to train than other AI algorithms.  
 To do our optimization, you saw just above that we took a small step via backpropagation. But let's try to better understand what's happening.  
@@ -113,7 +113,7 @@ This algorithm has been improved since then – for example, we add inertia to t
 
 <div class="figure-card" data-src="/assets/images/history-of-ai/gradient_descent.jpg" data-alt="Gradient Descent Algorithm" data-caption="The gradient descent algorithm."></div>
 
----
+</div>
 
 However, for LeCun and Hinton, who had begun a collaboration, winter was still not over. A new algorithm, the SVM, similar to a single-layer network, works very well on small datasets and does not require a complex training procedure. The training procedure for their "deep" neural networks is more complex and lacks a theoretical guarantee of success[^fn10], so it is judged less elegant. As a result, deep neural networks are once again sidelined by the AI community.
 
@@ -150,9 +150,7 @@ Image classification gradually becomes a solved problem: convolutional neural ne
 But text processing remains out of reach.  
 In 2013, the Word2vec algorithm allows for creating word representations as vectors, and with word representation as vectors, we can begin to translate texts[^fn14].
 
----
-
-### ⚙️ Technical Building Block: Representing Words as Vectors
+<div class="technical-block" data-title="Technical Building Block: Representing Words as Vectors">
 
 First, what is a vector? It's simply a list of numbers in a precise order. For example, coordinates in space in X, Y, Z form a vector in three dimensions that can be noted [X, Y, Z]. Conversely, any vector can be seen as the coordinates of a point in space. In one, two, or three dimensions, we can visualize them: but vectors have no size limit; they can be a thousand dimensions.  
 We can perform operations on vectors: for example, for two vectors of equal size, we can multiply each number in one by the number in the other at the same position (for the same dimension), then sum all the products to get a single number. This operation is called the dot product. We can also, of course, add or subtract them by performing the addition or subtraction on each dimension one by one.  
@@ -160,8 +158,7 @@ An idea that emerged early on was to represent words as vectors: the dimensions 
 This approach was implemented by the Word2vec algorithm in 2013[^fn15], which creates a vector representation for over a billion English words. This representation is fascinating: the obtained vectors have mathematical relationships that reproduce conceptual links between the words they represent. For example, if we take the vector representing the word "queen," subtract the vector of "woman," and add "man," we get the vector for "king"! Thus, we realize that word vectors represent concepts like royalty or femininity.
 
 <div class="figure-card" data-src="/assets/images/history-of-ai/word_vectors.png" data-alt="Word Vectors Visualization" data-caption="Word vector relationships showing semantic connections between words."></div>
-
----
+</div>
 
 To do this, we can place the different vectors representing the words of a sentence side by side and input the whole thing into a large neural network to ask it to predict the word to complete.  
 However, until 2017, deep neural networks were not really capable of considering dynamic interactions between their different inputs.  

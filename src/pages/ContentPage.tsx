@@ -9,6 +9,7 @@ import rehypeRaw from "rehype-raw";
 import PlotlyChart from "@/components/PlotlyChart";
 import FigureCard from "@/components/FigureCard";
 import TechnicalBlock from "@/components/TechnicalBlock";
+import TableOfContents from "@/components/TableOfContents";
 
 const ContentPage = () => {
   const { type: typeParam, slug } = useParams<{ type?: string; slug?: string }>();
@@ -19,6 +20,14 @@ const ContentPage = () => {
   const [parsedContent, setParsedContent] = useState<{title: string; date: string; content: string} | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const createHeadingId = (text: string) => {
+    return text
+      .toString()
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+  };
 
   useEffect(() => {
     const loadContentAsync = async () => {
@@ -107,54 +116,92 @@ const ContentPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <button
-          onClick={() => navigate(getBackPath())}
-          className="abbey-link mb-8 flex items-center"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to {getPageTitle()}
-        </button>
+      <div className="lg:grid lg:grid-cols-12 lg:gap-8 lg:px-6 lg:py-12">
+        {/* Left column - empty spacer */}
+        <div className="hidden lg:block lg:col-span-3"></div>
+        
+        {/* Center column - main content */}
+        <div className="lg:col-span-6 max-w-4xl mx-auto px-6 py-12 lg:px-0 lg:py-0">
+          <button
+            onClick={() => navigate(getBackPath())}
+            className="abbey-link mb-8 flex items-center"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to {getPageTitle()}
+          </button>
 
-        {/* Title and Date */}
-        <div className="mb-8">
-          <h1 className="abbey-heading text-4xl font-bold mb-4 text-foreground">
-            {parsedContent?.title}
-          </h1>
-          {parsedContent?.date && (
-            <time 
-              dateTime={parsedContent.date} 
-              className="text-muted-foreground text-sm"
-            >
-              {new Date(parsedContent.date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </time>
-          )}
-        </div>
+          {/* Title and Date */}
+          <div className="mb-8">
+            <h1 className="abbey-heading text-4xl font-bold mb-4 text-foreground">
+              {parsedContent?.title}
+            </h1>
+            {parsedContent?.date && (
+              <time 
+                dateTime={parsedContent.date} 
+                className="text-muted-foreground text-sm"
+              >
+                {new Date(parsedContent.date).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+            )}
+          </div>
 
-        <article className="prose prose-slate dark:prose-invert max-w-none">
+          <article className="prose prose-slate dark:prose-invert max-w-none">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
             components={{
-              h1: ({ children }) => (
-                <h2 className="abbey-heading text-2xl font-semibold mt-8 mb-4 text-foreground">
-                  {children}
-                </h2>
-              ),
-              h2: ({ children }) => (
-                <h2 className="abbey-heading text-2xl font-semibold mt-8 mb-4 text-foreground">
-                  {children}
-                </h2>
-              ),
-              h3: ({ children }) => (
-                <h3 className="abbey-heading text-xl font-semibold mt-6 mb-3 text-foreground">
-                  {children}
-                </h3>
-              ),
+              h1: ({ children }) => {
+                const id = createHeadingId(children?.toString() || '');
+                return (
+                  <h2 id={id} className="abbey-heading text-2xl font-semibold mt-8 mb-4 text-foreground">
+                    {children}
+                  </h2>
+                );
+              },
+              h2: ({ children }) => {
+                const id = createHeadingId(children?.toString() || '');
+                return (
+                  <h2 id={id} className="abbey-heading text-2xl font-semibold mt-8 mb-4 text-foreground">
+                    {children}
+                  </h2>
+                );
+              },
+              h3: ({ children }) => {
+                const id = createHeadingId(children?.toString() || '');
+                return (
+                  <h3 id={id} className="abbey-heading text-xl font-semibold mt-6 mb-3 text-foreground">
+                    {children}
+                  </h3>
+                );
+              },
+              h4: ({ children }) => {
+                const id = createHeadingId(children?.toString() || '');
+                return (
+                  <h4 id={id} className="abbey-heading text-lg font-semibold mt-5 mb-2 text-foreground">
+                    {children}
+                  </h4>
+                );
+              },
+              h5: ({ children }) => {
+                const id = createHeadingId(children?.toString() || '');
+                return (
+                  <h5 id={id} className="abbey-heading text-base font-semibold mt-4 mb-2 text-foreground">
+                    {children}
+                  </h5>
+                );
+              },
+              h6: ({ children }) => {
+                const id = createHeadingId(children?.toString() || '');
+                return (
+                  <h6 id={id} className="abbey-heading text-sm font-semibold mt-4 mb-2 text-foreground">
+                    {children}
+                  </h6>
+                );
+              },
               p: ({ children }) => (
                 <p className="abbey-text text-foreground/80 leading-relaxed mb-4">
                   {children}
@@ -270,7 +317,17 @@ const ContentPage = () => {
           >
             {parsedContent?.content || ''}
           </ReactMarkdown>
-        </article>
+          </article>
+        </div>
+        
+        {/* Right column - Table of Contents */}
+        <div className="hidden lg:block lg:col-span-3">
+          {/* Empty spacer to align TOC with article start */}
+          <div className="h-32"></div>
+          {type === 'blog' && parsedContent?.content && (
+            <TableOfContents content={parsedContent.content} />
+          )}
+        </div>
       </div>
     </div>
   );
