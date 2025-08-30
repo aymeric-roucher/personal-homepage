@@ -13,12 +13,12 @@ Artificial Intelligence (often abbreviated as "AI") is experiencing an unprecede
 Starting in the 1950s, with the advent of the first computers and the ability to execute algorithms[^fn1], it became evident that machines could now solve certain elementary mental tasks: mental arithmetic, list sorting, solving simple equations...
 A question arose immediately: "Can these machines be made more intelligent, perhaps equal to humans?" This marked the beginning of a fascinating quest.
 
----
-
-### ⚙️ Technical Building Block: Algorithms
+<div class="technical-block" data-title="Technical Building Block: Algorithms">
 
 What is an algorithm?
+
 It is an ordered sequence of predefined steps, whose execution allows for solving a task. A cooking recipe is an algorithm. They are often expressed in pseudocode. Here's an example of pseudocode for an algorithm:
+
 ```
 Input: list l
 sum = 0
@@ -27,15 +27,17 @@ For each element in the list, noted m:
 sum becomes sum / length of l
 Return sum
 ```
-This algorithm calculates the average of a list of numbers.  
+
+This algorithm calculates the average of a list of numbers.
+
 Current computers do not excel in initiative (they have none as long as they haven't been given instructions), but they are capable of applying simple rules with immense speed: they are therefore extremely powerful for executing algorithms.
 
----
+</div>
 
 But how to build a machine that thinks? A first approach, imagined by Frank Rosenblatt as early as 1950, aims to reconstruct reasoning from the ground up, starting from very simple reasoning blocks. He takes the example of an ant colony: an ant makes decisions based on simple, almost mechanical reasoning. But by operating and interacting a large number of these simple mechanisms, the ant colony as a whole manages to achieve complex behaviors that allow it to explore and use its environment effectively. Why not combine elementary mechanisms to reach higher levels of abstraction, eventually solving complex tasks?  
 Rosenblatt creates elementary mathematical functions that he calls neurons: these neurons take in several signals, combine and transform them to produce a single output channel. If the sum of all these signals exceeds a certain threshold, the neuron activates and outputs the sum; otherwise, it outputs 0[^fn2]. A connection can be formed from the output of one neuron to the input of another, thus forming successive layers, with a particular weight assigned to each connection. For example, let's build a neural network to detect which animal is present in an image. Neuron a on layer 1 detects proposition A, for example "orange color", and neuron b on layer 2 detects proposition B, "the image shows a fox". In this case, we want the connection from neuron a to neuron b to be positive: if we detect an orange color, as it is likely that an orange animal is a fox, there will be a positive signal to help B activate as well. Conversely, if neuron c on layer 2 detects condition C, "the image shows an elephant", we prefer the connection from a to c to be negative: if the image is orange, it is probably not an elephant. Each successive layer can thus rely on the previous ones to move up a level of abstraction: if layer 0 is the direct signal from the pixels, layer 1 represents elementary colors and shapes, layer 2 can already represent more advanced patterns and shapes, layer 3 can represent concepts like "claw" or "ear", and layer 4 can determine which animal it is. This approach is the first draft of today's large models.
 
-{% include image.html url="/assets/images/2024-08-15-brief-history-of-ai/NeuralNetwok_chien.png" description="Illustration of the rise in abstraction of representation across successive neuron layers." %}
+<div class="figure-card" data-src="/assets/images/history-of-ai/NeuralNetwok_chien.png" data-alt="Neural Network Abstraction" data-caption="Illustration of the rise in abstraction of representation across successive neuron layers."></div>
 
 ### Universal Approximators
 
@@ -65,20 +67,25 @@ When we talk about training or optimization, it is the learning stage. When we t
 Take the example of ChatGPT. It is a product (a chatbot) offered by OpenAI, powered by one of their models, for example, GPT-4. Training is prodigiously expensive – millions of euros – and lasts months. This is why the model's "knowledge" (we will see later that this knowledge is extremely fuzzy) stops at a certain date: yesterday's information cannot yet be integrated; it would take at least a few weeks to retrain the model with this information.  
 On the contrary, when a user chats with the chatbot, it's only inference, much faster (a few milliseconds) and less expensive (a few thousandths of a cent). The model does not learn from what we tell it – it may seem to remember because it generates its text from the entire conversation from the beginning, but as soon as the conversation changes, it starts over. However, the conversation could very well be saved as material for the training datasets of OpenAI's future models.
 
----
+<div class="technical-block" data-title="Technical Building Block: Training by Backpropagation">
 
-### ⚙️ Technical Building Block: Training by Backpropagation
+How to change the connection weights of a neural network to make it perform well on a problem? For example, starting from a network with weights initialized randomly, how to train it to recognize the animal in a photo? 
 
-How to change the connection weights of a neural network to make it perform well on a problem? For example, starting from a network with weights initialized randomly, how to train it to recognize the animal in a photo? We start by adding a final layer of neurons to the network, with as many neurons as possible prediction classes. For example, we can train the network to recognize only 1. A cat, 2. A dog. We, therefore, add a final layer of 2 neurons: if neuron No.1 activates with a higher value, the prediction is "a cat"; if it's No.2, it's a dog. Of course, at this stage, since the weights are created randomly, the predictions will be random. We then want to train the network, i.e., adjust its weights to get correct predictions.  
-For this, we need a dataset containing animal photos annotated with the name of each animal. For example: (photo_1193.jpg, "a cat"). Then (photo_2194.jpg, "a dog"), etc.  
+We start by adding a final layer of neurons to the network, with as many neurons as possible prediction classes. For example, we can train the network to recognize only 1. A cat, 2. A dog. We, therefore, add a final layer of 2 neurons: if neuron No.1 activates with a higher value, the prediction is "a cat"; if it's No.2, it's a dog. Of course, at this stage, since the weights are created randomly, the predictions will be random. We then want to train the network, i.e., adjust its weights to get correct predictions.
+
+For this, we need a dataset containing animal photos annotated with the name of each animal. For example: (photo_1193.jpg, "a cat"). Then (photo_2194.jpg, "a dog"), etc.
+
 We must therefore find the parameters (here the connection weights) that minimize the error (the number of wrong predictions). For this, we will modify all our parameters in small steps. At each step, we will:
+
 - Take a new example from our dataset, which is a photo - animal name pair.
 - Calculate the prediction for the given image. Then, compare it to the real animal name: is the prediction wrong or correct?
-- If it is correct, we *reward the weights that helped predict it* by reinforcing them; if it is wrong, we must *penalize the weights responsible* by diminishing them. To execute this adjustment and distribute the responsibility of an error or success among all weights, we backtrack from the end of the network: this is the backpropagation operation.  
-This operation is repeated hundreds of thousands of times: this is the optimization process, which will gradually converge to a better weight configuration giving good predictive performance to the model.  
+- If it is correct, we *reward the weights that helped predict it* by reinforcing them; if it is wrong, we must *penalize the weights responsible* by diminishing them. To execute this adjustment and distribute the responsibility of an error or success among all weights, we backtrack from the end of the network: this is the backpropagation operation.
+
+This operation is repeated hundreds of thousands of times: this is the optimization process, which will gradually converge to a better weight configuration giving good predictive performance to the model.
+
 This algorithm has undergone some tweaks since then, but it is still the same one that underpins all of Artificial Intelligence today.
 
----
+</div>
 
 ### ⚙️ Technical Building Block: Optimization - Finding the Lowest Valley
 
@@ -89,7 +96,7 @@ What do we want to achieve in the end? We want to obtain the best set of paramet
 We call this average error the "cost function"[^fn9]: "cost" because the error is a cost we want to minimize, and "function" because this average error varies depending on the parameters: when we vary each parameter, the average error varies accordingly.  
 Now, how to find the best set of parameters to minimize this cost function? To simplify the problem's representation, let's take a network with two parameters, a and b. Of course, this is a drastic simplification of reality where models have billions of parameters. But it is practical because we can represent the cost function on a 3D graph: we note parameter A along the X-axis, parameter B along the Y-axis, and the network's cost function (which thus depends on parameters A and B) along the Z-axis.
 
-{% include image.html url="/assets/images/2024-08-15-brief-history-of-ai/minima.png" description="The cost function admits minima: our goal is to find the local minimum, that is, the best set of parameters that exists." %}
+<div class="figure-card" data-src="/assets/images/history-of-ai/minima.png" data-alt="Cost Function Minima" data-caption="The cost function admits minima: our goal is to find the local minimum, that is, the best set of parameters that exists."></div>
 
 The cost function varies depending on its two parameters: we get a nice landscape.  
 Note, this graph has nothing to do with the previous one: here, the X and Y axes represent parameters, while in the previous one, X and Y were system inputs. The only commonality between these two graphs is being in 3D.  
@@ -104,7 +111,7 @@ Hence the backpropagation technique. We take examples one by one: for each examp
 Could we not get stuck in a basin (a local minimum) or stopped in balance on a ridge? Surprisingly, it works: most of the time, this method allows for a long descent and finding a very good minimum.  
 This algorithm has been improved since then – for example, we add inertia to the ball to prevent it from stopping at the first basin – but it remains very similar.
 
-{% include image.html url="/assets/images/2024-08-15-brief-history-of-ai/gradient_descent.jpg" description="The gradient descent algorithm." %}
+<div class="figure-card" data-src="/assets/images/history-of-ai/gradient_descent.jpg" data-alt="Gradient Descent Algorithm" data-caption="The gradient descent algorithm."></div>
 
 ---
 
@@ -124,7 +131,7 @@ But yet, as soon as we want to look up the definition of a term that is not ther
 In other words, we want our model to generalize the information from its training data through proto-reasoning like "if there is a triangular snout rather than a trunk, it is probably a dog."  
 A risk of a naive universal approximator is to adapt to the data without really generalizing. This is called "overfitting." See the figure below for an illustration of this phenomenon: the model learns a boundary that is far too complex between its classes and, as a result, proves useless as soon as we move away from the examples in its training.
 
-{% include image.html url="/assets/images/2024-08-15-brief-history-of-ai/france_graph_en.png" description="Several models try to predict based on coordinates [Latitude, Longitude] the output 'Is located in France'. They predict 1 for 'Yes', 0 for 'No'." %}
+<div class="figure-card" data-src="/assets/images/history-of-ai/france_graph_en.png" data-alt="Overfitting Example" data-caption="Several models try to predict based on coordinates [Latitude, Longitude] the output 'Is located in France'. They predict 1 for 'Yes', 0 for 'No'."></div>
 
 We want to learn the right way, by generalizing.  
 This is a difficult problem. The best way we've found is to seek simplicity, thus following Ockham's Razor. This methodological principle was formulated by the English Franciscan monk William of Ockham: "Plurality must not be posited without necessity"[^fn12]. To explain a phenomenon, it is better to simplify things by first considering the explanation that involves the fewest factors, as it is the one with the least strong hypothesis. We often unconsciously use this principle: for example, even if a student arriving late to an 8:30 am math class can explain their tardiness by a complex set of circumstances, the teacher might think that the student simply overslept.  
@@ -152,7 +159,7 @@ We can perform operations on vectors: for example, for two vectors of equal size
 An idea that emerged early on was to represent words as vectors: the dimensions could represent concepts, for example, the feminine-masculine axis, big-small, rainy-sunny, strong-weak...  
 This approach was implemented by the Word2vec algorithm in 2013[^fn15], which creates a vector representation for over a billion English words. This representation is fascinating: the obtained vectors have mathematical relationships that reproduce conceptual links between the words they represent. For example, if we take the vector representing the word "queen," subtract the vector of "woman," and add "man," we get the vector for "king"! Thus, we realize that word vectors represent concepts like royalty or femininity.
 
-{% include image.html url="/assets/images/2024-08-15-brief-history-of-ai/word_vectors.png" description="" %}
+<div class="figure-card" data-src="/assets/images/history-of-ai/word_vectors.png" data-alt="Word Vectors Visualization" data-caption="Word vector relationships showing semantic connections between words."></div>
 
 ---
 

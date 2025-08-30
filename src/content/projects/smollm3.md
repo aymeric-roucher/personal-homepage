@@ -4,5 +4,6 @@ thumbnail: Helped the Smol team post-train SmolLM3 to be better with agents: thi
 date: 2025-07-06
 type: project
 url: /projects
-huggingface_link: https://huggingface.co/blog/smollm3
+link: https://huggingface.co/blog/smollm3
+image: /smollm3_performance.png
 ---

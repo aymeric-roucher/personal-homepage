@@ -33,10 +33,7 @@ However, when temperatures are too high, good wine cannot be made. In Bordeaux, 
 Are we seeing a massive migration of European vineyards to the North? 
 See for yourself.
 
-{% raw %}
-<iframe src="/assets/images/2022-11-29-bordeaux-vineyard-global-warming/vineyard_map/index.html" height="570px" width="100%" style="border:none;"></iframe>
-{% endraw %}
-
+<iframe src="/assets/images/bordeaux_vineyard_climate/vineyard_map/index.html" height="570px" width="100%" style="border:none;"></iframe>
 
 > *Evolution of the surface of vineyards between 2000 and 2018.*
 > *In black the areas that remained vineyards, in green the new vineyard areas, in red the areas that were changed to another use. If there was a general migration of vineyards to colder latitudes, we should have a green dominance in the North and red in the South.*
@@ -51,19 +48,19 @@ The Laccave science project is producing a [census of these trial adaptations](h
 
 Pablo Almaraz, researcher at the University of Cadiz, has shown the tangible impact of this adaptation. He studied the relationship between the quality of Bordeaux wine, reported for over a century by a Bordeaux broker, and the average temperature from April to September. He thus managed to obtain an estimate of the optimal temperature: we then obtain the graph below, where we see that, since 1970, the increase in temperature is preceded by a progressive increase in the optimal temperature.
 
-{% include image.html url="/assets/images/2022-11-29-bordeaux-vineyard-global-warming/Almaraz.png" description="Value in °C of the average temperature in Bordeaux (in yellow, smoothed value in continuous line) and the calculated optimal temperature (in green, with 95% uncertainty margins). Graph obtained by reproducing Pablo Almaraz's work with Python library pymc." %}
+<div class="figure-card" data-src="/assets/images/bordeaux_vineyard_climate/Almaraz.png" data-alt="Temperature evolution in Bordeaux" data-caption="Value in °C of the average temperature in Bordeaux (in yellow, smoothed value in continuous line) and the calculated optimal temperature (in green, with 95% uncertainty margins). Graph obtained by reproducing Pablo Almaraz's work with Python library pymc."></div>
 
 ## The road ahead
 
 
 So, is the Bordeaux vineyard safe? It seems that the work in the vineyard - and no doubt also the winemaking and maturing - has been able to adapt with a tangible effect. But this is probably only time saved, before we reach the physical limits of the vineyard - let's remember that the median scenario given by [the latest IPCC report](https://www.ipcc.ch/report/ar6/wg1/downloads/report/IPCC_AR6_WGI_SPM_final.pdf) leads _very likely_ to a global temperature increase of more than 2°C by the end of the century, in particular an increase of 4°C in Europe. What will be the impact on viticulture? Temperatures above 40°C can dry out the grapes and cause apoplexy on the vines. Australian and Californian vineyards are already accustomed to this damage, and France experienced it painfully in June 2019, when a record 45°C was recorded in Marsillac, drying out a third of the Hérault harvest on the ground. 
 
-<figure class="image">
-    <video style="margin: auto; display: block; padding-top: 20px;border-radius: 4px;" width="320" height="240" loop autoplay muted>
-    <source src="/assets/images/2022-11-29-bordeaux-vineyard-global-warming/smoke_bordeaux.mp4" type="video/mp4">
-  </video>
-  <figcaption>In the middle of this satellite footage, you can see the plumes of smoke from the fires flowing over the Bordeaux vineyards. This creates a risk of "smoke taint", a threat well known from California winegrowers.</figcaption>
-</figure>
+<video width="100%" height="auto" controls preload="metadata" style="border-radius: 4px; max-width: 100%;">
+  <source src="/assets/images/bordeaux_vineyard_climate/smoke_bordeaux.mp4" type="video/mp4">
+  <p>Your browser does not support the video tag. <a href="/assets/images/bordeaux_vineyard_climate/smoke_bordeaux.mp4" target="_blank">Click here to view the video directly</a>.</p>
+</video>
+
+*In the middle of this satellite footage, you can see the plumes of smoke from the fires flowing over the Bordeaux vineyards. This creates a risk of "smoke taint", a threat well known from California winegrowers.*
 
 
 The French viticulture world has wholly measured the threats that loom ahead : a partnership including the great state research organism INRAE has built [a national strategy of the winemaking indsutry against climate change](https://innovin.fr/wp-content/uploads/2021/08/Strat%C3%A9gie-de-la-fili%C3%A8re-viticole-face-au-changement-climatique.pdf). Among the four scenarios envisaged for 2050, a "nomadic" scenario, which would involve relocating vineyards, thus calling into question our terroirs. To avoid this scenario, the industry will have to rely on a number of pillars, the last of which goes back to the root of the problem: since global warming is a societal problem, and since the wine industry will be asking the government for help in the difficulties to come, it will have to be exemplary in mitigating this warming.

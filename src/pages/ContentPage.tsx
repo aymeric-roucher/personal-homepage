@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import PlotlyChart from "@/components/PlotlyChart";
+import FigureCard from "@/components/FigureCard";
+import TechnicalBlock from "@/components/TechnicalBlock";
 
 const ContentPage = () => {
   const { type: typeParam, slug } = useParams<{ type?: string; slug?: string }>();
@@ -134,6 +138,7 @@ const ContentPage = () => {
         <article className="prose prose-slate dark:prose-invert max-w-none">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
             components={{
               h1: ({ children }) => (
                 <h2 className="abbey-heading text-2xl font-semibold mt-8 mb-4 text-foreground">
@@ -199,7 +204,68 @@ const ContentPage = () => {
                 <li className="mb-1">
                   {children}
                 </li>
-              )
+              ),
+              video: ({ src, width, height, controls, preload, style, children, ...props }) => (
+                <video 
+                  {...props}
+                  width={width || "100%"}
+                  height={height || "auto"}
+                  controls={controls !== undefined ? controls : true}
+                  preload={preload || "metadata"}
+                  className="w-full h-auto rounded-lg my-6"
+                  style={{ borderRadius: '4px', maxWidth: '100%', ...style }}
+                >
+                  {src && <source src={src} type="video/mp4" />}
+                  {children}
+                  <p>Your browser does not support the video tag. <a href={src} target="_blank" rel="noopener noreferrer">Click here to view the video directly</a>.</p>
+                </video>
+              ),
+              iframe: ({ src, ...props }) => (
+                <iframe
+                  {...props}
+                  src={src}
+                  className="w-full my-6 rounded-lg"
+                  style={{ border: 'none', height: '570px' }}
+                />
+              ),
+              div: ({ className, children, ...props }) => {
+                // Check if this is a plotly chart div
+                if (className && className.includes('plotly-chart')) {
+                  const dataSrc = props['data-src'] as string;
+                  if (dataSrc) {
+                    return <PlotlyChart src={dataSrc} />;
+                  }
+                }
+                
+                // Check if this is a figure card
+                if (className && className.includes('figure-card')) {
+                  const src = props['data-src'] as string;
+                  const alt = props['data-alt'] as string;
+                  const caption = props['data-caption'] as string;
+                  if (src && alt && caption) {
+                    return <FigureCard src={src} alt={alt} caption={caption} />;
+                  }
+                }
+                
+                // Check if this is a technical block
+                if (className && className.includes('technical-block')) {
+                  const title = props['data-title'] as string;
+                  if (title) {
+                    return (
+                      <TechnicalBlock title={title}>
+                        {children}
+                      </TechnicalBlock>
+                    );
+                  }
+                }
+                
+                // Otherwise render as normal div
+                return (
+                  <div className={className} {...props}>
+                    {children}
+                  </div>
+                );
+              }
             }}
           >
             {parsedContent?.content || ''}

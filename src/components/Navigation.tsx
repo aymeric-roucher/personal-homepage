@@ -138,7 +138,7 @@ const Navigation = () => {
             <NavLink
               to="/readings"
               className={({ isActive }) =>
-                `abbey-link text-xs ${isActive ? 'text-primary' : ''}`
+                `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
               }
             >
               Readings
@@ -146,7 +146,7 @@ const Navigation = () => {
             <NavLink
               to="/projects"
               className={({ isActive }) =>
-                `abbey-link text-xs ${isActive ? 'text-primary' : ''}`
+                `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
               }
             >
               Projects
@@ -154,7 +154,7 @@ const Navigation = () => {
             <NavLink
               to="/blog"
               className={({ isActive }) =>
-                `abbey-link text-xs ${isActive ? 'text-primary' : ''}`
+                `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
               }
             >
               Blog

@@ -72,13 +72,13 @@ These measures will be successively reinforced by the reforms of 2007 and 2013.
 
 ## Bird's eyeview
 
-{% include image.html url="/assets/images/2023-04-02-eu-common-agricultural-policy/evolution_budget_cap.png" description="Evolution of CAP expenditure. 2021 budget is reduced because of Brexit." %}
+<div class="figure-card" data-src="/assets/images/eu-agricultural-policy/evolution_budget_cap.png" data-alt="Evolution of CAP expenditure" data-caption="Evolution of CAP expenditure. 2021 budget is reduced because of Brexit."></div>
 
 The graph above [^grapheUE] summarizes the evolution of the CAP budget over the years. It shows the profound transformations mentioned above, sometimes implemented a few years after their promulgation: from 1992, the replacement of market measures by direct aids and the introduction of the _Rural Development_ pillar, the decoupling of aids from 2005, the submission of certain direct aids to a green standard in 2016.  The black line marks a downward trend in the CAP in relation to EU GDP, which in fact corresponds to a decrease in importance in the budget: other policies are indeed taking up more and more space in the EU budget, for example the European Regional Development Fund ([ERDF](https://ec.europa.eu/regional_policy/funding/erdf_en)) which rebalances income between EU regions.
 
 Over the years, as Europe has expanded, the net balance of each country in the CAP has changed.
 
-{% include cap_country_balance_en.html %}
+<div class="plotly-chart" data-src="/assets/images/eu-agricultural-policy/country_balance_en.json"></div>
 
 We see for example that despite the large budget that France is allocated by the CAP, it is still a net deficit: indeed, the integration into the EU of new countries such as Poland and Romania, less rich and strongly agricultural, has loaded the contributions of the founding countries of the EEC.
 
@@ -102,7 +102,7 @@ The main focus of this reform is environmental protection. It has several change
   - To combat certain abuses of employing seasonal labor under poor conditions, adding social standards related to transparency and stability of contracts, as well as safety and health standards.
   - Addition of environmental standards such as maintaining 4% of non-productive surface to preserve areas of ecological interest (hedges, ponds), or mandatory rotation for farms of more than 10ha non-bio.
 
-{% include image.html url="/assets/images/2023-04-02-eu-common-agricultural-policy/CAP_reform_2021.webp" description="Changes introduced by the 2021 CAP in biodiversity-linked sectors." %}
+<div class="figure-card" data-src="/assets/images/eu-agricultural-policy/CAP_reform_2021.webp" data-alt="Changes introduced by the 2021 CAP" data-caption="Changes introduced by the 2021 CAP in biodiversity-linked sectors."></div>
 
 
 ## Criticism

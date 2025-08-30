@@ -4,6 +4,6 @@ thumbnail: Smolagents is a leading framework for agents, with over 20,000 stars 
 date: 2025-01-01
 type: blog
 url: /projects
-github_link: https://github.com/huggingface/smolagents
-huggingface_link: https://huggingface.co/docs/smolagents/en/index
+link: https://github.com/huggingface/smolagents
+image: /license_to_call.png
 ---

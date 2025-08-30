@@ -130,6 +130,9 @@ export interface ContentListItem {
   date?: string;
   readTime?: string;
   links?: {
+    link?: string;
+    image?: string;
+    background?: string;
     github_link?: string;
     huggingface_link?: string;
     webpage_link?: string;
@@ -169,7 +172,7 @@ export const parseEnhancedMetadata = (content: string, slug: string): ContentLis
   const links: ContentListItem['links'] = {};
   
   // Extract links from frontmatter
-  const linkFields = ['github_link', 'huggingface_link', 'webpage_link'];
+  const linkFields = ['link', 'image', 'background', 'github_link', 'huggingface_link', 'webpage_link'];
   for (const field of linkFields) {
     if (frontmatter[field]) {
       links[field as keyof NonNullable<ContentListItem['links']>] = frontmatter[field];
