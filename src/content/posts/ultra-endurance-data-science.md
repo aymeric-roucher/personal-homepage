@@ -1,6 +1,6 @@
 ---
 title: Data science is like nitro for ultra-endurance.
-thumbnail: How Joseph Mestrallet, 27yo data scientist from Chamonix, upended the most mythical trail running race in the world.
+thumbnail: How Joseph Mestrallet, 27yo data scientist from Chamonix, upended the most mythical trail running race in the world, the Ultra-Trail du Mont Blanc (UTMB).
 date: 2025-08-31
 type: blog
 url: ultra-endurance-data-science
@@ -63,7 +63,7 @@ Turns out, the pacing plan did magic :
 - Tom Evans ? ⇒ #1 🥇
 - Ruth Croft ? ⇒ #1 🥇
 
-Both ~30 minutes early on the runner-ups 🤯
+Both ~30 minutes early on the runner-ups.
 
 Joseph Mestrallet is still focusing more on performance than branding ([his website](https://www.joseph-mestrallet.com/) looks like a bad high school project, I'm trying my best to pressure him into upgrading it).
 
