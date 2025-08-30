@@ -3,7 +3,7 @@ title: A Brief History of Artificial Intelligence
 thumbnail: A journey through seven decades of artificial intelligence breakthroughs, from simple perceptrons to the transformers revolutionizing our world today.
 date: 2024-08-15
 type: blog
-url: /blog#history-of-ai
+url: history-of-ai
 ---
 
 Artificial Intelligence (often abbreviated as "AI") is experiencing an unprecedented surge of ideas and developments in the history of science. However, its development didn't start yesterday; to trace its beginnings, we must go back to the middle of the last century. By studying the history of AI, a saga full of twists and turns, we will see the emergence of the key technical building blocks of the models we use today.

@@ -3,7 +3,7 @@ title: Global warming is our fault
 thumbnail: A detailed walkthrough.
 date: 2023-10-31
 type: blog
-url: /blog#hand-of-humanity-in-global-warming
+url: hand-of-humanity-in-global-warming
 ---
 
 
@@ -171,8 +171,7 @@ And the best thing is that figure helps forecast future temperature increase dep
 Now, that's the end of our study for today! The careful reader that you are has probably noticed that point 3 of the IPCC's thesis ("the consequences will be disastrous") is not treated yet: this will be done in a later blog post.
 
 
-> Now, you will find many other people try to poke holes in the "Global warming is caused by our GHG and it will have bad consequences" thesis. Their arguments take a lot of effort to refute. See for instance [this discussion](https://climatefeedback.org/evaluation/wall-street-journal-article-repeats-multiple-incorrect-and-misleading-claims-made-in-steven-koonins-new-book-unsettled-steven-koonin/) where to debunk false claims from a book by Steven Koonin, 3x as much effort is needed in careful explanations.
-But you can filter most of the bullshit yourself. Here are a few questions to ask:
+> Now, you will find many other people try to poke holes in the "Global warming is caused by our GHG and it will have bad consequences" thesis. Their arguments take a lot of effort to refute. But you can filter most of the bullshit yourself. Here are a few questions to ask:
 > - is the author reputable / publishing in a reputable journal? Because reputable authors and journals have skin in the game: they can lose this reputation if they lie, contrary to the random stranger starting a climate blog post on the internet.
 > - do they cite scientific sources as well as sources for their data?
 > - do they provide a broad overview of arguments for and against each thesis?
