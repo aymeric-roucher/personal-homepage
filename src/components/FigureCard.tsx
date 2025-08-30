@@ -13,7 +13,7 @@ const FigureCard = ({ src, alt, caption }: FigureCardProps) => {
           alt={alt}
           className="mx-auto max-w-full h-auto rounded-md shadow-sm"
         />
-        <p className="mt-4 text-sm text-card-foreground/70 italic leading-relaxed">
+        <p className="mt-3 mb-0 text-sm text-card-foreground/70 italic leading-relaxed">
           {caption}
         </p>
       </div>
