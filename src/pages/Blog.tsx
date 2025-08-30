@@ -22,7 +22,7 @@ const Blog = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="text-center mb-12">
           <h1 className="abbey-heading text-4xl font-light mb-4">Blog</h1>
@@ -78,18 +78,6 @@ const Blog = () => {
             </div>
           )}
         </div>
-
-        {blogPosts.length > 0 && (
-          <div className="mt-16 p-8 bg-muted/30 rounded-lg border border-border">
-            <h2 className="abbey-heading text-xl font-semibold mb-4 text-foreground">
-              More Coming Soon
-            </h2>
-            <p className="abbey-text text-muted-foreground">
-              This space will grow with more thoughts and reflections.
-              Check back regularly for new posts and insights.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

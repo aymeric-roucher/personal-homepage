@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <div className="max-w-6xl mx-auto px-6 py-20">
         {/* Main About Section */}
         <div className="grid lg:grid-cols-2 gap-10 items-center mb-20">

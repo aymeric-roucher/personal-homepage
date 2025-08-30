@@ -20,19 +20,23 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <Navigation />
-        <Routes>
-          <Route path="/" element={<About />} />
-          <Route path="/readings" element={<Readings />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/blog" element={<Blog />} />
-          {/* Dynamic content routes */}
-          <Route path="/blog/:slug" element={<ContentPage />} />
-          <Route path="/projects/:slug" element={<ContentPage />} />
-          <Route path="/readings/:slug" element={<ContentPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Footer />
+        <div className="flex flex-col min-h-screen">
+          <Navigation />
+          <main className="flex-1">
+            <Routes>
+              <Route path="/" element={<About />} />
+              <Route path="/readings" element={<Readings />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/blog" element={<Blog />} />
+              {/* Dynamic content routes */}
+              <Route path="/blog/:slug" element={<ContentPage />} />
+              <Route path="/projects/:slug" element={<ContentPage />} />
+              <Route path="/readings/:slug" element={<ContentPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
