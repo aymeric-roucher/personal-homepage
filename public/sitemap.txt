@@ -5,6 +5,7 @@ https://m-ric.com/readings
 https://m-ric.com/projects/smollm3
 https://m-ric.com/projects/smolagents
 https://m-ric.com/projects/open-computer-agent
+https://m-ric.com/blog/ultra-endurance-data-science
 https://m-ric.com/blog/humanitys-role-in-global-warming
 https://m-ric.com/blog/history-of-ai
 https://m-ric.com/blog/eu-agricultural-policy

@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { allContent } from "@/data/content";
-import { BookOpen, Code, FileText, Search } from "lucide-react";
+import { Code, FileText, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
@@ -23,7 +23,6 @@ const Navigation = () => {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "reading": return <BookOpen className="h-4 w-4" />;
       case "project": return <Code className="h-4 w-4" />;
       case "blog": return <FileText className="h-4 w-4" />;
       default: return <FileText className="h-4 w-4" />;
@@ -57,7 +56,7 @@ const Navigation = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search posts, projects, readings..."
+                  placeholder="Search posts, projects..."
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -107,58 +106,10 @@ const Navigation = () => {
             </div>
 
             <div className="flex items-center space-x-8">
-              <NavLink
-                to="/readings"
-                className={({ isActive }) =>
-                  `abbey-link text-base ${isActive ? 'text-primary' : ''}`
-                }
-              >
-                Readings
-              </NavLink>
-              <NavLink
-                to="/projects"
-                className={({ isActive }) =>
-                  `abbey-link text-base ${isActive ? 'text-primary' : ''}`
-                }
-              >
-                Projects
-              </NavLink>
-              <NavLink
-                to="/blog"
-                className={({ isActive }) =>
-                  `abbey-link text-base ${isActive ? 'text-primary' : ''}`
-                }
-              >
-                Blog
-              </NavLink>
             </div>
           </div>
 
           <div className="flex md:hidden items-center space-x-4">
-            <NavLink
-              to="/readings"
-              className={({ isActive }) =>
-                `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
-              }
-            >
-              Readings
-            </NavLink>
-            <NavLink
-              to="/projects"
-              className={({ isActive }) =>
-                `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
-              }
-            >
-              Projects
-            </NavLink>
-            <NavLink
-              to="/blog"
-              className={({ isActive }) =>
-                `abbey-link text-sm ${isActive ? 'text-primary' : ''}`
-              }
-            >
-              Blog
-            </NavLink>
           </div>
         </div>
       </div>

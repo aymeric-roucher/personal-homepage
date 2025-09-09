@@ -52,29 +52,11 @@ const ContentPage = () => {
   }, [type, slug]);
 
   const getBackPath = () => {
-    switch (type) {
-      case "blog":
-        return "/blog";
-      case "projects":
-        return "/projects";
-      case "readings":
-        return "/readings";
-      default:
-        return "/";
-    }
+    return "/";
   };
 
   const getPageTitle = () => {
-    switch (type) {
-      case "blog":
-        return "Blog";
-      case "projects":
-        return "Projects";
-      case "readings":
-        return "Readings";
-      default:
-        return "Content";
-    }
+    return "Home";
   };
 
   if (loading) {

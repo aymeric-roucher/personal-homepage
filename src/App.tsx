@@ -6,11 +6,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navigation from "./components/Navigation";
 import About from "./pages/About";
-import Blog from "./pages/Blog";
 import ContentPage from "./pages/ContentPage";
 import NotFound from "./pages/NotFound";
-import Projects from "./pages/Projects";
-import Readings from "./pages/Readings";
 
 const queryClient = new QueryClient();
 
@@ -25,13 +22,8 @@ const App = () => (
           <main className="flex-1">
             <Routes>
               <Route path="/" element={<About />} />
-              <Route path="/readings" element={<Readings />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/blog" element={<Blog />} />
               {/* Dynamic content routes */}
               <Route path="/blog/:slug" element={<ContentPage />} />
-              <Route path="/projects/:slug" element={<ContentPage />} />
-              <Route path="/readings/:slug" element={<ContentPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

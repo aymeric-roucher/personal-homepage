@@ -3,7 +3,7 @@
 export interface ContentItem {
   title: string;
   url: string;
-  type: 'project' | 'blog' | 'reading';
+  type: 'project' | 'blog';
   excerpt: string;
   metadata?: string;
   date?: string;
@@ -70,27 +70,8 @@ export const blogPosts: ContentItem[] = [
   }
 ];
 
-// Readings data - matches actual Readings page content
-export const readings: ContentItem[] = [
-  {
-    title: "Example Paper Title",
-    url: "/readings#reading-1",
-    type: "reading",
-    excerpt: "A brief description or key insight from this reading that caught your attention and influenced your thinking.",
-    metadata: "Author Name • Journal • Year"
-  },
-  {
-    title: "Another Interesting Article",
-    url: "/readings#reading-2", 
-    type: "reading",
-    excerpt: "Another insightful piece that contributed to your understanding of a particular topic or field of study.",
-    metadata: "Author Name • Publication • Year"
-  }
-];
-
 // Combined content for search
 export const allContent: ContentItem[] = [
   ...projects,
-  ...blogPosts, 
-  ...readings
+  ...blogPosts
 ];
