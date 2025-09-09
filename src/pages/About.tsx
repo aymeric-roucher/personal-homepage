@@ -62,7 +62,9 @@ const About = () => {
                 </h2>
                 <p className="text-lg mb-6">
                   What better time to live in? We're at a turning point for human history, and my craft is the lever that can lift the world.
-                  I try to put these skills to good use.
+                </p>
+                <p className="text-lg mb-6">
+                  I studied at Polytechnique and Cambridge, then worked at Hugging Face, where I led the agent development team.
                 </p>
               </div>
             </div>
@@ -205,7 +207,7 @@ const About = () => {
         {/* Blog Section */}
         <div className="py-4">
           <div className="text-center mb-4">
-            <h1 className="abbey-heading text-4xl font-light">Blog</h1>
+            <h1 className="abbey-heading text-4xl font-light">Thoughts</h1>
           </div>
 
           <div>

@@ -33,8 +33,7 @@ async function generateSitemap() {
     entries.push(
         { loc: '/', changefreq: 'weekly', priority: 1.0 },
         { loc: '/blog', changefreq: 'monthly', priority: 0.9 },
-        { loc: '/projects', changefreq: 'monthly', priority: 0.8 },
-        { loc: '/readings', changefreq: 'monthly', priority: 0.7 }
+        { loc: '/projects', changefreq: 'monthly', priority: 0.8 }
     );
 
     // Find all markdown files
@@ -49,6 +48,11 @@ async function generateSitemap() {
         const routeType = type === 'posts' ? 'blog' : type;
         const url = `/${routeType}/${slug}`;
 
+        // Skip readings content entirely
+        if (type === 'readings' || routeType === 'readings') {
+            continue;
+        }
+
         const lastmod = await getLastModified(file);
 
         // Set priority based on content type
@@ -60,9 +64,6 @@ async function generateSitemap() {
             changefreq = 'weekly';
         } else if (type === 'projects') {
             priority = 0.7;
-            changefreq = 'weekly';
-        } else if (type === 'readings') {
-            priority = 0.6;
             changefreq = 'weekly';
         }
 

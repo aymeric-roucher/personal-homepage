@@ -1,5 +1,5 @@
 ---
-title: Data science is like nitro for ultra-endurance.
+title: The secreat weapon of ultra-athletes: a data scientist.
 thumbnail: How Joseph Mestrallet, 27yo data scientist from Chamonix, upended the most mythical trail running race in the world, the Ultra-Trail du Mont Blanc (UTMB).
 date: 2025-08-31
 type: blog

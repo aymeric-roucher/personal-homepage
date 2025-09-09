@@ -150,3 +150,11 @@
     align-items: flex-start;
   }
 }
+
+/* Smooth anchor scrolling and offset for footnote refs */
+[id^="fnref-"], [id^="fn-"] {
+  scroll-margin-top: 6rem;
+}
+html {
+  scroll-behavior: smooth;
+}

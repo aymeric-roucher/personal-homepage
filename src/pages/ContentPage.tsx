@@ -3,6 +3,7 @@ import { loadMarkdownContent, parseContentForDisplay } from "@/lib/contentLoader
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import React from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
@@ -132,7 +133,14 @@ const ContentPage = () => {
           </div>
 
           <article className="prose prose-slate dark:prose-invert max-w-none">
-          <ReactMarkdown
+          {(() => {
+            const raw = parsedContent?.content || '';
+            // Escape custom tokens like <end> so they render as text rather than unknown HTML tags
+            const safeContent = raw
+              .replace(/<\s*end\s*>/gi, '&lt;end&gt;')
+              .replace(/<\s*\/\s*end\s*>/gi, '&lt;/end&gt;');
+            return (
+              <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
             components={{
@@ -189,16 +197,33 @@ const ContentPage = () => {
                   {children}
                 </p>
               ),
-              a: ({ href, children }) => (
-                <a
-                  href={href}
-                  className="abbey-link text-primary hover:text-primary/80 underline"
-                  target={href?.startsWith('http') ? '_blank' : undefined}
-                  rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
-                >
-                  {children}
-                </a>
-              ),
+              a: ({ href, children, ...props }) => {
+                const isExternal = typeof href === 'string' && /^https?:\/\//i.test(href);
+                const isAnchor = typeof href === 'string' && href.startsWith('#');
+                const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+                  if (!isAnchor) return;
+                  const id = (href || '').slice(1);
+                  const el = document.getElementById(id);
+                  if (el) {
+                    e.preventDefault();
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // update the hash without adding a new history entry
+                    history.replaceState(null, '', `#${id}`);
+                  }
+                };
+                return (
+                  <a
+                    {...props}
+                    href={href}
+                    onClick={handleClick}
+                    className="abbey-link text-primary hover:text-primary/80 underline"
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                  >
+                    {children}
+                  </a>
+                );
+              },
               code: ({ children, className }) => {
                 const isInline = !className;
                 if (isInline) {
@@ -229,8 +254,8 @@ const ContentPage = () => {
                   {children}
                 </ol>
               ),
-              li: ({ children }) => (
-                <li className="mb-1">
+              li: ({ children, ...props }) => (
+                <li {...props} className={`${(props as any).className || ''} mb-1`.trim()}>
                   {children}
                 </li>
               ),
@@ -297,8 +322,10 @@ const ContentPage = () => {
               }
             }}
           >
-            {parsedContent?.content || ''}
+            {safeContent}
           </ReactMarkdown>
+            );
+          })()}
           </article>
         </div>
         
