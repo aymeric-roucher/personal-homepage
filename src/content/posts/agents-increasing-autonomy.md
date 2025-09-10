@@ -21,7 +21,7 @@ Hence you need:
 3. Execute steps : effective tool-calling
 4. Recover from failures : this requires critical spirit, opposed to the sycophancy bias[^sycophancy].
 
-### Autonomy is expanding, fast
+### Autonomy is expanding exponentially...
 
 Autonomy of an LLM in agentic setup can be quantified by the concept of "time-horizon of autonomy"[^metr_autonomy], defined as follows : if $C_m$ is the class of tasks that take up to $m$ minutes for a human worker, how far can we increase $m$ while keeping a success rate of the agent of over 90% on $C_m$ ? (90% threshold is arbitrary: could be 50%)
 
@@ -47,13 +47,15 @@ But I the general indication stands true : AI models autonomy is increasing expo
 
 I think this progress in the time-horizon of autonomy is directly caused by advances in each of the task-solving abilities presented above : improved planning[^planning], nearly-solved tool-calling (BFCL top scores are >80% on single-turn), reduced hallucinations, better critical thinking.
 
+### ...but still below the hour
+
 And yet, as of now (mid-2025), the time-horizon of autonomy is still below 1 hour.
 
 On GAIA[^gaia] benchmark's level 3 question, for which the average human-equivalent autonomy is 18 minutes, the [current top scores are still 20 percentage points below the human baseline of 87%](https://huggingface.co/spaces/gaia-benchmark/leaderboard).
 
 Given this autonomy limitation, how can we still efficiently get task-solving help from agents? Maybe we can take the other end of that question : where can agents of limited autonomy still be useful ?
 
-### Meanwhile, how to get value despite limited autonomy?
+### Meanwhile, how to get value from agents despite their limited autonomy?
 
 I think three concepts matter a lot when thinking of how/where autonomy-limited AI agents can help:
 
