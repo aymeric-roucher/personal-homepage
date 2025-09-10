@@ -1,9 +1,9 @@
 ---
-title: Global warming is our fault
-thumbnail: Sorry about that. A detailed walkthrough.
+title: Global warming is our fault - a walkthrough
+thumbnail: A detailed inquiry, and step-by-step proof that it's our fault. Sorry about that.
 date: 2023-10-31
 type: blog
-url: hand-of-humanity-in-global-warming
+url: humanitys-role-in-global-warming
 ---
 
 

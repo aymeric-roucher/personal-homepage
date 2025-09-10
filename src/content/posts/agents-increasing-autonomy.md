@@ -1,5 +1,5 @@
 ---
-title: Agents autonomy is increasing, but limited ; how to go around that.
+title: Autonomy of AI Agents is increasing, yet still limited ; how to go around that.
 thumbnail: The concept of "time-horizon of autonomy", how it's increasing exponentially for agents, how to build good applications in 2025 while this horizon is still limited.
 date: 2025-09-10
 type: blog

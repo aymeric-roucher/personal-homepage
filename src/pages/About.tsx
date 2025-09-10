@@ -57,14 +57,17 @@ const About = () => {
             {/* Name and bio on the right */}
             <div className="order-1 lg:order-2">
               <div className="space-y-6 text-foreground/80 leading-relaxed">
-                <h2 className="text-2xl font-light mb-4">
+                <h1 className="text-2xl font-light mb-4">
                   The codist monk
-                </h2>
+                </h1>
                 <p className="text-lg mb-6">
                   What better time to live in? We're at a turning point for human history, and my craft is the lever that can lift the world.
                 </p>
                 <p className="text-lg mb-6">
                   I studied at Polytechnique and Cambridge, then worked at Hugging Face, where I led the agent development team.
+                </p>
+                <p className="text-lg mb-6">
+                  Now I'm exploring the next steps.
                 </p>
               </div>
             </div>
