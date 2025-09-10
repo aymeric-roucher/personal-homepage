@@ -35,6 +35,21 @@ const GoatCounterTracker = () => {
   return null;
 };
 
+// Scrolls to top on route change
+const ScrollToTop = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Only scroll to top if we're not navigating to an anchor link
+    if (!location.hash) {
+      // Scroll to top immediately for better navigation experience
+      window.scrollTo(0, 0);
+    }
+  }, [location.pathname, location.search]);
+
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -43,6 +58,7 @@ const App = () => (
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <div className="flex flex-col min-h-screen">
           <GoatCounterTracker />
+          <ScrollToTop />
           <Navigation />
           <main className="flex-1">
             <Routes>
