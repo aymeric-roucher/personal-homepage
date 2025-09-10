@@ -42,8 +42,8 @@ const ScrollToTop = () => {
   useEffect(() => {
     // Only scroll to top if we're not navigating to an anchor link
     if (!location.hash) {
-      // Scroll to top immediately for better navigation experience
-      window.scrollTo(0, 0);
+      // Scroll to top immediately with no animation for better navigation experience
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     }
   }, [location.pathname, location.search]);
 
