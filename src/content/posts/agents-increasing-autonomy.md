@@ -23,7 +23,7 @@ Hence you need:
 
 ### Autonomy is expanding, fast
 
-Autonomy of an LLM in agentic setup can be quantified by the concept of "time-horizon of autonomy"[^metr_autonomy], defined as follows : if Cm is the class of tasks that take up to m minutes for a human worker, how far can we raise m while keeping a success rate of the agent of over 90% on Cm ? (90% threshold is arbitrary: could be 50%)
+Autonomy of an LLM in agentic setup can be quantified by the concept of "time-horizon of autonomy"[^metr_autonomy], defined as follows : if $C_m$ is the class of tasks that take up to $m$ minutes for a human worker, how far can we increase $m$ while keeping a success rate of the agent of over 90% on $C_m$ ? (90% threshold is arbitrary: could be 50%)
 
 In other words, what’s the higher bound of the duration, in equivalent human time, of the tasks that this LLM (in an agentic setup, and given the required tools) can solve reliably ?
 
@@ -49,7 +49,7 @@ I think this progress in the time-horizon of autonomy is directly caused by adva
 
 And yet, as of now (mid-2025), the time-horizon of autonomy is still below 1 hour.
 
-On GAIA benchmark's level 3 question, for which the average human-equivalent autonomy is 18 minutes, the current top scores are still 20 percentage points below the human baseline of 87%[^gaia].
+On GAIA[^gaia] benchmark's level 3 question, for which the average human-equivalent autonomy is 18 minutes, the [current top scores are still 20 percentage points below the human baseline of 87%](https://huggingface.co/spaces/gaia-benchmark/leaderboard).
 
 Given this autonomy limitation, how can we still efficiently get task-solving help from agents? Maybe we can take the other end of that question : where can agents of limited autonomy still be useful ?
 
@@ -58,7 +58,7 @@ Given this autonomy limitation, how can we still efficiently get task-solving he
 I think three concepts matter a lot when thinking of how/where autonomy-limited AI agents can help:
 
 - **Agents are only useful where the game-plan can’t be known in advance**. If you can know in advance the steps that solving your problem requires, of course an agent is useless, just implement your fixed resolution process with interleaved LLM calls / plain code.
-- **Agents shine for strong-link problems.** Strong-link vs weak-link is the distinction: is the final output's value dependant on the maximum value of individual steps, or the minimum ? Weak-link problems are the ones where your output's value is the minimum of all steps : nuclear security. Strong-link problems are the others : science is a strong-link problem[^strong_link_science]. Weak-link problems reveal the worst of AI's low reliability ; strong-link problems excuse it[^ai_scientist]. This piece[^upsides_downsides] discusses how strong-link problems tend to degrade into weak-link problems as a company matures.
+- **Agents shine for strong-link problems.** Strong-link vs weak-link is the distinction: is the final output's value dependant on the maximum value of individual steps, or the minimum ? Weak-link problems are the ones where your output's value is the minimum of all steps : nuclear security. Strong-link problems are the others : [science is a strong-link problem](https://www.experimental-history.com/p/science-is-a-strong-link-problem). Weak-link problems reveal the worst of AI's low reliability ; strong-link problems excuse it[^ai_scientist]. [This piece](https://calv.info/upsides-and-downsides) discusses how strong-link problems tend to degrade into weak-link problems as a company matures.
 - **Agents shine where the output is easy to verify.** Cf the concept of asymmetry of information[^asymmetry_verification] : if your problem is much easier to verify than to solve (if your task is NP, and not P (until someone proves that P = NP)), then reliability of agents is not that much of a problem, because supervision becomes much easier, or even automated. I think this is the particular reason why Code agents are already hugely successful. Sure, Codex can destroy your code, but you can easily verify the output with proper tests, even linting checks helps ; at worst, if the agent messed up your code, just git checkout the last good version.
 
 The points above are good sieves for where agents can be useful out-of-the-box
@@ -102,15 +102,12 @@ This drop of junior hirings make sense in the framework of the time-horizon of a
 
 [^bfcl]: Patil, S. G., Mao, H., Ji, C. C., Yan, F., Suresh, V., Stoica, I., & Gonzalez, J. E. (2025). The Berkeley Function Calling Leaderboard (BFCL): From Tool Use to Agentic Evaluation of Large Language Models. In Forty-second International Conference on Machine Learning. [https://gorilla.cs.berkeley.edu/leaderboard.html](https://gorilla.cs.berkeley.edu/leaderboard.html)
 
-[^planning]: arXiv preprint (2024). Improved Planning for Large Language Models. arXiv:2409.13373. [https://arxiv.org/pdf/2409.13373](https://arxiv.org/pdf/2409.13373)
+[^planning]: Valmeekam, K., Stechly, K., & Kambhampati, S. (2024). LLMs Still Can’t Plan; Can LRMs? A Preliminary Evaluation of OpenAI’s o1 on PlanBench (No. arXiv:2409.13373). arXiv. https://doi.org/10.48550/arXiv.2409.13373
 
-[^gaia]: GAIA Benchmark Leaderboard. Hugging Face Spaces. [https://huggingface.co/spaces/gaia-benchmark/leaderboard](https://huggingface.co/spaces/gaia-benchmark/leaderboard)
 
-[^strong_link_science]: Mastroianni, A. (2023, April 11). Science is a strong-link problem. Experimental History. [https://www.experimental-history.com/p/science-is-a-strong-link-problem](https://www.experimental-history.com/p/science-is-a-strong-link-problem)
+[^gaia]: Mialon, G., Fourrier, C., Swift, C., Wolf, T., LeCun, Y., & Scialom, T. (2023). GAIA : A benchmark for General AI Assistants (No. arXiv:2311.12983). arXiv. https://doi.org/10.48550/arXiv.2311.12983
 
 [^ai_scientist]: Yamada, Y., Lange, R. T., Lu, C., Hu, S., Lu, C., Foerster, J., Clune, J., & Ha, D. (2025). The AI Scientist-v2: Workshop-Level Automated Scientific Discovery via Agentic Tree Search. arXiv preprint arXiv:2504.08066. [https://arxiv.org/abs/2504.08066](https://arxiv.org/abs/2504.08066)
-
-[^upsides_downsides]: French-Owen, C. (2025, February 27). Upsides and Downsides. Calvin's Blog. [https://calv.info/upsides-and-downsides](https://calv.info/upsides-and-downsides)
 
 [^asymmetry_verification]: Wei, J. (2025, July 15). Asymmetry of verification and verifier's rule. Jason Wei's Blog. [https://www.jasonwei.net/blog/asymmetry-of-verification-and-verifiers-law](https://www.jasonwei.net/blog/asymmetry-of-verification-and-verifiers-law)
 

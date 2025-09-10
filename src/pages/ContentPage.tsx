@@ -6,7 +6,10 @@ import ReactMarkdown from "react-markdown";
 import React from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 import rehypeRaw from "rehype-raw";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import PlotlyChart from "@/components/PlotlyChart";
 import FigureCard from "@/components/FigureCard";
 import TechnicalBlock from "@/components/TechnicalBlock";
@@ -141,8 +144,8 @@ const ContentPage = () => {
               .replace(/<\s*\/\s*end\s*>/gi, '&lt;/end&gt;');
             return (
               <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw]}
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeRaw, rehypeKatex]}
             components={{
               h1: ({ children }) => {
                 const id = createHeadingId(children?.toString() || '');
