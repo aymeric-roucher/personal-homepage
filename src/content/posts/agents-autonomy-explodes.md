@@ -3,7 +3,7 @@ title: The autonomy of AI agents is exploding - and what it will change
 thumbnail: The concept of "time-horizon of autonomy", how it's increasing exponentially for agents, the consequences, and how to build good applications in 2025 while this horizon is still limited.
 date: 2025-09-10
 type: blog
-url: agents-increasing-autonomy
+url: agents-exploding-autonomy
 ---
 
 Agents are already immensely useful ; yet they’re also very brittle, and have limited autonomy. How will this evolve ? How to still efficiently use agents in the meantime ?
@@ -43,7 +43,7 @@ Of course the graph has had to sacrifice some exhaustivity for clarity : in real
 
 But I the general indication stands true : AI models autonomy is increasing exponentially.
 
-<div class="figure-card" data-src="/assets/images/agents-increasing-autonomy/length-of-tasks-log.png" data-alt="LLMs can now solve longer and longer tasks" data-caption="Time-horizon of agentic tasks, METR"></div>
+<div class="figure-card" data-src="/assets/images/agents-autonomy-explodes/length-of-tasks-log.png" data-alt="LLMs can now solve longer and longer tasks" data-caption="Time-horizon of agentic tasks, METR"></div>
 
 I think this progress in the time-horizon of autonomy is directly caused by advances in each of the task-solving abilities presented above : improved planning[^planning], nearly-solved tool-calling (BFCL top scores are >80% on single-turn), reduced hallucinations, better critical thinking.
 
