@@ -1,5 +1,5 @@
 // Simple prerender that duplicates built index.html for each blog route
-// and injects per-post SEO tags into the head.
+// and injects per-post SEO tags into the head, including og:image.
 // Purpose: make direct URLs like /blog/<slug> work on static hosting
 // while providing correct <title>, descriptions, canonicals, and OG/Twitter tags.
 
@@ -29,8 +29,37 @@ function parseFrontmatter(raw) {
   return fm;
 }
 
+function extractMainContent(raw) {
+  if (!raw.startsWith('---')) return raw;
+  const endIdx = raw.indexOf('\n---');
+  if (endIdx === -1) return raw;
+  return raw.slice(endIdx + 4).trim();
+}
+
+function firstImageFromMarkdown(raw) {
+  const content = extractMainContent(raw);
+  // Candidates: custom figure-card data-src, <img src>, Markdown image syntax
+  const patterns = [
+    /data-src=\"([^\"]+\.(?:png|jpe?g|webp|gif))\"/i,
+    /<img[^>]*src=\"([^\"]+\.(?:png|jpe?g|webp|gif))\"[^>]*>/i,
+    /!\[[^\]]*\]\(([^\)]+\.(?:png|jpe?g|webp|gif))\)/i,
+  ];
+  for (const re of patterns) {
+    const m = content.match(re);
+    if (m && m[1]) return m[1];
+  }
+  return null;
+}
+
+function toAbsoluteUrl(u) {
+  if (!u) return null;
+  if (/^https?:\/\//i.test(u)) return u;
+  if (u.startsWith('/')) return ORIGIN + u;
+  return ORIGIN + '/' + u.replace(/^\.\//, '');
+}
+
 function escAttr(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+  return String(s).replace(/&/g, '&amp;').replace(/\"/g, '&quot;');
 }
 
 function replaceOrInsert(html, regex, tag) {
@@ -38,7 +67,7 @@ function replaceOrInsert(html, regex, tag) {
   return html.replace('</head>', `  ${tag}\n</head>`);
 }
 
-function injectSeo(indexHtml, { title, description, url }) {
+function injectSeo(indexHtml, { title, description, url, image }) {
   let html = indexHtml;
 
   // Title
@@ -48,40 +77,50 @@ function injectSeo(indexHtml, { title, description, url }) {
 
   // Description
   if (description) {
-    const descTag = `<meta name="description" content="${escAttr(description)}" />`;
-    html = replaceOrInsert(html, /<meta[^>]*name=["']description["'][^>]*>/i, descTag);
+    const descTag = `<meta name=\"description\" content=\"${escAttr(description)}\" />`;
+    html = replaceOrInsert(html, /<meta[^>]*name=[\"']description[\"'][^>]*>/i, descTag);
   }
 
   // Canonical and og:url
   if (url) {
-    const canonicalTag = `<link rel="canonical" href="${url}" />`;
-    html = replaceOrInsert(html, /<link[^>]*rel=["']canonical["'][^>]*>/i, canonicalTag);
+    const canonicalTag = `<link rel=\"canonical\" href=\"${url}\" />`;
+    html = replaceOrInsert(html, /<link[^>]*rel=[\"']canonical[\"'][^>]*>/i, canonicalTag);
 
-    const ogUrlTag = `<meta property="og:url" content="${url}" />`;
-    html = replaceOrInsert(html, /<meta[^>]*property=["']og:url["'][^>]*>/i, ogUrlTag);
+    const ogUrlTag = `<meta property=\"og:url\" content=\"${url}\" />`;
+    html = replaceOrInsert(html, /<meta[^>]*property=[\"']og:url[\"'][^>]*>/i, ogUrlTag);
   }
 
   // Open Graph title/description and type
   if (title) {
-    const ogTitleTag = `<meta property="og:title" content="${escAttr(title)}" />`;
-    html = replaceOrInsert(html, /<meta[^>]*property=["']og:title["'][^>]*>/i, ogTitleTag);
+    const ogTitleTag = `<meta property=\"og:title\" content=\"${escAttr(title)}\" />`;
+    html = replaceOrInsert(html, /<meta[^>]*property=[\"']og:title[\"'][^>]*>/i, ogTitleTag);
   }
   if (description) {
-    const ogDescTag = `<meta property="og:description" content="${escAttr(description)}" />`;
-    html = replaceOrInsert(html, /<meta[^>]*property=["']og:description["'][^>]*>/i, ogDescTag);
+    const ogDescTag = `<meta property=\"og:description\" content=\"${escAttr(description)}\" />`;
+    html = replaceOrInsert(html, /<meta[^>]*property=[\"']og:description[\"'][^>]*>/i, ogDescTag);
   }
   // If there's an og:type, set to article for blog posts; otherwise insert it
-  const ogTypeTag = `<meta property="og:type" content="article" />`;
-  html = replaceOrInsert(html, /<meta[^>]*property=["']og:type["'][^>]*>/i, ogTypeTag);
+  const ogTypeTag = `<meta property=\"og:type\" content=\"article\" />`;
+  html = replaceOrInsert(html, /<meta[^>]*property=[\"']og:type[\"'][^>]*>/i, ogTypeTag);
 
-  // Twitter title/description (keep card/site/image as-is)
+  // Twitter title/description
   if (title) {
-    const twTitleTag = `<meta name="twitter:title" content="${escAttr(title)}" />`;
-    html = replaceOrInsert(html, /<meta[^>]*name=["']twitter:title["'][^>]*>/i, twTitleTag);
+    const twTitleTag = `<meta name=\"twitter:title\" content=\"${escAttr(title)}\" />`;
+    html = replaceOrInsert(html, /<meta[^>]*name=[\"']twitter:title[\"'][^>]*>/i, twTitleTag);
   }
   if (description) {
-    const twDescTag = `<meta name="twitter:description" content="${escAttr(description)}" />`;
-    html = replaceOrInsert(html, /<meta[^>]*name=["']twitter:description["'][^>]*>/i, twDescTag);
+    const twDescTag = `<meta name=\"twitter:description\" content=\"${escAttr(description)}\" />`;
+    html = replaceOrInsert(html, /<meta[^>]*name=[\"']twitter:description[\"'][^>]*>/i, twDescTag);
+  }
+
+  // Image (Open Graph + Twitter)
+  if (image) {
+    const ogImgTag = `<meta property=\"og:image\" content=\"${image}\" />`;
+    html = replaceOrInsert(html, /<meta[^>]*property=[\"']og:image[\"'][^>]*>/i, ogImgTag);
+    const twImgTag = `<meta name=\"twitter:image\" content=\"${image}\" />`;
+    html = replaceOrInsert(html, /<meta[^>]*name=[\"']twitter:image[\"'][^>]*>/i, twImgTag);
+    const twCardTag = `<meta name=\"twitter:card\" content=\"summary_large_image\" />`;
+    html = replaceOrInsert(html, /<meta[^>]*name=[\"']twitter:card[\"'][^>]*>/i, twCardTag);
   }
 
   return html;
@@ -114,8 +153,11 @@ async function main() {
     const title = fm.title || slug;
     const description = fm.thumbnail || fm.description || `Blog post: ${title}`;
     const url = `${ORIGIN}/blog/${slug}`;
+    let image = null;
+    if (fm.image) image = toAbsoluteUrl(fm.image);
+    if (!image) image = toAbsoluteUrl(firstImageFromMarkdown(raw));
 
-    const html = injectSeo(indexHtml, { title, description, url });
+    const html = injectSeo(indexHtml, { title, description, url, image });
     const outDir = path.join(DIST_DIR, 'blog', slug);
     await fs.mkdir(outDir, { recursive: true });
     await fs.writeFile(path.join(outDir, 'index.html'), html, 'utf8');
@@ -127,3 +169,4 @@ main().catch(err => {
   console.error('[prerender] Failed:', err);
   process.exit(1);
 });
+
