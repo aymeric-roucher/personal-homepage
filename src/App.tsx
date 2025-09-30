@@ -35,17 +35,24 @@ const GoatCounterTracker = () => {
   return null;
 };
 
-// Scrolls to top on route change
+// Scrolls to top on route change or to anchor if hash is present
 const ScrollToTop = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Only scroll to top if we're not navigating to an anchor link
-    if (!location.hash) {
+    if (location.hash) {
+      // Wait for DOM to be ready, then scroll to anchor
+      setTimeout(() => {
+        const element = document.querySelector(location.hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 0);
+    } else {
       // Scroll to top immediately with no animation for better navigation experience
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     }
-  }, [location.pathname, location.search]);
+  }, [location.pathname, location.search, location.hash]);
 
   return null;
 };
