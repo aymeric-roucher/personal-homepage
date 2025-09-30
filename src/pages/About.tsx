@@ -80,9 +80,11 @@ const About = () => {
         </div>
 
         {/* Projects Section */}
-        <div className="py-4">
+        <div className="py-4" id="projects">
           <div className="text-center mb-4">
-            <h1 className="abbey-heading text-4xl font-light">Projects</h1>
+            <a href="#projects" className="no-underline hover:opacity-70 transition-opacity">
+              <h1 className="abbey-heading text-4xl font-light">Projects</h1>
+            </a>
           </div>
 
           <div>
