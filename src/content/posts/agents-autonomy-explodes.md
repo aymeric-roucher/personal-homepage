@@ -1,6 +1,6 @@
 ---
 title: Autonomy of AI agents is exploding - why, and what it will change (a lot)
-thumbnail: Tthe concept of "time-horizon of autonomy", how it's increasing exponentially for agents, the consequences, and how to build good applications in 2025 while this horizon is still limited.
+thumbnail: The concept of "time-horizon of autonomy", how it's increasing exponentially for agents, the consequences, and how to build good applications in 2025 while this horizon is still limited.
 date: 2025-09-10
 type: blog
 url: agents-exploding-autonomy

@@ -1,6 +1,6 @@
 ---
 title: The secret weapon that broke ultra-trail: a young data scientist.
-thumbnail: How Joseph Mestrallet, 27-year-old data scientist from Chamonix, upended the most mythical trail running race in the world, the Ultra-Trail du Mont Blanc (UTMB).
+thumbnail: Joseph Mestrallet, 27-year-old data scientist from Chamonix, upended the most mythical trail running race in the world, the Ultra-Trail du Mont Blanc (UTMB).
 date: 2025-08-31
 type: blog
 url: ultra-endurance-data-science

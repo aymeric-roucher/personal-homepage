@@ -1,6 +1,6 @@
 ---
 title: A Brief History of Artificial Intelligence
-thumbnail: A journey through seven decades of artificial intelligence breakthroughs, from simple perceptrons to the transformers revolutionizing our world today.
+thumbnail: Seven decades of artificial intelligence breakthroughs, from simple perceptrons to the transformers revolutionizing our world.
 date: 2024-08-15
 type: blog
 url: history-of-ai

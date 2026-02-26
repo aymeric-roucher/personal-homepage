@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import Navigation from "./components/Navigation";
 import About from "./pages/About";
 import ContentPage from "./pages/ContentPage";
+import EventPage from "./pages/EventPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -72,6 +73,7 @@ const App = () => (
               <Route path="/" element={<About />} />
               {/* Dynamic content routes */}
               <Route path="/blog/:slug" element={<ContentPage />} />
+              <Route path="/event/lancement-ultra-intelligence" element={<EventPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

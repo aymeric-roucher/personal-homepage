@@ -1,6 +1,6 @@
 ---
 title: Will the Bordeaux vineyards dry up tomorrow?
-thumbnail: Exploring how global warming threatens traditional viticulture and the innovative adaptations reshaping wine country.
+thumbnail: Global warming threatens traditional viticulture — here are the adaptations reshaping wine country.
 date: 2022-11-29
 type: blog
 url: bordeaux-vineyard-climate
