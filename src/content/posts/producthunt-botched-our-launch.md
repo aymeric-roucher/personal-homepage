@@ -3,7 +3,7 @@ title: How ProductHunt botched our launch
 thumbnail: We launched Verso AI on ProductHunt, followed all the playbooks, and got shadowbanned. Here's what happened and what I learned.
 date: 2026-04-14
 type: blog
-url: producthunt-is-broken
+url: producthunt-botched-our-launch
 ---
 
 This Sunday at 00:01 PST, we launched our product, [Verso AI](https://get-verso.ai/), which I think is the best AI assistant for PowerPoint. The product is easy to use, quite general-usage, and performs very well, so I thought it would be a great fit for a ProductHunt launch.
@@ -12,7 +12,7 @@ I took some tricks from [some](https://newsletter.jjvalino.com/p/launching-on-pr
 
 - Launch as early as possible, at 00:01AM PST, to have the full day to get upvotes + get a lead on the leaderboard  
 - Most traffic on ProductHunt occurs on weekdays, especially on Tuesday to Thursday. So launch on a weekday to maximize traffic; But these are also most crowded by competing products ; so launch on the weekend to optimize the ranking (on top of this I checked through [personal vibe-coded study](https://github.com/aymeric-roucher/ProductHuntStudy) that weekend launches were less qualitative, so easier to beat).  
-  - We aimed for ranking, so weekend it was. AND the ProductHunt newsletter is sent to >300k subscribers every weekday, mentioning the previous day’s launches => so we launched on Sunday to possibly get featured on Monday.  
+  - We aimed for ranking, so weekend it was. And the ProductHunt newsletter is sent to >300k subscribers every weekday, mentioning the previous day’s launches => so we launched on Sunday to possibly get featured on Monday.  
 
 <div class="figure-card" data-src="/assets/images/producthunt-is-broken/weekly-reactions.jpg" data-alt="ProductHunt votes and comments by day of the week" data-caption="Traffic on ProductHunt per day of the week. From <a href=’https://www.lennysnewsletter.com/p/how-to-successfully-launch-on-product’>Lenny Rachitsky’s article</a>"></div>
 
