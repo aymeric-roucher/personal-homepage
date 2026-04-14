@@ -1,6 +1,6 @@
 ---
 title: The EU's Common Agricultural Policy
-thumbnail: The €300+ billion policy shaping European farming, environment, and food security for the next decade.
+thumbnail: The €300+ billion policy that shapes European farming, environment, and food security.
 date: 2023-04-02
 type: blog
 url: eu-agricultural-policy
