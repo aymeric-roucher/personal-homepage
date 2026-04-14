@@ -14,7 +14,7 @@ I took some tricks from [some](https://newsletter.jjvalino.com/p/launching-on-pr
 - Most traffic on ProductHunt occurs on weekdays, especially Tuesday to Thursday. So launch on a weekday to maximize traffic — but weekdays are also the most competitive. Launch on the weekend to optimize ranking (on top of this I checked through a [personal vibe-coded study](https://github.com/aymeric-roucher/ProductHuntStudy) that weekend launches were lower quality, so easier to beat).  
   - We aimed for ranking, so weekend it was. And the ProductHunt newsletter is sent to >300k subscribers every weekday, mentioning the previous day’s launches — so we launched on Sunday to possibly get featured on Monday.  
 
-<div class="figure-card" data-src="/assets/images/producthunt-is-broken/weekly-reactions.jpg" data-alt="ProductHunt votes and comments by day of the week" data-caption="Traffic on ProductHunt per day of the week. From <a href=’https://www.lennysnewsletter.com/p/how-to-successfully-launch-on-product’>Lenny Rachitsky’s article</a>"></div>
+<div class="figure-card" data-src="/assets/images/producthunt-is-broken/weekly-reactions.jpg" data-alt="ProductHunt votes and comments by day of the week" data-caption="Traffic on ProductHunt per day of the week. From <a href='https://www.lennysnewsletter.com/p/how-to-successfully-launch-on-product'>Lenny Rachitsky’s article</a>"></div>
 
 - Prepare our existing audience for the launch (sent a heads-up email 2 days before)  
 - Posted the announcement with a video and CTA to my ~29k LinkedIn followers and 7k Twitter, which should be decent enough.  

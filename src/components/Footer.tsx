@@ -4,6 +4,17 @@ const Footer = () => {
       <div className="max-w-4xl mx-auto px-6 py-8">
         <div className="flex justify-center items-center space-x-6">
           <a
+            href="https://scholar.google.com/citations?user=xzF8NpcAAAAJ&hl=en"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="abbey-link flex items-center space-x-1 text-muted-foreground hover:text-primary"
+          >
+            <span>Google Scholar</span>
+          </a>
+
+          <span className="text-muted-foreground">✯</span>
+
+          <a
             href="https://twitter.com/aymericroucher"
             target="_blank"
             rel="noopener noreferrer"
