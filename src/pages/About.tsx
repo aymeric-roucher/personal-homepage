@@ -4,11 +4,62 @@ import { Cog } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+const BIO_CHUNKS = [
+  ["What better time to live in?", ""],
+  ["We're at a turning point in history,", "and my craft is the lever that can lift the world."],
+  ["I studied at Polytechnique and Cambridge,", "then led the agent team at Hugging Face."],
+  ["", "Now I'm exploring the next steps."],
+];
+
+const FloatingBio = ({ onToggleControls }: { onToggleControls: () => void }) => {
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % BIO_CHUNKS.length);
+        setVisible(true);
+      }, 600);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const [line1, line2] = BIO_CHUNKS[index];
+
+  return (
+    <div className="absolute inset-0 flex items-end justify-center pointer-events-none pb-2">
+      <div className="max-w-4xl w-full px-6 flex items-end">
+      <div
+        className="pointer-events-auto cursor-pointer select-none"
+        onClick={onToggleControls}
+        style={{
+          padding: "16px 32px",
+          transition: "opacity 0.6s ease",
+          opacity: visible ? 1 : 0,
+        }}
+      >
+        <p className="text-xl md:text-2xl text-foreground/90 leading-relaxed italic">
+          {line1}
+        </p>
+        {line2 && (
+          <p className="text-xl md:text-2xl text-foreground/70 leading-relaxed mt-1 italic">
+            {line2}
+          </p>
+        )}
+      </div>
+      </div>
+    </div>
+  );
+};
+
 const About = () => {
   const [projects, setProjects] = useState<ContentListItem[]>([]);
   const [blogPosts, setBlogPosts] = useState<ContentListItem[]>([]);
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [blogLoading, setBlogLoading] = useState(true);
+  const [showControls, setShowControls] = useState(false);
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -43,28 +94,10 @@ const About = () => {
       <div className="relative">
         <CathedralViewer
           style={{ width: "100%", height: "500px" }}
-          offsetX={0}
-          offsetZ={0}
+          showControls={showControls}
         />
-        {/* Bio floating over the 3D view */}
-        <div className="absolute inset-0 flex items-end justify-end pointer-events-none">
-          <div className="max-w-sm text-right pr-8 pb-8 pointer-events-auto">
-            <div className="space-y-3 text-foreground/80 leading-relaxed">
-              <h1 className="text-2xl font-light">
-                The codist monk
-              </h1>
-              <p className="text-sm">
-                What better time to live in? We're at a turning point for human history, and my craft is the lever that can lift the world.
-              </p>
-              <p className="text-sm">
-                I studied at Polytechnique and Cambridge, then worked at Hugging Face, where I led the agent development team.
-              </p>
-              <p className="text-sm">
-                Now I'm exploring the next steps.
-              </p>
-            </div>
-          </div>
-        </div>
+        {/* Bio floating over the 3D view — click to toggle controls */}
+        <FloatingBio onToggleControls={() => setShowControls((v) => !v)} />
       </div>
 
       <div className="max-w-4xl mx-auto px-6">

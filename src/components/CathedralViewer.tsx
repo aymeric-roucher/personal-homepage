@@ -6,6 +6,7 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 interface CathedralViewerProps {
   className?: string;
   style?: React.CSSProperties;
+  showControls?: boolean;
 }
 
 // All fog applied per-fragment in the material — no post-processing.
@@ -45,16 +46,17 @@ const fragmentShader = `
     // Depth fog (distance from camera)
     float depthFog = smoothstep(uDepthFogNear, uDepthFogFar, vViewDepth);
 
-    // Height fog with smooth hermite curve
+    // Height fog — power-skewed quintic: stretches the clear transition at the top
     float t = clamp((vWorldPos.y - uHeightFogBottom) / (uHeightFogTop - uHeightFogBottom), 0.0, 1.0);
-    float heightFog = 1.0 - t * t * (3.0 - 2.0 * t);
+    t = pow(t, 0.5); // skew: fog clears earlier, tail lingers longer toward 0%
+    float heightFog = 1.0 - t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
 
     float fog = max(depthFog, heightFog);
     gl_FragColor = vec4(mix(lit, uFogColor, fog), 1.0);
   }
 `;
 
-const CathedralViewer = ({ className, style }: CathedralViewerProps) => {
+const CathedralViewer = ({ className, style, showControls = false }: CathedralViewerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<THREE.Group | null>(null);
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);
@@ -62,8 +64,8 @@ const CathedralViewer = ({ className, style }: CathedralViewerProps) => {
 
   const [offsetX, setOffsetX] = useState(4.0);
   const [offsetZ, setOffsetZ] = useState(7.0);
-  const [fogBottomPct, setFogBottomPct] = useState(2);
-  const [fogTopPct, setFogTopPct] = useState(55);
+  const [fogBottomPct, setFogBottomPct] = useState(5);
+  const [fogTopPct, setFogTopPct] = useState(100);
 
   useEffect(() => {
     if (innerRef.current) {
@@ -218,8 +220,55 @@ const CathedralViewer = ({ className, style }: CathedralViewerProps) => {
   }, []);
 
   return (
-    <div className={className} style={style}>
+    <div className={className} style={{ ...style, position: "relative" }}>
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
+      {showControls && (
+        <div
+          style={{
+            position: "absolute",
+            top: 80,
+            right: 8,
+            zIndex: 10,
+            background: "rgba(255,255,255,0.9)",
+            padding: "8px 12px",
+            borderRadius: 6,
+            fontSize: 11,
+            display: "flex",
+            flexDirection: "column",
+            gap: 6,
+            fontFamily: "monospace",
+          }}
+        >
+          <style>{`
+            .cathedral-controls input[type="range"] {
+              accent-color: hsl(25, 25%, 35%);
+            }
+          `}</style>
+          <div className="cathedral-controls" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <label>
+              E/W: {offsetX.toFixed(1)}
+              <input type="range" min={-20} max={20} step={0.5} value={offsetX}
+                onChange={(e) => setOffsetX(Number(e.target.value))} style={{ width: 100, marginLeft: 6 }} />
+            </label>
+            <label>
+              N/S: {offsetZ.toFixed(1)}
+              <input type="range" min={-20} max={20} step={0.5} value={offsetZ}
+                onChange={(e) => setOffsetZ(Number(e.target.value))} style={{ width: 100, marginLeft: 6 }} />
+            </label>
+            <hr style={{ margin: 0, borderColor: "#ccc" }} />
+            <label>
+              Fog 100%: {fogBottomPct}%
+              <input type="range" min={0} max={50} step={1} value={fogBottomPct}
+                onChange={(e) => setFogBottomPct(Number(e.target.value))} style={{ width: 100, marginLeft: 6 }} />
+            </label>
+            <label>
+              Fog 0%: {fogTopPct}%
+              <input type="range" min={20} max={100} step={1} value={fogTopPct}
+                onChange={(e) => setFogTopPct(Number(e.target.value))} style={{ width: 100, marginLeft: 6 }} />
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

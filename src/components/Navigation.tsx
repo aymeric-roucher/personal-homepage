@@ -131,7 +131,7 @@ const Navigation = () => {
             Aymeric Roucher
           </NavLink>
 
-          <div className="hidden md:flex items-center space-x-6 ml-auto">
+          <div className="flex items-center space-x-6 ml-auto">
             <div className="relative" ref={searchRef}>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
@@ -186,11 +186,6 @@ const Navigation = () => {
               )}
             </div>
 
-            <div className="flex items-center space-x-8">
-            </div>
-          </div>
-
-          <div className="flex md:hidden items-center space-x-4">
           </div>
         </div>
       </div>
