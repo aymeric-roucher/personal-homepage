@@ -67,8 +67,10 @@ const App = () => (
         <div className="flex flex-col min-h-screen">
           <GoatCounterTracker />
           <ScrollToTop />
-          <Navigation />
-          <main className="flex-1">
+          <div className="relative z-20">
+            <Navigation />
+          </div>
+          <main className="flex-1 -mt-[72px]">
             <Routes>
               <Route path="/" element={<About />} />
               {/* Dynamic content routes */}

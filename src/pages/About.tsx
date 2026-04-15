@@ -1,4 +1,5 @@
 import { ContentListItem, loadContentList } from "@/lib/contentLoader";
+import CathedralViewer from "@/components/CathedralViewer";
 import { Cog } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -38,46 +39,35 @@ const About = () => {
 
   return (
     <div className="bg-background">
-      <div className="max-w-4xl mx-auto px-6">
-
-        {/* About me Section */}
-        <div className="py-6">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
-            {/* Image on the left */}
-            <div className="order-2 lg:order-1 flex items-center justify-center h-full">
-              <div className="aspect-square flex items-center justify-center max-w-xs max-h-xs">
-                <img
-                  src="/codist_monk.png"
-                  alt="Aymeric Roucher"
-                  className="w-full h-full object-contain rounded-lg"
-                />
-              </div>
-            </div>
-
-            {/* Name and bio on the right */}
-            <div className="order-1 lg:order-2">
-              <div className="space-y-6 text-foreground/80 leading-relaxed">
-                <h1 className="text-2xl font-light mb-4">
-                  The codist monk
-                </h1>
-                <p className="text-lg mb-6">
-                  What better time to live in? We're at a turning point for human history, and my craft is the lever that can lift the world.
-                </p>
-                <p className="text-lg mb-6">
-                  I studied at Polytechnique and Cambridge, then worked at Hugging Face, where I led the agent development team.
-                </p>
-                <p className="text-lg mb-6">
-                  Now I'm exploring the next steps.
-                </p>
-              </div>
+      {/* Cathedral — full width with bio overlay */}
+      <div className="relative">
+        <CathedralViewer
+          style={{ width: "100%", height: "500px" }}
+          offsetX={0}
+          offsetZ={0}
+        />
+        {/* Bio floating over the 3D view */}
+        <div className="absolute inset-0 flex items-end justify-end pointer-events-none">
+          <div className="max-w-sm text-right pr-8 pb-8 pointer-events-auto">
+            <div className="space-y-3 text-foreground/80 leading-relaxed">
+              <h1 className="text-2xl font-light">
+                The codist monk
+              </h1>
+              <p className="text-sm">
+                What better time to live in? We're at a turning point for human history, and my craft is the lever that can lift the world.
+              </p>
+              <p className="text-sm">
+                I studied at Polytechnique and Cambridge, then worked at Hugging Face, where I led the agent development team.
+              </p>
+              <p className="text-sm">
+                Now I'm exploring the next steps.
+              </p>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Separator */}
-        <div className="flex justify-center py-4">
-          <div className="h-px bg-border w-full max-w-xs"></div>
-        </div>
+      <div className="max-w-4xl mx-auto px-6">
 
         {/* Projects Section */}
         <div className="py-4" id="projects">

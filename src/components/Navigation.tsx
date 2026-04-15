@@ -121,7 +121,7 @@ const Navigation = () => {
   }, []);
 
   return (
-    <nav className="bg-background border-b border-border">
+    <nav className="bg-transparent border-b-0 relative z-10">
       <div className="max-w-4xl mx-auto px-6 py-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <NavLink
@@ -131,10 +131,10 @@ const Navigation = () => {
             Aymeric Roucher
           </NavLink>
 
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-6 ml-auto">
             <div className="relative" ref={searchRef}>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
                 <Input
                   placeholder="Search posts, projects..."
                   value={searchQuery}
@@ -143,7 +143,7 @@ const Navigation = () => {
                     setShowDropdown(e.target.value.length > 0);
                   }}
                   onFocus={() => setShowDropdown(searchQuery.length > 0)}
-                  className="w-64 md:w-[24rem] lg:w-[28rem] pl-10"
+                  className="w-48 md:w-[16rem] lg:w-[20rem] pl-10 bg-background/40 backdrop-blur-sm"
                 />
               </div>
 
