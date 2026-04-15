@@ -88,7 +88,9 @@ const CathedralViewer = ({ className, style }: CathedralViewerProps) => {
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    const fogColor = new THREE.Color("hsl(48, 15%, 94%)");
+    // Exact sRGB values for hsl(48, 15%, 94%) — hardcoded so LinearSRGBColorSpace
+    // output matches CSS pixel-for-pixel (no gamma conversion to mismatch).
+    const fogColor = new THREE.Color(0.949, 0.9454, 0.931);
     const scene = new THREE.Scene();
     scene.background = fogColor;
 
