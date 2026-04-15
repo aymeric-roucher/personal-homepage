@@ -124,6 +124,7 @@ const CathedralViewer = ({ className, style, showControls = false }: CathedralVi
     materialRef.current = material;
 
     const pivot = new THREE.Group();
+    pivot.rotation.y = -Math.PI / 2; // start rotated -90° so the best face shows first
     const inner = new THREE.Group();
     pivot.add(inner);
     scene.add(pivot);
