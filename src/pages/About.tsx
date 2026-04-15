@@ -40,11 +40,11 @@ const FloatingBio = ({ onToggleControls }: { onToggleControls: () => void }) => 
           opacity: visible ? 1 : 0,
         }}
       >
-        <p className="text-xl md:text-2xl text-foreground/90 leading-relaxed italic">
+        <p className="text-lg md:text-xl text-foreground/90 leading-relaxed italic">
           {line1}
         </p>
         {line2 && (
-          <p className="text-xl md:text-2xl text-foreground/70 leading-relaxed mt-1 italic">
+          <p className="text-lg md:text-xl text-foreground/70 leading-relaxed mt-1 italic">
             {line2}
           </p>
         )}
