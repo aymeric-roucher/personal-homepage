@@ -70,7 +70,7 @@ const App = () => (
           <div className="relative z-20">
             <Navigation />
           </div>
-          <main className="flex-1 -mt-[72px]">
+          <main className="flex-1">
             <Routes>
               <Route path="/" element={<About />} />
               {/* Dynamic content routes */}

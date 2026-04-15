@@ -89,7 +89,7 @@ const About = () => {
   }, []);
 
   return (
-    <div className="bg-background">
+    <div className="bg-background -mt-[72px]">
       {/* Cathedral — full width with bio overlay */}
       <div className="relative">
         <CathedralViewer

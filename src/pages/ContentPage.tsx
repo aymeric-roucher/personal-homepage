@@ -102,12 +102,12 @@ const ContentPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="lg:grid lg:grid-cols-12 lg:gap-8 lg:px-6 lg:py-12">
+      <div className="lg:grid lg:grid-cols-12 lg:gap-8 lg:px-6 lg:py-4">
         {/* Left column - empty spacer */}
         <div className="hidden lg:block lg:col-span-3"></div>
-        
+
         {/* Center column - main content */}
-        <div className="lg:col-span-6 max-w-4xl mx-auto px-6 py-12 lg:px-0 lg:py-0">
+        <div className="lg:col-span-6 max-w-4xl mx-auto px-6 py-4 lg:px-0 lg:py-0">
           <button
             onClick={() => navigate(getBackPath())}
             className="abbey-link mb-8 flex items-center"
