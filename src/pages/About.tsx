@@ -98,7 +98,7 @@ const About = () => {
         {/* Bio floating over the 3D view — click to toggle controls */}
         <FloatingBio onToggleControls={() => setShowControls((v) => !v)} />
         {/* Scroll indicator — pointing hand, rotated to point down */}
-        <div className="absolute inset-x-0 bottom-6 flex justify-center pointer-events-none">
+        <div className="absolute inset-x-0 bottom-24 flex justify-center pointer-events-none">
           <span
             aria-hidden="true"
             className="text-primary select-none animate-fade-pulse"
