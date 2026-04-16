@@ -143,7 +143,7 @@ const CathedralViewer = ({ className, style, showControls = false }: CathedralVi
       const center = box.getCenter(new THREE.Vector3());
       const size = box.getSize(new THREE.Vector3());
       const maxDim = Math.max(size.x, size.y, size.z);
-      const scale = 100 / maxDim;
+      const scale = 80 / maxDim;
       model.scale.setScalar(scale);
       model.position.sub(center.multiplyScalar(scale));
 

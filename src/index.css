@@ -158,3 +158,11 @@
 html {
   scroll-behavior: smooth;
 }
+
+@keyframes fade-pulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.9; }
+}
+.animate-fade-pulse {
+  animation: fade-pulse 2.4s ease-in-out infinite;
+}

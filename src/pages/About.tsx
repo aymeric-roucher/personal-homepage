@@ -29,22 +29,21 @@ const FloatingBio = ({ onToggleControls }: { onToggleControls: () => void }) => 
   const [line1, line2] = BIO_CHUNKS[index];
 
   return (
-    <div className="absolute inset-0 flex items-end justify-center pointer-events-none pb-2">
-      <div className="max-w-4xl w-full px-6 flex items-end">
+    <div className="absolute inset-x-0 bottom-36 md:bottom-44 flex pointer-events-none">
+      <div className="max-w-4xl w-full mx-auto px-6 md:px-16">
       <div
-        className="pointer-events-auto cursor-pointer select-none"
+        className="pointer-events-auto cursor-pointer select-none text-left max-w-xl"
         onClick={onToggleControls}
         style={{
-          padding: "16px 32px",
           transition: "opacity 0.6s ease",
           opacity: visible ? 1 : 0,
         }}
       >
-        <p className="text-lg md:text-xl text-foreground/90 leading-relaxed italic">
+        <p className="text-xl md:text-2xl text-foreground/90 leading-relaxed italic">
           {line1}
         </p>
         {line2 && (
-          <p className="text-lg md:text-xl text-foreground/70 leading-relaxed mt-1 italic">
+          <p className="text-xl md:text-2xl text-foreground/70 leading-relaxed mt-1 italic">
             {line2}
           </p>
         )}
@@ -90,14 +89,24 @@ const About = () => {
 
   return (
     <div className="bg-background -mt-[72px]">
-      {/* Cathedral — full width with bio overlay */}
-      <div className="relative">
+      {/* Cathedral — full viewport with bio overlay */}
+      <div className="relative flex items-center justify-center" style={{ height: "100vh" }}>
         <CathedralViewer
-          style={{ width: "100%", height: "500px" }}
+          style={{ width: "100%", height: "100vh" }}
           showControls={showControls}
         />
         {/* Bio floating over the 3D view — click to toggle controls */}
         <FloatingBio onToggleControls={() => setShowControls((v) => !v)} />
+        {/* Scroll indicator — pointing hand, rotated to point down */}
+        <div className="absolute inset-x-0 bottom-6 flex justify-center pointer-events-none">
+          <span
+            aria-hidden="true"
+            className="text-primary select-none animate-fade-pulse"
+            style={{ fontSize: "2rem", transform: "rotate(90deg)", lineHeight: 1 }}
+          >
+            ☞
+          </span>
+        </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-6">
