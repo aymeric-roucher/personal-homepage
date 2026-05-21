@@ -35,19 +35,7 @@ Compute is the new oil, and the map of who controls it is being drawn right now.
   | Huawei Ascend 910B/C | ~3 kW | cluster-level incl. cooling (CloudMatrix384 = 384 chips @ 559 kW) |
   | ¥ → $ | ~¥7 per $1 | for capex conversions |
 
-## What the picture shows
-- **US hyperscalers dominate** measured capacity: Oracle (Stargate Abilene) leaps to
-  ~8 GW around 2029; Google/Microsoft/Amazon/Meta each multi-GW.
-- **Europe is an order of magnitude smaller.** Mistral, France's champion, owns
-  ~44 MW today (one Essonne site) and *commands* ~90 MW incl. rented cloud; it
-  *targets* 200 MW by 2027 and ~1 GW by 2029. On the same axis as the hyperscalers it
-  is a thin line. Campus IA (1.4 GW) is bigger but Mistral only minority-owns it.
-- **China builds fast but reports in EFLOPS, not MW**, so its lines are mostly
-  estimates. The hyperscaler arms (Alibaba/ByteDance/Tencent) are hundreds-of-MW to
-  low-GW; the telcos publish real ~100-150 MW facilities. The pure-play **labs counting
-  rented inference are lab-scale** (~Mistral-size): DeepSeek ~90 MW (the only one that
-  *owns* its cluster), Zhipu ~110, Moonshot ~90, MiniMax ~80, StepFun ~55, while the two
-  that pivoted (01.AI, Baichuan) collapsed to single digits.
+## The three tiers : US champions, Chinese giants, Contenders
 
 ## Mistral (Europe), the testimony in numbers
 From Arthur Mensch's Assemblée Nationale hearing, verified/expanded by web search.
