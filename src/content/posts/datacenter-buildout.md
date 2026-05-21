@@ -1,5 +1,5 @@
 ---
-title: How AI datacenters are getting installed across the world
+title: The 3 tiers of the AI compute race
 thumbnail: An interactive view of who is installing how much AI compute (megawatts) over time, US hyperscalers, Europe's Mistral, and China's giants and labs, and what it means geopolitically.
 date: 2026-05-21
 type: blog
