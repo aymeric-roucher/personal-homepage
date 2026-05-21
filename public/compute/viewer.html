@@ -386,7 +386,8 @@ function initUI(){
 
   window.addEventListener('resize', () => chart.resize());
   render();
-  // In an iframe the container may finish sizing after init; resize once layout settles.
+  // Container may size after init (esp. in an iframe); redraw whenever it changes size.
+  if (window.ResizeObserver) new ResizeObserver(() => chart.resize()).observe(document.getElementById('chart'));
   requestAnimationFrame(() => chart.resize());
   setTimeout(() => chart.resize(), 300);
 }
