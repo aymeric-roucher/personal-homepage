@@ -41,14 +41,14 @@ Compute is the new oil, and the map of who controls it is being drawn right now.
    multiple gigawatts (OpenAI ~15 GW once you count the Stargate/Azure/Oracle capacity it
    rents). Ever wondered why their Claude, GPT and Gemini consistently top benchmarks? Now
    you know.
-2. **Chinese giants scale fast, but in the dark.** Alibaba, ByteDance, Tencent, Huawei and
-   the three state telcos are racing from hundreds of MW toward multi-GW, increasingly on
-   domestic Ascend silicon and the national "East Data West Compute" grid. The catch: they
-   report "computing power" in EFLOPS, not MW, so their points are estimates, not nameplates.
-3. **The contenders punch above their weight.** Europe's Mistral commands ~90 MW today and
-   aims at 1 GW by 2029, still an order of magnitude behind the leaders. The Chinese
-   pure-play labs (DeepSeek, Moonshot, Zhipu, MiniMax) ship frontier models on mere tens of
-   MW, mostly rented; DeepSeek (~90 MW, the only one that owns its cluster) is the largest.
+2. **Chinese giants scale fast.** Alibaba, ByteDance, Tencent, Huawei and the three state
+   telcos are racing from hundreds of MW toward multi-GW, increasingly on domestic Ascend
+   silicon and the national "East Data West Compute" grid. They report "computing power" in
+   EFLOPS rather than MW, so their points here are estimates, not nameplates.
+3. **The contenders.** Europe's Mistral commands ~90 MW today and aims at 1 GW by 2029, an
+   order of magnitude behind the leaders. The Chinese pure-play labs (DeepSeek, Moonshot,
+   Zhipu, MiniMax) run on tens of MW, mostly rented; DeepSeek (~90 MW, the only one that owns
+   its cluster) is the largest.
 
 ## Mistral (Europe), the testimony in numbers
 From Arthur Mensch's Assemblée Nationale hearing, verified/expanded by web search.
