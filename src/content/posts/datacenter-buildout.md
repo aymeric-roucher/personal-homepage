@@ -91,20 +91,39 @@ the "East Data West Compute" program (8 hubs) drove >¥200B of investment.
 fleet MW; each point is derived from chip orders / capex at the constants above. **2030
 points are trend extrapolation.**
 
-| Player | Date → MW | Basis | Source |
-|---|---|---|---|
-| **Alibaba** | 2024 → 400; 2027 → 1,800; 2030 → 3,000 | ¥380B (2025-27) plan ÷ ~¥100B/GW; ~$10B/yr chips → ~480 MW/yr | [Alibaba](https://www.alibabagroup.com/en-US/document-1830678592242057216), [ratio](https://www.itiger.com/news/1177639303) |
-| **ByteDance** | 2024 → 300; 2026 → 1,300; 2030 → 3,500 | ~230k Hopper ordered 2024 × ~1.1 kW; + 36k B200 (Malaysia, leased); 2026 chip spend ~$13B | [tbreak](https://tbreak.com/bytedance-ai-spending-30-billion-2026/) |
-| **Tencent** | 2024 → 250; 2030 → 1,500 | ~230k Nvidia ordered 2024 (analyst); 100k-GPU-capable HCC clusters | [Tom's Hardware](https://www.tomshardware.com/tech-industry/artificial-intelligence/tencent-boosts-100000-gpu-capable-hpc-clusters-with-network-optimization) |
-| **Huawei** | 2024 → 300; 2025 → 480; 2030 → 2,000 | ~100k Ascend 910B × ~3 kW; 160k-card CloudMatrix384 cluster | [SemiAnalysis](https://semianalysis.com/2025/04/16/huawei-ai-cloudmatrix-384-chinas-answer-to-nvidia-gb200-nvl72/) |
+<table>
+<thead><tr><th>Player</th><th>Date</th><th>MW</th><th>Basis</th><th>Source</th></tr></thead>
+<tbody>
+<tr><td rowspan="3"><strong>Alibaba</strong></td><td>2024</td><td>400</td><td rowspan="3">¥380B (2025-27) plan ÷ ~¥100B/GW; ~$10B/yr chips → ~480 MW/yr</td><td rowspan="3"><a href="https://www.alibabagroup.com/en-US/document-1830678592242057216">Alibaba</a>, <a href="https://www.itiger.com/news/1177639303">ratio</a></td></tr>
+<tr><td>2027</td><td>1,800</td></tr>
+<tr><td>2030</td><td>3,000</td></tr>
+<tr><td rowspan="3"><strong>ByteDance</strong></td><td>2024</td><td>300</td><td rowspan="3">~230k Hopper ordered 2024 × ~1.1 kW; + 36k B200 (Malaysia, leased); 2026 chip spend ~$13B</td><td rowspan="3"><a href="https://tbreak.com/bytedance-ai-spending-30-billion-2026/">tbreak</a></td></tr>
+<tr><td>2026</td><td>1,300</td></tr>
+<tr><td>2030</td><td>3,500</td></tr>
+<tr><td rowspan="2"><strong>Tencent</strong></td><td>2024</td><td>250</td><td rowspan="2">~230k Nvidia ordered 2024 (analyst); 100k-GPU-capable HCC clusters</td><td rowspan="2"><a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/tencent-boosts-100000-gpu-capable-hpc-clusters-with-network-optimization">Tom's Hardware</a></td></tr>
+<tr><td>2030</td><td>1,500</td></tr>
+<tr><td rowspan="3"><strong>Huawei</strong></td><td>2024</td><td>300</td><td rowspan="3">~100k Ascend 910B × ~3 kW; 160k-card CloudMatrix384 cluster</td><td rowspan="3"><a href="https://semianalysis.com/2025/04/16/huawei-ai-cloudmatrix-384-chinas-answer-to-nvidia-gb200-nvl72/">SemiAnalysis</a></td></tr>
+<tr><td>2025</td><td>480</td></tr>
+<tr><td>2030</td><td>2,000</td></tr>
+</tbody>
+</table>
 
 **Telcos, anchored on published facility nameplates** (the only hard MW figures in China):
 
-| Player | Date → MW | Basis | Source |
-|---|---|---|---|
-| **China Mobile** | 2024 → 130/250 (hard); 2028 → 1,500 [est.] | Hohhot ~130 MW + Harbin ~120 MW nameplates; then ~61 EFLOPS / target 100 EFLOPS | [ChinaDaily](https://www.chinaservicesinfo.com/s/202408/21/WS66c83cb0498ed2d7b7eb791e/chinas-largest-ai-computing-center-to-be-launched-in-harbin.html) |
-| **China Telecom** | 2024 → 150 (hard); 2030 → 1,500 [est.] | Inner Mongolia DC ~150 MW; + Wuhan ICC + pooled (Xirang) | [Tom's Hardware](https://www.tomshardware.com/null/chinas-first-natively-built-supercomputer-goes-online-the-central-intelligent-computing-center-is-liquid-cooled-and-built-for-ai) |
-| **China Unicom** | 2024 → 200 [est.]; 2025 → 700 (mostly hard) | 7 × ~100 MW AIDC campuses (FY2025). Excludes Unicom's 2,650 MW *total* DC reserve (general+AI) | [PRNewswire](https://www.prnewswire.com/apac/news-releases/china-unicom-free-cash-flow-up-by-nearly-30-302718590.html) |
+<table>
+<thead><tr><th>Player</th><th>Date</th><th>MW</th><th>Basis</th><th>Source</th></tr></thead>
+<tbody>
+<tr><td rowspan="4"><strong>China Mobile</strong></td><td>2024</td><td>130</td><td>Hohhot ICC ~130 MW nameplate (hard)</td><td rowspan="4"><a href="https://www.chinaservicesinfo.com/s/202408/21/WS66c83cb0498ed2d7b7eb791e/chinas-largest-ai-computing-center-to-be-launched-in-harbin.html">ChinaDaily</a></td></tr>
+<tr><td>2024</td><td>250</td><td>+ Harbin ultra-cluster ~120 MW (hard)</td></tr>
+<tr><td>2025</td><td>600</td><td>[est.] ~61 EFLOPS / 13 nodes</td></tr>
+<tr><td>2028</td><td>1,500</td><td>[est.] target 100 EFLOPS / 100k-card clusters</td></tr>
+<tr><td rowspan="3"><strong>China Telecom</strong></td><td>2024</td><td>150</td><td>Inner Mongolia DC ~150 MW (hard)</td><td rowspan="3"><a href="https://www.tomshardware.com/null/chinas-first-natively-built-supercomputer-goes-online-the-central-intelligent-computing-center-is-liquid-cooled-and-built-for-ai">Tom's Hardware</a></td></tr>
+<tr><td>2024</td><td>500</td><td>[est.] Wuhan ICC + pooled (Xirang)</td></tr>
+<tr><td>2030</td><td>1,500</td><td>[est.] national AIDC upgrade</td></tr>
+<tr><td rowspan="2"><strong>China Unicom</strong></td><td>2024</td><td>200</td><td>[est.] 2 × 10k-card centers (Lingang, Hohhot)</td><td rowspan="2"><a href="https://www.prnewswire.com/apac/news-releases/china-unicom-free-cash-flow-up-by-nearly-30-302718590.html">PRNewswire</a></td></tr>
+<tr><td>2025</td><td>700</td><td>7 × ~100 MW AIDC campuses (FY2025); excludes Unicom's 2,650 MW total DC reserve (general+AI)</td></tr>
+</tbody>
+</table>
 
 ### Chinese AI labs, total commanded (owned + rented, est.)
 Lab-scale once you count their standing **inference** fleets (the dominant load for popular

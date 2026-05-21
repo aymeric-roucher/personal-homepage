@@ -250,11 +250,11 @@ const ContentPage = () => {
               thead: ({ children }) => (
                 <thead className="bg-muted">{children}</thead>
               ),
-              th: ({ children }) => (
-                <th className="text-left font-semibold px-3 py-2 border border-border align-top">{children}</th>
+              th: ({ node, children, ...props }) => (
+                <th {...props} className="text-left font-semibold px-3 py-2 border border-border align-top">{children}</th>
               ),
-              td: ({ children }) => (
-                <td className="px-3 py-2 border border-border align-top text-foreground/80">{children}</td>
+              td: ({ node, children, ...props }) => (
+                <td {...props} className="px-3 py-2 border border-border align-top text-foreground/80">{children}</td>
               ),
               blockquote: ({ children }) => (
                 <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">
