@@ -4,38 +4,44 @@ thumbnail: An interactive view of who is installing how much AI compute (megawat
 date: 2026-05-21
 type: blog
 url: datacenter-buildout
+toc: false
 ---
 
 Compute is the new oil, and the map of who controls it is being drawn right now. Below is an interactive look at AI data-center buildout: **who is installing how much power (in megawatts), where, and when.** Every player sits on a single axis, so you can compare the US hyperscalers, Europe's Mistral, and China's giants and labs at a glance. Hover any point for its source and how the number was derived; click a point to open that source.
 
-<iframe src="/compute/viewer.html?v=8" height="1240"></iframe>
+<iframe src="/compute/viewer.html?v=8" height="1180"></iframe>
 
-*Tip: the labs sit at tens of MW while the US players reach gigawatts, flip on **log scale** to see everyone at once.*
+*Tip: flip on **log scale** to differentiate better.*
 
 ## Method
-We started from [Epoch AI](https://epoch.ai/data/data-centers) data, which provides:
+We started from the data of this excellent [Epoch AI study](https://epoch.ai/data/data-centers), which provides:
 - per-facility installed power (MW) over time for the world's frontier data centers,
-- each facility's owner and its users (tenants).
+- each facility's owner and its users (tenants), which powers the **User vs Provider** toggle: credit each facility to its tenant (OpenAI, Anthropic, Google DeepMind, xAI...) or to its owner.
 
 On top of that:
-- **User vs Provider** toggle: credit each facility to its tenant (OpenAI, Anthropic, Google DeepMind, xAI...) or to its owner.
-- **Curated lines** add players Epoch doesn't track (Mistral, the Chinese giants and labs). Every point is tagged by source, 🟢 *official*, 🔵 *Epoch AI*, or 🟠 *own estimate*, and shows its derivation in the tooltip (click a point to open the source).
+- **Curated lines** add players Epoch doesn't track (Mistral, the Chinese giants and labs). Every point is tagged by source, <span style="color:#16a34a"><strong>official</strong></span>, <span style="color:#34d2b9"><strong>Epoch AI</strong></span>, or <span style="color:#d97706"><strong>own estimate</strong></span>, and shows its derivation in the tooltip (click a point to open the source).
 - **Chip-count → MW** where fleet MW isn't published: ~48 MW per $1B of AI-chip spend; per-GPU all-in ~0.7 kW (A100), ~1.4 kW (H100/H800), ~0.9 kW (H20), ~3 kW (Ascend 910B/C).
 
 ## The three tiers : US champions, Chinese giants, Contenders
 
-1. <span style="color:#2563eb"><strong>US champions lead the compute race.</strong></span> Anthropic, OpenAI and Google each command
-   multiple gigawatts (OpenAI ~15 GW once you count the Stargate/Azure/Oracle capacity it
-   rents). Ever wondered why their Claude, GPT and Gemini consistently top benchmarks? Now
-   you know.
-2. <span style="color:#dc2626"><strong>Chinese giants scale fast.</strong></span> Alibaba, ByteDance, Tencent, Huawei and the three state
-   telcos are racing from hundreds of MW toward multi-GW, increasingly on domestic Ascend
-   silicon and the national "East Data West Compute" grid. They report "computing power" in
-   EFLOPS rather than MW, so their points here are estimates, not nameplates.
-3. <span style="color:#d97706"><strong>The contenders.</strong></span> Europe's Mistral commands ~90 MW today and aims at 1 GW by 2029, an
-   order of magnitude behind the leaders. The Chinese pure-play labs (DeepSeek, Moonshot,
-   Zhipu, MiniMax) run on tens of MW, mostly rented; DeepSeek (~90 MW, the only one that owns
-   its cluster) is the largest.
+If you're curious about any of the companies below, I'd advise to go check out their rough ranking on the [Artificial Analysis leaderboard](https://artificialanalysis.ai/leaderboards/models).
+
+<span style="color:#2563eb"><strong>1. US Champions are really far ahead.</strong></span> Anthropic, OpenAI and Google each command
+multiple gigawatts (OpenAI ~15 GW once you count the Stargate/Azure/Oracle capacity it
+rents). Ever wondered why their Claude, GPT and Gemini consistently top benchmarks? Now
+you know. By the way, tick in Meta and xAI and you'll see them entering tier 1 too with their
+recent buildouts.
+
+<span style="color:#dc2626"><strong>2. Chinese giants scale fast.</strong></span> Alibaba, ByteDance, Tencent, Huawei and the three state
+telcos are racing from hundreds of MW toward multi-GW, increasingly on domestic Ascend
+silicon and the national "East Data West Compute" grid. They report "computing power" in
+EFLOPS rather than MW, so their points here are estimates, not nameplates.
+
+<span style="color:#d97706"><strong>3. The contenders.</strong></span> Europe's Mistral commands ~90 MW today and aims at 1 GW by 2029, an
+order of magnitude behind the leaders. Observe how the Chinese labs (DeepSeek, Moonshot,
+Zhipu, MiniMax) have no longstanding compute : they are pure-play : they rent or get
+allocations from government capacity for specific efforts. DeepSeek (~90 MW, the only one
+that owns its cluster) is the largest.
 
 ## Boring calculations
 The per-line derivations, source by source.
@@ -69,13 +75,10 @@ Caveats: the "80 MW French cluster next year" from the testimony has no standalo
 announcement (folded into the 200 MW target); Sweden is 23 not 25 MW; the 1 GW goal leans
 on Campus IA, which Mistral only minority-owns and which is *not* added to Mistral's line.
 
-#### Campus IA (Fouju, Seine-et-Marne)
-~€35B, **1.4 GW** ultimate (RTE: 240 MW by end-2027, +700 MW by end-2029), ~89 ha,
-10-12 buildings. Shareholders: **MGX** (Abu Dhabi, lead), **Bpifrance**, **Mistral**
-(minority), **Nvidia**. Public inquiry 30 Apr-30 May 2026; groundbreaking H2 2026.
-([Polytechnique JV PR](https://www.polytechnique.edu/en/press-room/press-releases/mgx-bpifrance-mistral-ai-and-nvidia-launch-joint-venture-build-europes-largest-ai-campus-france),
-[CNDP dossier](https://www.debatpublic.fr/datacenters-et-infrastructure-de-raccordement-au-reseau-electrique-campus-ia-fouju-7813),
-[DCD](https://www.datacenterdynamics.com/en/news/mgx-bpifrance-nvidia-and-mistral-ai-plan-14gw-paris-data-center-campus/))
+**Campus IA**, the MGX-led joint venture where Mistral is only a minority partner, is a
+~€35 B, **1.4 GW** campus near Paris (RTE grid: 240 MW by end-2027, +700 MW by end-2029),
+backed by MGX (Abu Dhabi, lead), Bpifrance, Mistral and Nvidia. It is *not* added to
+Mistral's line. ([Polytechnique JV PR](https://www.polytechnique.edu/en/press-room/press-releases/mgx-bpifrance-mistral-ai-and-nvidia-launch-joint-venture-build-europes-largest-ai-campus-france), [DCD](https://www.datacenterdynamics.com/en/news/mgx-bpifrance-nvidia-and-mistral-ai-plan-14gw-paris-data-center-campus/))
 
 Other European builds for context: Stargate Norway (Nscale/Aker/OpenAI, 230→520 MW),
 Nebius Finland (310 MW) & Lille (240 MW), EU AI Gigafactories (EuroHPC), EDF ~3 GW of
@@ -147,7 +150,7 @@ counts, their compute is the hyperscaler-cloud fleet above, not double-counted h
 ### Biggest uncertainties
 - Chinese hyperscaler MW is chip-spend-derived; the $/GPU and chip-vs-total-capex split can
   move it ±30-50%. The 2030 points are trend extrapolation.
-- EFLOPS↔MW is not done (precision/generation-dependent); telco EFLOPS double-count leased
-  capacity.
+- A direct EFLOPS→MW conversion is unreliable (precision- and chip-generation-dependent), so
+  we avoid it; telco EFLOPS figures also double-count leased capacity.
 - Tracker future dates (to 2030) are the tracker's own under-construction/announced
   estimates, not guaranteed builds.

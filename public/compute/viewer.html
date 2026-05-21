@@ -18,7 +18,7 @@
   .wrap { display:flex; gap:16px; padding:12px 24px 24px; align-items:flex-start; }
   #chart { flex:1; height:990px; background:var(--panel); border:1px solid var(--line);
            border-radius:10px; }
-  .side { width:300px; max-height:680px; overflow:auto; background:var(--panel);
+  .side { width:300px; max-height:990px; overflow:auto; background:var(--panel);
           border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
   .toolbar { display:flex; gap:8px; margin-bottom:10px; }
   .toolbar button { flex:1; padding:6px 8px; font-size:12px; border:1px solid var(--line);
@@ -60,14 +60,10 @@
 <div class="wrap" id="app" style="display:none">
   <div id="chart"></div>
   <div class="side">
-    <div class="toolbar" style="margin-bottom:12px;">
+    <div class="toolbar" style="margin-bottom:12px; flex-wrap:wrap; align-items:center;">
       <label class="row" style="gap:6px;"><input type="checkbox" id="logscale"/> Log scale</label>
-      <label class="row" style="gap:6px; font-weight:600;"><input type="checkbox" id="rented" checked/> Count rented capacity</label>
-    </div>
-    <div class="horizon" style="margin-bottom:6px;">
-      Attribute by:
-      <label><input type="radio" name="mode" value="user" checked/> User</label>
-      <label><input type="radio" name="mode" value="provider"/> Provider</label>
+      <label class="row" style="gap:6px; font-weight:600;"><input type="checkbox" id="rented" checked/> Include rented capacity</label>
+      <button id="resetbounds" title="Reset date range" style="flex:none; display:inline-flex; align-items:center; gap:5px; padding:5px 9px; font-size:12px; color:#334155; border:1px solid var(--line); background:#f1f5f9; border-radius:6px; cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Reset bounds</button>
     </div>
     <div class="horizon">Drag the slider beneath the chart to set the date range (both ends).
       Source: <span style="color:#16a34a;font-weight:600">official</span> ·
@@ -75,6 +71,11 @@
       <span style="color:#d97706;font-weight:600">own estimate</span></div>
     <div id="checks"></div>
     <div class="scale">MW = megawatts of data-center power.</div>
+    <div class="horizon" style="margin-top:12px; padding-top:10px; border-top:1px solid var(--line);">
+      Attribute by:
+      <label><input type="radio" name="mode" value="user" checked/> User</label>
+      <label><input type="radio" name="mode" value="provider"/> Provider</label>
+    </div>
   </div>
 </div>
 
@@ -261,44 +262,69 @@ function splitToday(points){
 const SRC_LABEL = { official: 'Official source', epoch: 'Epoch AI estimate', estimate: 'Own estimate' };
 const SRC_COLOR = { official: '#16a34a', epoch: '#34d2b9', estimate: '#d97706' };
 
-// Three tier bands (affine trapezoids). Bounds = each tier's min/max at the current
-// x-axis edges (+ margin); at the RIGHT edge the tiers are forced not to overlap.
-// Colours match the bold tier headings in the blog post.
+// Three tier bands (affine trapezoids). Corner values [lo, up] in MW are hand-set at a
+// fixed left anchor (end-2023) and right anchor (Sep 2027), then drawn affine across the
+// current x-axis. Colours match the bold tier headings in the blog post.
+const TIER_LX = new Date('2023-10-01').getTime(), TIER_RX = new Date('2027-09-01').getTime();
+const TIER_LABEL_X = new Date('2027-05-01').getTime();
 const TIERS = [
-  { color: '#2563eb', members: ['OpenAI', 'Anthropic', 'Google DeepMind'] },                       // US champions
-  { color: '#dc2626', members: ['Alibaba (fleet, est.)', 'ByteDance (est.)', 'Tencent (est.)',
-      'Huawei (est.)', 'China Mobile', 'China Telecom', 'China Unicom'] },                          // Chinese giants
-  { color: '#d97706', members: ['Mistral', 'DeepSeek', 'Zhipu / Z.ai', 'Moonshot (Kimi)',
-      'MiniMax', 'StepFun', 'Baichuan', '01.AI (Yi)'] },                                            // The contenders
+  { color: '#2563eb', name: 'Tier 1', l: [80, 240], r: [2800, 7200], labelY: 6000 },  // US champions
+  { color: '#dc2626', name: 'Tier 2', l: [40, 240], r: [600, 2000] },   // Chinese giants
+  { color: '#d97706', name: 'Tier 3', l: [3, 70],   r: [80, 400], labelY: 285 },     // The contenders (label nudged down)
 ];
 let BAND_POLYS = [];
-function tierRange(members, byName, x){
-  const vs = members.map(n => byName[n] ? valueAt(byName[n].data, x) : 0).filter(v => v > 0.001);
-  return vs.length ? { up: Math.max(...vs), lo: Math.min(...vs) } : null;
-}
 function computeBands(){
-  const byName = {}; SERIES.forEach(s => byName[s.name] = s);
-  const lx = view.startMs, rx = view.endMs, M = 0.15;
-  const R = TIERS.map(t => { const r = tierRange(t.members, byName, rx); return r ? { up: r.up*(1+M), lo: r.lo*(1-M) } : null; });
-  // enforce no overlap at the right edge (top tier down)
-  const order = TIERS.map((_, i) => i).filter(i => R[i]).sort((a, b) => R[b].up - R[a].up);
-  for (let k = 1; k < order.length; k++){
-    const cur = R[order[k]], prev = R[order[k-1]];
-    if (cur.up >= prev.lo){ cur.up = prev.lo * 0.97; if (cur.lo >= cur.up) cur.lo = cur.up * 0.55; }
-  }
-  BAND_POLYS = TIERS.map((t, i) => {
-    if (!R[i]) return null;
-    const L = tierRange(t.members, byName, lx);   // no fallback: a not-yet-started tier tapers low at left
-    const lUp = L ? L.up * (1 + M) : R[i].lo * 0.5;
-    const lLo = Math.max((L ? L.lo * (1 - M) : R[i].lo * 0.12), 0.5);
-    return { color: t.color, pts: [[lx, lUp], [rx, R[i].up], [rx, R[i].lo], [lx, lLo]] };
-  }).filter(Boolean);
+  const span = TIER_RX - TIER_LX, lx = view.startMs, rx = view.endMs, N = 40;
+  // geometric (exponential) interpolation: straight on a log axis, exponential curve on linear.
+  const geo = (a, b, x) => Math.max(a * Math.pow(b / a, (x - TIER_LX) / span), 0.5);
+  BAND_POLYS = TIERS.map(t => {
+    const up = [], lo = [];
+    for (let i = 0; i <= N; i++){
+      const x = lx + (rx - lx) * i / N;
+      up.push([x, geo(t.l[1], t.r[1], x)]);
+      lo.push([x, geo(t.l[0], t.r[0], x)]);
+    }
+    return { color: t.color, name: t.name, labelX: TIER_LABEL_X,
+             labelY: t.labelY != null ? t.labelY : geo(t.l[1], t.r[1], TIER_LABEL_X),
+             pts: up.concat(lo.reverse()) };
+  });
 }
 function bandRender(params, api){
   const b = BAND_POLYS[params.dataIndex];
   if (!b) return;
-  return { type: 'polygon', shape: { points: b.pts.map(([t, v]) => api.coord([t, v])) },
+  const poly = { type: 'polygon', transition: 'shape',   // morph smoothly on scale/zoom changes
+    shape: { points: b.pts.map(([t, v]) => api.coord([t, v])) },
     style: { fill: b.color, opacity: 0.10 }, silent: true };
+  const [lxp, lyp] = api.coord([b.labelX, b.labelY]);
+  const label = { type: 'text', silent: true, transition: 'style', style: { text: b.name, x: lxp, y: lyp - 4,
+    fill: b.color, fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 'bold', fontSize: 19,
+    align: 'center', verticalAlign: 'bottom' } };
+  return { type: 'group', children: [poly, label] };
+}
+
+// Company line labels (annotate which line is which), shown only when the line is visible.
+const LINE_LABEL_X = new Date('2027-02-01').getTime();
+const LINE_LABELS = [
+  { name: 'OpenAI', text: 'OpenAI', color: '#000000', x: LINE_LABEL_X, y: 5500 },
+  { name: 'Anthropic', text: 'Anthropic', color: '#D97757', x: LINE_LABEL_X, y: 3000 },
+  { name: 'Google DeepMind', text: 'Google', color: '#4285F4', x: LINE_LABEL_X, y: 3850 },
+];
+let LINE_LABELS_VIS = [];
+function lineLabelRender(params, api){
+  const l = LINE_LABELS_VIS[params.dataIndex];
+  if (!l) return;
+  const [x, y] = api.coord([l.x, l.y]);
+  return { type: 'text', silent: true, style: { text: l.text, x, y, fill: l.color,
+    fontWeight: 'bold', fontSize: 13, align: 'left', verticalAlign: 'middle' } };
+}
+
+// In-plot chart title (left-aligned, two lines, anchored near the top-left of the plot).
+function titleRender(params, api){
+  const [x, y] = api.coord([view.startMs, 7400]);
+  return { type: 'text', silent: true, style: {
+    text: 'The Compute Race\nInstalled and projected power\nper company',
+    x: x + 8, y: y, fill: '#334155', fontFamily: 'Georgia, "Times New Roman", serif',
+    fontWeight: 'bold', fontSize: 23, lineHeight: 28, align: 'left', verticalAlign: 'top' } };
 }
 
 function makeOption(){
@@ -306,6 +332,7 @@ function makeOption(){
   const vis = SERIES.filter(s => visible.has(s.name));
   let yMax = 0;
   for (const s of vis){ const v = valueAt(s.data, view.endMs); if (isFinite(v)) yMax = Math.max(yMax, v); }
+  yMax = Math.max(yMax, ...TIERS.map(t => t.r[1]));    // leave room for the tier bands
   yMax = yMax > 0 ? yMax * 1.05 : 1;
   if (!isFinite(yMax) || yMax > 40000) yMax = 40000;   // guard against blow-ups
 
@@ -319,7 +346,7 @@ function makeOption(){
 
   const series = [];
   for (const s of vis){
-    const isCN = s.group === 'China' || s.group === 'Chinese AI labs';
+    const isCN = s.group === 'Chinese giants' || s.group === 'Chinese pure-play AI labs';
     const hasOwned = s.data.some(p => p.owned > 0);
     if (isCN && !hasOwned){
       series.push({ name: s.name, type: 'scatter', symbolSize: 11,
@@ -339,11 +366,21 @@ function makeOption(){
     markLine: { symbol: 'none', silent: true,
       label: { formatter: 'today', position: 'insideEndTop', color: '#94a3b8' },
       lineStyle: { color: '#94a3b8', type: 'dashed' }, data: [{ xAxis: TODAYMS }] } });
-  // tier bands drawn behind everything (computed from the current x-axis edges)
-  computeBands();
-  series.unshift({ type: 'custom', name: '__bands__', renderItem: bandRender,
-    data: BAND_POLYS.map((_, i) => i),
-    z: 0, silent: true, tooltip: { show: false }, clip: true, animation: false });
+  // tier bands drawn behind everything (computed from the current x-axis edges).
+  // Tiers are an attribution-by-user concept, so don't draw them in the by-provider view.
+  if (mode !== 'provider') {
+    computeBands();
+    series.unshift({ type: 'custom', name: '__bands__', renderItem: bandRender,
+      data: BAND_POLYS.map((_, i) => i),
+      z: 0, silent: true, tooltip: { show: false }, clip: true,
+      animationDurationUpdate: 300, animationEasingUpdate: 'cubicOut' });
+  }
+
+  LINE_LABELS_VIS = log ? [] : LINE_LABELS.filter(l => visible.has(l.name));   // hide company labels on log scale
+  series.push({ type: 'custom', name: '__linelabels__', renderItem: lineLabelRender,
+    data: LINE_LABELS_VIS.map((_, i) => i), z: 6, silent: true, tooltip: { show: false }, clip: true });
+  series.push({ type: 'custom', name: '__title__', renderItem: titleRender,
+    data: [0], z: 7, silent: true, tooltip: { show: false }, clip: true });
 
   return {
     animationDuration: 250,
@@ -371,10 +408,9 @@ function makeOption(){
         startValue: view.startMs, endValue: view.endMs,
         labelFormatter: v => new Date(v).getFullYear() },
     ],
-    xAxis: { type: 'time', boundaryGap: false, axisLabel: { fontSize: 13 } },
-    yAxis: { type: log ? 'log' : 'value', name: 'Installed power', nameGap: 52,
-      nameLocation: 'middle', nameTextStyle: { fontSize: 14 }, min: log ? 1 : 0, max: log ? null : yMax,
-      axisLabel: { fontSize: 13, formatter: v => v >= 1000 ? (v / 1000) + ' GW' : v + ' MW' } },
+    xAxis: { type: 'time', boundaryGap: false, axisLabel: { fontSize: 16 } },
+    yAxis: { type: log ? 'log' : 'value', min: log ? 1 : 0, max: yMax,
+      axisLabel: { fontSize: 13, showMaxLabel: false, formatter: v => v >= 1000 ? (v / 1000) + ' GW' : v + ' MW' } },
     series,
   };
 }
@@ -423,6 +459,10 @@ function initUI(){
 
   document.getElementById('logscale').onchange = render;
   document.getElementById('rented').onchange = e => { countRented = e.target.checked; buildChecks(); render(); };
+  document.getElementById('resetbounds').onclick = () => {
+    view = { startMs: new Date('2023-10-01').getTime(), endMs: new Date('2027-09-01').getTime() };
+    render();
+  };
   document.querySelectorAll('input[name=mode]').forEach(r => r.onchange = () => {
     mode = r.value; assemble(); buildChecks(); render();
   });

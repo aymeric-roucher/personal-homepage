@@ -117,7 +117,8 @@ export const parseContentForDisplay = (content: string) => {
   return {
     title: frontmatter.title || '',
     date: frontmatter.date || '',
-    content: mainContent
+    content: mainContent,
+    toc: frontmatter.toc !== 'false'   // table of contents on by default; "toc: false" disables it
   };
 };
 

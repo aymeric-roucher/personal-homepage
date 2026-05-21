@@ -21,7 +21,7 @@ const ContentPage = () => {
   // If :type param is not in the route definition (e.g. /blog/:slug), infer it from pathname
   const type = typeParam || location.pathname.split("/")[1];
   const navigate = useNavigate();
-  const [parsedContent, setParsedContent] = useState<{title: string; date: string; content: string} | null>(null);
+  const [parsedContent, setParsedContent] = useState<{title: string; date: string; content: string; toc?: boolean} | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -360,7 +360,7 @@ const ContentPage = () => {
         <div className="hidden lg:block lg:col-span-3">
           {/* Empty spacer to align TOC with article start */}
           <div className="h-32"></div>
-          {type === 'blog' && parsedContent?.content && (
+          {type === 'blog' && parsedContent?.toc !== false && parsedContent?.content && (
             <TableOfContents content={parsedContent.content} />
           )}
         </div>

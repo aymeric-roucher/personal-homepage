@@ -16,18 +16,18 @@
   "defaultHidden": ["China Mobile", "China Telecom", "China Unicom", "Microsoft", "xAI", "Other / undisclosed", "Meta", "Baichuan", "01.AI (Yi)"],
   "groupsUser": {
     "US AI labs & hyperscalers": ["OpenAI", "Anthropic", "Google DeepMind", "Meta", "xAI", "Microsoft"],
-    "Other / undisclosed": ["Other / undisclosed", "Cursor", "G42"],
     "Europe (Mistral)": ["Mistral"],
-    "China": [],
-    "Chinese AI labs": []
+    "Chinese giants": [],
+    "Chinese pure-play AI labs": [],
+    "Other / undisclosed": ["Other / undisclosed", "Cursor", "G42"]
   },
   "groupsProvider": {
     "US hyperscalers": ["Google", "Microsoft", "Amazon", "Meta", "Oracle", "xAI"],
     "Neoclouds & colocation": ["CoreWeave", "Fluidstack", "Nscale", "QTS", "STACK", "Stream", "Vantage", "EdgeCore"],
     "Gulf / Stargate": ["G42", "SoftBank"],
     "Europe (Mistral)": ["Mistral"],
-    "China": [],
-    "Chinese AI labs": []
+    "Chinese giants": [],
+    "Chinese pure-play AI labs": []
   },
   "brand": {
     "OpenAI": "#000000", "Anthropic": "#D97757", "Google DeepMind": "#4285F4",
@@ -53,75 +53,75 @@
       { "date": "2027-12-01", "owned": 67, "rented": 133, "src": "official", "url": "https://www.tahawultech.com/industry/mistral-ai-plans-to-build-200mw-of-data-centre-compute-capacity/", "note": "Stated target: 200 MW across Europe by end-2027 (owned Essonne+Sweden ~67 MW, rest rented/contracted)" },
       { "date": "2029-12-01", "owned": 67, "rented": 933, "src": "official", "url": "https://techcrunch.com/2026/03/30/mistral-ai-raises-830m-in-debt-to-set-up-a-data-center-near-paris/", "note": "Mensch stated goal: ~1 GW by 2029 (Assemblee Nationale). Beyond owned sites via rented / Campus IA offtake" }
     ]},
-    { "name": "China Mobile", "group": "China", "data": [
+    { "name": "China Mobile", "group": "Chinese giants", "data": [
       { "date": "2024-04-01", "owned": 130, "rented": 0, "src": "official", "url": "https://www.chinaservicesinfo.com/s/202408/21/WS66c83cb0498ed2d7b7eb791e/chinas-largest-ai-computing-center-to-be-launched-in-harbin.html", "note": "Hohhot intelligent-computing center, ~130 MW nameplate" },
       { "date": "2024-08-01", "owned": 250, "rented": 0, "src": "official", "url": "https://www.chinaservicesinfo.com/s/202408/21/WS66c83cb0498ed2d7b7eb791e/chinas-largest-ai-computing-center-to-be-launched-in-harbin.html", "note": "+ Harbin ultra-large cluster ~120 MW (130 + 120 = 250)" },
       { "date": "2025-12-01", "owned": 600, "rented": 0, "src": "estimate", "url": "https://global.chinadaily.com.cn/a/202510/12/WS68eba3fda310f735438b4827.html", "note": "~61 EFLOPS across 13 nodes; EFLOPS-implied ~ 600 MW (rough)" },
       { "date": "2028-12-01", "owned": 1500, "rented": 0, "src": "estimate", "url": "https://global.chinadaily.com.cn/a/202510/12/WS68eba3fda310f735438b4827.html", "note": "Stated target 100 EFLOPS / 100k-card clusters by 2028; extrapolated to ~1.5 GW" }
     ]},
-    { "name": "China Telecom", "group": "China", "data": [
+    { "name": "China Telecom", "group": "Chinese giants", "data": [
       { "date": "2024-01-01", "owned": 150, "rented": 0, "src": "official", "url": "https://www.tomshardware.com/null/chinas-first-natively-built-supercomputer-goes-online-the-central-intelligent-computing-center-is-liquid-cooled-and-built-for-ai", "note": "Inner Mongolia DC ~150 MW (largest single China Telecom facility)" },
       { "date": "2024-12-01", "owned": 500, "rented": 0, "src": "estimate", "url": "https://www.tomshardware.com/null/chinas-first-natively-built-supercomputer-goes-online-the-central-intelligent-computing-center-is-liquid-cooled-and-built-for-ai", "note": "~21 EFLOPS own + pooled (Xirang) + Wuhan central ICC; EFLOPS-implied ~ 500 MW" },
       { "date": "2030-12-01", "owned": 1500, "rented": 0, "src": "estimate", "url": "https://www.tomshardware.com/null/chinas-first-natively-built-supercomputer-goes-online-the-central-intelligent-computing-center-is-liquid-cooled-and-built-for-ai", "note": "National AIDC upgrade, extrapolated to ~1.5 GW" }
     ]},
-    { "name": "China Unicom", "group": "China", "data": [
+    { "name": "China Unicom", "group": "Chinese giants", "data": [
       { "date": "2024-09-01", "owned": 200, "rented": 0, "src": "estimate", "url": "https://www.prnewswire.com/apac/news-releases/china-unicom-free-cash-flow-up-by-nearly-30-302718590.html", "note": "2 x 10k-card centers (Lingang, Hohhot) ~ 100 MW each" },
       { "date": "2025-12-01", "owned": 700, "rented": 0, "src": "official", "url": "https://www.prnewswire.com/apac/news-releases/china-unicom-free-cash-flow-up-by-nearly-30-302718590.html", "note": "7 x ~100 MW-grade AIDC campuses (FY2025 results)" }
     ]},
-    { "name": "Alibaba (fleet, est.)", "group": "China", "data": [
+    { "name": "Alibaba (fleet, est.)", "group": "Chinese giants", "data": [
       { "date": "2024-06-01", "owned": 400, "rented": 0, "src": "estimate", "url": "https://www.alibabagroup.com/en-US/document-1830678592242057216", "note": "Hyperscale cloud fleet, hundreds of MW; order-of-magnitude anchor (no fleet count published)" },
       { "date": "2025-12-01", "owned": 900, "rented": 0, "src": "estimate", "url": "https://www.itiger.com/news/1177639303", "note": "Y380B (2025-27) plan; Morgan Stanley ~Y100B per GW; ~$10B/yr chips ~ 480 MW/yr added" },
       { "date": "2027-12-01", "owned": 1800, "rented": 0, "src": "estimate", "url": "https://www.itiger.com/news/1177639303", "note": "Full Y380B chip portion deployed (chip-spend basis)" },
       { "date": "2030-12-01", "owned": 3000, "rented": 0, "src": "estimate", "url": "https://www.itiger.com/news/1177639303", "note": "Continued spend, extrapolated (weakest point)" }
     ]},
-    { "name": "ByteDance (est.)", "group": "China", "data": [
+    { "name": "ByteDance (est.)", "group": "Chinese giants", "data": [
       { "date": "2024-12-01", "owned": 300, "rented": 0, "src": "estimate", "url": "https://tbreak.com/bytedance-ai-spending-30-billion-2026/", "note": "~230k Hopper ordered 2024 x ~1.1 kW all-in ~ 250 MW (rounded 300)" },
       { "date": "2025-12-01", "owned": 590, "rented": 50, "src": "estimate", "url": "https://tbreak.com/bytedance-ai-spending-30-billion-2026/", "note": "+ ~$7B chips owned + 36k B200 accessed via Malaysia (leased = rented)" },
       { "date": "2026-12-01", "owned": 1250, "rented": 50, "src": "estimate", "url": "https://tbreak.com/bytedance-ai-spending-30-billion-2026/", "note": "2026 chip spend ~$13B at ~48 MW/$1B ~ 620 MW added" },
       { "date": "2030-12-01", "owned": 3450, "rented": 50, "src": "estimate", "url": "https://tbreak.com/bytedance-ai-spending-30-billion-2026/", "note": "Sustained spend, extrapolated" }
     ]},
-    { "name": "Tencent (est.)", "group": "China", "data": [
+    { "name": "Tencent (est.)", "group": "Chinese giants", "data": [
       { "date": "2024-12-01", "owned": 250, "rented": 0, "src": "estimate", "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/tencent-boosts-100000-gpu-capable-hpc-clusters-with-network-optimization", "note": "~230k Nvidia ordered 2024 (analyst); ~half AI-deployed x ~1 kW ~ 250 MW" },
       { "date": "2025-12-01", "owned": 500, "rented": 0, "src": "estimate", "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/tencent-boosts-100000-gpu-capable-hpc-clusters-with-network-optimization", "note": "100k-GPU-capable HCC clusters; partial AI loading" },
       { "date": "2030-12-01", "owned": 1500, "rented": 0, "src": "estimate", "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/tencent-boosts-100000-gpu-capable-hpc-clusters-with-network-optimization", "note": "Continued build, extrapolated" }
     ]},
-    { "name": "Huawei (est.)", "group": "China", "data": [
+    { "name": "Huawei (est.)", "group": "Chinese giants", "data": [
       { "date": "2024-12-01", "owned": 300, "rented": 0, "src": "estimate", "url": "https://semianalysis.com/2025/04/16/huawei-ai-cloudmatrix-384-chinas-answer-to-nvidia-gb200-nvl72/", "note": "~100k Ascend 910B cards x ~3 kW all-in ~ 0.3 GW" },
       { "date": "2025-08-01", "owned": 480, "rented": 0, "src": "estimate", "url": "https://semianalysis.com/2025/04/16/huawei-ai-cloudmatrix-384-chinas-answer-to-nvidia-gb200-nvl72/", "note": "160k-card cluster reported (CloudMatrix384-based) x ~3 kW ~ 0.48 GW" },
       { "date": "2030-12-01", "owned": 2000, "rented": 0, "src": "estimate", "url": "https://semianalysis.com/2025/04/16/huawei-ai-cloudmatrix-384-chinas-answer-to-nvidia-gb200-nvl72/", "note": "Ascend Cloud fleet (Gui'an/Wuhu/...), extrapolated" }
     ]},
-    { "name": "DeepSeek", "group": "Chinese AI labs", "data": [
+    { "name": "DeepSeek", "group": "Chinese pure-play AI labs", "data": [
       { "date": "2022-01-01", "owned": 4, "rented": 0, "src": "official", "url": "https://arxiv.org/abs/2408.14158", "note": "Fire-Flyer II: ~5,000 PCIe A100 (owned); paper measures ~3 MW total" },
       { "date": "2024-09-01", "owned": 10, "rented": 0, "src": "official", "url": "https://arxiv.org/abs/2408.14158", "note": "10,000 A100 cluster (Fire-Flyer AI-HPC paper), owned ~ 7-10 MW" },
       { "date": "2025-01-01", "owned": 70, "rented": 5, "src": "official", "url": "https://semianalysis.com/2025/01/31/deepseek-debates/", "note": "SemiAnalysis: ~50k Hopper + 10k A100, $1.6B server capex. ~20k H100/H800 x1.4 + ~30k H20 x0.9 + 10k A100 x0.7 ~ 62 MW IT, ~75 MW all-in" },
       { "date": "2026-05-01", "owned": 75, "rented": 15, "src": "estimate", "url": "https://semianalysis.com/2025/01/31/deepseek-debates/", "note": "+ Ascend 910C inference racks for the ~143M-MAU app ~ 90 MW commanded [est.]" }
     ]},
-    { "name": "Zhipu / Z.ai", "group": "Chinese AI labs", "data": [
+    { "name": "Zhipu / Z.ai", "group": "Chinese pure-play AI labs", "data": [
       { "date": "2024-06-01", "owned": 0, "rented": 30, "src": "estimate", "url": "https://www.chinatalk.media/p/zhipu-and-minimax-ipo", "note": "National champion on rented Nvidia + cloud (owns no DC; prospectus)" },
       { "date": "2025-06-01", "owned": 0, "rented": 70, "src": "official", "url": "https://www.chinatalk.media/p/zhipu-and-minimax-ipo", "note": "H1-2025 cloud-compute spend Y1.14B (~$160M = 71.8% of R&D); ~$320M/yr at ~$2-3/GPU-hr ~ tens of k GPUs" },
       { "date": "2026-02-01", "owned": 0, "rented": 110, "src": "estimate", "url": "https://www.aicerts.ai/news/zhipu-ai-caps-sign-ups-amid-surging-demand-and-compute-strain/", "note": "~110 MW commanded (GLM API inference, 45M devs). GLM-5 ran on ~100k Ascend = national/borrowed compute (~300 MW, one-off), not Zhipu standing capacity" }
     ]},
-    { "name": "Moonshot (Kimi)", "group": "Chinese AI labs", "data": [
+    { "name": "Moonshot (Kimi)", "group": "Chinese pure-play AI labs", "data": [
       { "date": "2024-10-01", "owned": 0, "rented": 40, "src": "estimate", "url": "https://techcrunch.com/2026/05/07/chinas-moonshot-ai-raises-2b-at-20b-valuation-as-demand-for-open-source-ai-skyrockets/", "note": "Kimi MAU ~36M; ad-driven inference burst (rents Alibaba/Tencent cloud)" },
       { "date": "2025-06-01", "owned": 0, "rented": 60, "src": "estimate", "url": "https://techcrunch.com/2026/05/07/chinas-moonshot-ai-raises-2b-at-20b-valuation-as-demand-for-open-source-ai-skyrockets/", "note": "Kimi K2 (1T-param MoE) training + serving" },
       { "date": "2026-05-01", "owned": 0, "rented": 90, "src": "estimate", "url": "https://techcrunch.com/2026/05/07/chinas-moonshot-ai-raises-2b-at-20b-valuation-as-demand-for-open-source-ai-skyrockets/", "note": "$2B raise @ $20B valuation (~Mistral+); calibrated ~ 90 MW commanded (rents)" }
     ]},
-    { "name": "MiniMax", "group": "Chinese AI labs", "data": [
+    { "name": "MiniMax", "group": "Chinese pure-play AI labs", "data": [
       { "date": "2024-03-01", "owned": 0, "rented": 30, "src": "estimate", "url": "https://www.chinatalk.media/p/zhipu-and-minimax-ipo", "note": "$2.5B val; Talkie ~30M MAU; 'light-asset' (no own clusters, prospectus)" },
       { "date": "2025-06-01", "owned": 0, "rented": 50, "src": "estimate", "url": "https://www.chinatalk.media/p/zhipu-and-minimax-ipo", "note": "Hailuo 02 video gen; text-to-video ~100-1000x GPU/output vs text" },
       { "date": "2026-01-01", "owned": 0, "rented": 80, "src": "estimate", "url": "https://www.chinatalk.media/p/zhipu-and-minimax-ipo", "note": "HK IPO $6.5B; 212M reach; ~$300-400M/yr cloud ~ 80 MW commanded" }
     ]},
-    { "name": "StepFun", "group": "Chinese AI labs", "data": [
+    { "name": "StepFun", "group": "Chinese pure-play AI labs", "data": [
       { "date": "2024-12-01", "owned": 0, "rented": 25, "src": "estimate", "url": "https://technode.com/2026/01/26/shanghai-ai-unicorn-stepfun-raises-over-718-million-in-b-round/", "note": "Trillion-param Step-2 + multimodal (rents)" },
       { "date": "2025-06-01", "owned": 0, "rented": 40, "src": "estimate", "url": "https://technode.com/2026/01/26/shanghai-ai-unicorn-stepfun-raises-over-718-million-in-b-round/", "note": "Step-Video-T2V 300B (video training, GPU-heavy)" },
       { "date": "2026-01-01", "owned": 0, "rented": 55, "src": "estimate", "url": "https://technode.com/2026/01/26/shanghai-ai-unicorn-stepfun-raises-over-718-million-in-b-round/", "note": "$718M raise (mostly compute); ~$4-6B val; calibrated ~ 55 MW" }
     ]},
-    { "name": "Baichuan", "group": "Chinese AI labs", "data": [
+    { "name": "Baichuan", "group": "Chinese pure-play AI labs", "data": [
       { "date": "2024-07-01", "owned": 0, "rented": 20, "src": "estimate", "url": "https://en.tmtpost.com/post/7655398", "note": "$690M raise, AGI-contender era, full LLM training (rents)" },
       { "date": "2025-03-01", "owned": 0, "rented": 12, "src": "estimate", "url": "https://en.tmtpost.com/post/7655398", "note": "Pivot to medical AI; narrows scope" },
       { "date": "2026-02-01", "owned": 0, "rented": 8, "src": "estimate", "url": "https://en.tmtpost.com/post/7655398", "note": "Lightweight medical models (M2 runs on a single RTX 4090) ~ 8 MW" }
     ]},
-    { "name": "01.AI (Yi)", "group": "Chinese AI labs", "data": [
+    { "name": "01.AI (Yi)", "group": "Chinese pure-play AI labs", "data": [
       { "date": "2024-05-01", "owned": 0, "rented": 15, "src": "estimate", "url": "https://kr-asia.com/kai-fu-lee-sets-the-record-straight-on-01-ais-pivot", "note": "Yi-Large era; trained on ~2,000 GPUs (rents; founder says owns no GPUs)" },
       { "date": "2024-12-01", "owned": 0, "rented": 8, "src": "estimate", "url": "https://kr-asia.com/kai-fu-lee-sets-the-record-straight-on-01-ais-pivot", "note": "Pivot: pre-train + infra teams absorbed by Alibaba (Dec 2024)" },
       { "date": "2026-01-01", "owned": 0, "rented": 5, "src": "estimate", "url": "https://kr-asia.com/kai-fu-lee-sets-the-record-straight-on-01-ais-pivot", "note": "Small-model / enterprise focus ~ 5 MW (rents)" }
