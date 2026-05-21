@@ -35,7 +35,7 @@ recent buildouts.
 <span style="color:#dc2626"><strong>2. Chinese giants scale fast.</strong></span> Alibaba, ByteDance, Tencent, Huawei and the three state
 telcos are racing from hundreds of MW toward multi-GW, increasingly on domestic Ascend
 silicon and the national "East Data West Compute" grid. They report "computing power" in
-EFLOPS rather than MW, so their points here are estimates, not nameplates.
+EFLOPS rather than MW, so their points here are estimates, could be quite off the mark.
 
 <span style="color:#d97706"><strong>3. The contenders.</strong></span> Europe's Mistral commands ~90 MW today and aims at 1 GW by 2029, an
 order of magnitude behind the leaders. Observe how the Chinese labs (DeepSeek, Moonshot,
