@@ -1,0 +1,130 @@
+{
+  "today": "2026-05-20",
+  "normalizeUser": {
+    "spacexai": "xAI", "xai": "xAI",
+    "google deepmind": "Google DeepMind", "google": "Google DeepMind",
+    "openai": "OpenAI", "anthropic": "Anthropic", "microsoft": "Microsoft",
+    "meta": "Meta", "alibaba": "Alibaba", "cursor": "Cursor", "g42": "G42"
+  },
+  "normalizeOwner": {
+    "spacexai": "xAI", "coreweave": "CoreWeave", "g42": "G42", "softbank": "SoftBank"
+  },
+  "skipUsers": ["Alibaba"],
+  "skipOwners": ["Alibaba"],
+  "defaultHidden": ["China Mobile", "China Telecom", "China Unicom", "Microsoft", "xAI", "Other / undisclosed", "Meta", "Baichuan", "01.AI (Yi)"],
+  "groupsUser": {
+    "US AI labs & hyperscalers": ["OpenAI", "Anthropic", "Google DeepMind", "Meta", "xAI", "Microsoft"],
+    "Other / undisclosed": ["Other / undisclosed", "Cursor", "G42"],
+    "Europe (Mistral)": ["Mistral"],
+    "China": [],
+    "Chinese AI labs": []
+  },
+  "groupsProvider": {
+    "US hyperscalers": ["Google", "Microsoft", "Amazon", "Meta", "Oracle", "xAI"],
+    "Neoclouds & colocation": ["CoreWeave", "Fluidstack", "Nscale", "QTS", "STACK", "Stream", "Vantage", "EdgeCore"],
+    "Gulf / Stargate": ["G42", "SoftBank"],
+    "Europe (Mistral)": ["Mistral"],
+    "China": [],
+    "Chinese AI labs": []
+  },
+  "brand": {
+    "OpenAI": "#000000", "Anthropic": "#D97757", "Google DeepMind": "#4285F4",
+    "Meta": "#0866FF", "xAI": "#334155", "Microsoft": "#00A4EF",
+    "Cursor": "#6B7280", "G42": "#E4002B", "Other / undisclosed": "#9CA3AF",
+    "Google": "#4285F4", "Amazon": "#FF9900", "Oracle": "#C74634", "CoreWeave": "#00B140",
+    "SoftBank": "#7C3AED", "QTS": "#5B616B", "STACK": "#0EA5E9", "Stream": "#14B8A6",
+    "Vantage": "#8B5CF6", "Fluidstack": "#10B981", "Nscale": "#F43F5E", "EdgeCore": "#A3A3A3",
+    "Mistral": "#FA500F", "Campus IA (Mistral minority)": "#9333EA",
+    "Alibaba (fleet, est.)": "#FF6A00", "ByteDance (est.)": "#325AB4",
+    "Tencent (est.)": "#0052D9", "Huawei (est.)": "#CF0A2C",
+    "China Mobile": "#00A0E9", "China Telecom": "#0066B3", "China Unicom": "#E60012",
+    "DeepSeek": "#4D6BFE", "Zhipu / Z.ai": "#5B5BD6", "Moonshot (Kimi)": "#6E56CF",
+    "StepFun": "#1C7ED6", "MiniMax": "#FF6B6B", "Baichuan": "#2F9E44", "01.AI (Yi)": "#E8590C"
+  },
+  "curatedSeries": [
+    { "name": "Mistral", "group": "Europe (Mistral)", "data": [
+      ["2023-06-01", 0, 5, "~1,500 H100 rented ≈ 3-5 MW [est.]"],
+      ["2024-12-01", 0, 40, "[est.] rented CoreWeave/Azure ramps"],
+      ["2025-07-01", 0, 70, "[est.] Mistral Compute 'tens of thousands of GPUs' (rented)"],
+      ["2026-06-01", 44, 66, "44 MW owned (Essonne) + ~66 MW rented ≈ 110 MW commanded"],
+      ["2027-12-01", 67, 133, "67 MW owned (Essonne+Sweden); 200 MW target incl. rented/contracted"],
+      ["2029-12-01", 67, 933, "~1 GW goal, beyond owned sites via rented/Campus IA offtake"]
+    ]},
+    { "name": "China Mobile", "group": "China", "data": [
+      ["2024-04-01", 130, 0, "Hohhot ICC online (~130 MW nameplate)"],
+      ["2024-08-01", 250, 0, "+ Harbin ultra-cluster (~120 MW)"],
+      ["2025-12-01", 600, 0, "[est.] 13 nodes, ~61 EFLOPS → ~600 MW"],
+      ["2028-12-01", 1500, 0, "[est.] target 100 EFLOPS / 100k-card clusters"]
+    ]},
+    { "name": "China Telecom", "group": "China", "data": [
+      ["2024-01-01", 150, 0, "Inner Mongolia DC (~150 MW)"],
+      ["2024-06-01", 300, 0, "[est.] + Wuhan central ICC online"],
+      ["2024-12-01", 500, 0, "[est.] ~21 EFLOPS own + pooled → ~500 MW"],
+      ["2030-12-01", 1500, 0, "[est.] national AIDC upgrade → ~1.5 GW"]
+    ]},
+    { "name": "China Unicom", "group": "China", "data": [
+      ["2024-09-01", 200, 0, "[est.] 2×10k-card centers (Lingang, Hohhot)"],
+      ["2025-12-01", 700, 0, "7×~100 MW AIDC campuses (45 EFLOPS)"]
+    ]},
+    { "name": "Alibaba (fleet, est.)", "group": "China", "data": [
+      ["2024-06-01", 400, 0, "[est.] hyperscale fleet ~hundreds of MW (no count)"],
+      ["2025-12-01", 900, 0, "[est.] ¥380B plan, ~$10B/yr chips → ~480 MW/yr"],
+      ["2027-12-01", 1800, 0, "[est.] ¥380B (2025-27) chip spend deployed"],
+      ["2030-12-01", 3000, 0, "[est.] continued spend, extrapolated"]
+    ]},
+    { "name": "ByteDance (est.)", "group": "China", "data": [
+      ["2024-12-01", 300, 0, "[est.] ~230k Hopper ordered 2024 × ~1.1 kW ≈ 250 MW"],
+      ["2025-12-01", 590, 50, "[est.] +~$7B chips owned + 36k B200 (Malaysia, leased)"],
+      ["2026-12-01", 1250, 50, "[est.] 2026 chip spend ~$13B → ~620 MW added"],
+      ["2030-12-01", 3450, 50, "[est.] sustained spend, extrapolated"]
+    ]},
+    { "name": "Tencent (est.)", "group": "China", "data": [
+      ["2024-12-01", 250, 0, "[est.] ~230k Nvidia ordered 2024 (analyst)"],
+      ["2025-12-01", 500, 0, "[est.] 100k-GPU-capable HCC clusters"],
+      ["2030-12-01", 1500, 0, "[est.] continued build, extrapolated"]
+    ]},
+    { "name": "Huawei (est.)", "group": "China", "data": [
+      ["2024-12-01", 300, 0, "[est.] Ascend 910B clusters (~100k cards @ ~3 kW)"],
+      ["2025-08-01", 480, 0, "[est.] 160k-card cluster (CloudMatrix384)"],
+      ["2030-12-01", 2000, 0, "[est.] Ascend Cloud fleet (Gui'an/Wuhu/…)"]
+    ]},
+    { "name": "DeepSeek", "group": "Chinese AI labs", "data": [
+      ["2022-01-01", 4, 0, "Fire-Flyer II: ~5,000 A100 ≈ 3.5 MW [owned]"],
+      ["2024-09-01", 10, 0, "10k A100 cluster (Fire-Flyer AI-HPC) [owned]"],
+      ["2025-01-01", 70, 5, "~50k Hopper + 10k A100, $1.6B capex (SemiAnalysis) [owned]"],
+      ["2026-05-01", 75, 15, "+ Ascend 910C inference racks ≈ 90 MW commanded"]
+    ]},
+    { "name": "Zhipu / Z.ai", "group": "Chinese AI labs", "data": [
+      ["2024-06-01", 0, 30, "[est.] national champion, Nvidia + cloud (rents)"],
+      ["2025-01-01", 0, 50, "[est.] on US Entity List → rented Ascend cloud"],
+      ["2025-06-01", 0, 70, "[est.] H1-2025 cloud spend ¥1.14B (~$160M)"],
+      ["2026-02-01", 0, 110, "[est.] ~110 MW commanded (GLM API); GLM-5 ran on ~100k Ascend (national, one-off)"]
+    ]},
+    { "name": "Moonshot (Kimi)", "group": "Chinese AI labs", "data": [
+      ["2024-10-01", 0, 40, "[est.] Kimi MAU ~36M; ad-driven inference burst"],
+      ["2025-06-01", 0, 60, "[est.] Kimi K2 (1T MoE) training + inference"],
+      ["2026-02-01", 0, 75, "[est.] $10B decacorn raise"],
+      ["2026-05-01", 0, 90, "[est.] $2B @ $20B val ≈ 90 MW commanded (rents)"]
+    ]},
+    { "name": "MiniMax", "group": "Chinese AI labs", "data": [
+      ["2024-03-01", 0, 30, "[est.] $2.5B val; Talkie ~30M MAU"],
+      ["2025-06-01", 0, 50, "[est.] Hailuo 02 video (GPU-heavy inference)"],
+      ["2026-01-01", 0, 80, "[est.] HK IPO $6.5B; 212M reach ≈ 80 MW ('light-asset', rents)"]
+    ]},
+    { "name": "StepFun", "group": "Chinese AI labs", "data": [
+      ["2024-12-01", 0, 25, "[est.] Step-2 1T + multimodal"],
+      ["2025-06-01", 0, 40, "[est.] Step-Video-T2V 300B (video training)"],
+      ["2026-01-01", 0, 55, "[est.] $718M raise ≈ 55 MW commanded (rents)"]
+    ]},
+    { "name": "Baichuan", "group": "Chinese AI labs", "data": [
+      ["2024-07-01", 0, 20, "[est.] $690M raise, AGI-contender era"],
+      ["2025-03-01", 0, 12, "[est.] pivot to medical AI"],
+      ["2026-02-01", 0, 8, "[est.] lightweight medical models ≈ 8 MW (rents)"]
+    ]},
+    { "name": "01.AI (Yi)", "group": "Chinese AI labs", "data": [
+      ["2024-05-01", 0, 15, "[est.] Yi-Large era, ~2,000-GPU runs"],
+      ["2024-12-01", 0, 8, "[est.] pivot; teams absorbed by Alibaba"],
+      ["2026-01-01", 0, 5, "[est.] small-model focus ≈ 5 MW (rents, no owned GPUs)"]
+    ]}
+  ]
+}

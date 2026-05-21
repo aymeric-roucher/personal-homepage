@@ -277,12 +277,12 @@ const ContentPage = () => {
                   <p>Your browser does not support the video tag. <a href={src} target="_blank" rel="noopener noreferrer">Click here to view the video directly</a>.</p>
                 </video>
               ),
-              iframe: ({ src, ...props }) => (
+              iframe: ({ src, height, ...props }) => (
                 <iframe
                   {...props}
                   src={src}
                   className="w-full my-6 rounded-lg"
-                  style={{ border: 'none', height: '570px' }}
+                  style={{ border: 'none', height: height ? `${height}px` : '570px' }}
                 />
               ),
               div: ({ className, children, ...props }) => {

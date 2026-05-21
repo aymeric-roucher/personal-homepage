@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Datacenter buildout around the world, by user</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+  :root { --panel:#fff; --muted:#64748b; --line:#e2e8f0; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+         color:#0f172a; background:#f8fafc; }
+  /* zoom the HTML chrome only, NOT the chart (CSS zoom breaks ECharts mouse math) */
+  header, .side { zoom:1.12; }
+  header { padding:18px 24px 6px; }
+  header h1 { margin:0; font-size:20px; }
+  header p { margin:4px 0 0; color:var(--muted); font-size:13px; max-width:980px; }
+  .wrap { display:flex; gap:16px; padding:12px 24px 24px; align-items:flex-start; }
+  #chart { flex:1; height:760px; background:var(--panel); border:1px solid var(--line);
+           border-radius:10px; }
+  .side { width:300px; max-height:680px; overflow:auto; background:var(--panel);
+          border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+  .toolbar { display:flex; gap:8px; margin-bottom:10px; }
+  .toolbar button { flex:1; padding:6px 8px; font-size:12px; border:1px solid var(--line);
+                    background:#f1f5f9; border-radius:6px; cursor:pointer; }
+  .toolbar button:hover { background:#e2e8f0; }
+  .horizon { margin:2px 0 12px; font-size:12px; color:var(--muted); }
+  .horizon input { width:100%; margin-top:4px; }
+  .group { margin-bottom:12px; }
+  .group h3 { margin:0 0 6px; font-size:12px; text-transform:uppercase; letter-spacing:.04em;
+              color:var(--muted); display:flex; justify-content:space-between; cursor:pointer; }
+  .group h3 span.tog { color:#2563eb; font-weight:400; text-transform:none; letter-spacing:0; }
+  label.row { display:flex; align-items:center; gap:8px; padding:3px 2px; font-size:13px;
+              cursor:pointer; border-radius:5px; }
+  label.row:hover { background:#f8fafc; }
+  .swatch { width:12px; height:12px; border-radius:3px; flex:none; }
+  .nm { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .mw { color:var(--muted); font-variant-numeric:tabular-nums; font-size:12px; }
+  .scale { font-size:12px; color:var(--muted); margin-top:6px; }
+  #err { display:none; margin:24px; padding:16px; border:1px solid #fca5a5; background:#fef2f2;
+         border-radius:10px; color:#991b1b; font-size:14px; }
+  code { background:#f1f5f9; padding:1px 5px; border-radius:4px; }
+  @media (max-width: 820px){
+    .wrap { flex-direction:column; }
+    .side { width:100%; max-height:340px; }
+    #chart { height:460px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Datacenter buildout around the world</h1>
+  <p>Installed power (MW) over time, by the <b>user/tenant</b> running the compute (toggle
+  User/Provider). Solid = up to today, dashed = projected. <b>Count rented capacity</b>
+  adds what each entity rents vs owns. Estimates &amp; method: see README.</p>
+</header>
+
+<div id="err"></div>
+
+<div class="wrap" id="app" style="display:none">
+  <div id="chart"></div>
+  <div class="side">
+    <div class="toolbar">
+      <button id="all">All</button>
+      <button id="none">None</button>
+      <label class="row" style="flex:1;justify-content:center;gap:6px;">
+        <input type="checkbox" id="logscale"/> log scale
+      </label>
+    </div>
+    <label class="row rented" style="gap:8px; font-weight:600; margin-bottom:10px;">
+      <input type="checkbox" id="rented" checked/> count rented capacity
+    </label>
+    <div class="horizon" style="margin-bottom:6px;">
+      Attribute by:
+      <label><input type="radio" name="mode" value="user" checked/> User</label>
+      <label><input type="radio" name="mode" value="provider"/> Provider</label>
+    </div>
+    <div class="horizon">Drag the slider beneath the chart to set the date range (both ends).</div>
+    <div id="checks"></div>
+    <div class="scale">MW = megawatts of data-center power.</div>
+  </div>
+</div>
+
+<script>
+// ----------------------------- CSV (RFC 4180) ----------------------------- //
+function parseCSV(text){
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);  // strip BOM
+  const rows = []; let row = [], field = '', inQ = false, i = 0;
+  while (i < text.length){
+    const c = text[i];
+    if (inQ){
+      if (c === '"'){ if (text[i+1] === '"'){ field += '"'; i += 2; continue; } inQ = false; i++; continue; }
+      field += c; i++; continue;
+    }
+    if (c === '"'){ inQ = true; i++; continue; }
+    if (c === ','){ row.push(field); field = ''; i++; continue; }
+    if (c === '\r'){ i++; continue; }
+    if (c === '\n'){ row.push(field); rows.push(row); row = []; field = ''; i++; continue; }
+    field += c; i++;
+  }
+  if (field.length || row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+function toObjects(rows){
+  const head = rows[0].map(h => h.trim());
+  return rows.slice(1).filter(r => r.length > 1).map(r => {
+    const o = {}; head.forEach((h, j) => o[h] = (r[j] ?? '').trim()); return o;
+  });
+}
+const numEU = x => parseFloat((x || '0').replace(',', '.')) || 0;  // decimal-comma aware
+
+// ------------------------------- main ------------------------------------- //
+let chart, CURATED, SERIES, TRACKER, MAXMS, TODAYMS, todayD, maxD, view;
+let mode = 'user';
+let countRented = true;          // "count rented capacity" toggle
+let visible = new Set();         // view = {startMs, endMs} x-axis window (2-handle slider)
+
+// Each datapoint is [t, owned, rented]; the plotted value depends on the toggle.
+const effOf = d => d[1] + (countRented ? (d[2] || 0) : 0);
+const effData = s => s.data.map(d => [d[0], effOf(d)]);
+
+async function load(){
+  let timelineTxt, snapshotTxt;
+  try {
+    const bust = '?t=' + Date.now();   // avoid stale browser cache on refresh
+    [timelineTxt, snapshotTxt, CURATED] = await Promise.all([
+      fetch('data/datacenters_timeline.csv' + bust).then(r => { if(!r.ok) throw 0; return r.text(); }),
+      fetch('data/datacenters_snapshot.csv' + bust).then(r => { if(!r.ok) throw 0; return r.text(); }),
+      fetch('curated.json' + bust).then(r => { if(!r.ok) throw 0; return r.json(); }),
+    ]);
+  } catch (e){
+    document.getElementById('err').style.display = 'block';
+    document.getElementById('err').innerHTML =
+      "Couldn't read the source files. Browsers block <code>fetch()</code> of local files when " +
+      "you double-click an HTML file. Serve this folder instead:<br><br>" +
+      "<code>cd Compute &amp;&amp; python3 -m http.server 8000</code><br>" +
+      "then open <code>http://localhost:8000/viewer.html</code> (or use <code>npx serve</code>).";
+    return;
+  }
+  buildSeries(timelineTxt, snapshotTxt);
+  initUI();
+}
+
+function groupsForMode(){ return mode === 'provider' ? CURATED.groupsProvider : CURATED.groupsUser; }
+function groupOf(name){
+  for (const [g, members] of Object.entries(groupsForMode())) if (members.includes(name)) return g;
+  return 'Other';
+}
+
+// Parse CSVs once; precompute BOTH the by-user and by-owner tracker aggregations.
+function buildSeries(timelineTxt, snapshotTxt){
+  const snap = toObjects(parseCSV(snapshotTxt));
+  const tl = toObjects(parseCSV(timelineTxt));
+
+  // facility -> tenant and facility -> owner
+  const userOf = {}, ownerOf = {};
+  for (const r of snap){
+    const u = (r['Users'] || '').split(',')[0].split('#')[0].trim();
+    userOf[r['Name']] = u ? (CURATED.normalizeUser[u.toLowerCase()] || u) : 'Other / undisclosed';
+    let o = (r['Owner'] || '').split('#')[0].trim();
+    if (!o) o = (r['Name'] || '').split(' ')[0];   // colo: attribute to operator
+    ownerOf[r['Name']] = CURATED.normalizeOwner[o.toLowerCase()] || o;
+  }
+
+  // facility -> sorted [{t, v}] trajectory
+  const traj = {};
+  for (const r of tl){
+    if (!r['Date']) continue;
+    (traj[r['Data center']] = traj[r['Data center']] || []).push(
+      { t: new Date(r['Date']).getTime(), v: numEU(r['Power (MW)']) });
+  }
+  for (const k in traj) traj[k].sort((a, b) => a.t - b.t);
+
+  const allT = [...new Set(Object.values(traj).flat().map(p => p.t))].sort((a, b) => a - b);
+  const facPower = (obs, when) => { let v = 0; for (const p of obs){ if (p.t <= when) v = p.v; else break; } return v; };
+
+  // Split each tenant's capacity into owned (Owner==key) vs rented (Owner!=key).
+  // In provider mode the key IS the owner, so everything is owned.
+  const aggregate = (keyOf, skip, byUser) => {
+    const owned = {}, rented = {};
+    for (const [fac, obs] of Object.entries(traj)){
+      const k = keyOf[fac] || 'Other / undisclosed';
+      if (skip.includes(k)) continue;
+      const isOwned = !byUser || ownerOf[fac] === k;
+      const o = owned[k] = owned[k] || allT.map(() => 0);
+      const r = rented[k] = rented[k] || allT.map(() => 0);
+      const tgt = isOwned ? o : r;
+      allT.forEach((t, i) => { tgt[i] += facPower(obs, t); });
+    }
+    const names = new Set([...Object.keys(owned), ...Object.keys(rented)]);
+    return [...names].map(name => {
+      const o = owned[name] || allT.map(() => 0), r = rented[name] || allT.map(() => 0);
+      return { name, data: allT.map((t, i) => [t, Math.round(o[i]*10)/10, Math.round(r[i]*10)/10]) };
+    }).filter(s => Math.max(...s.data.map(d => d[1] + d[2])) > 0);
+  };
+
+  TRACKER = {
+    user: aggregate(userOf, CURATED.skipUsers, true),
+    provider: aggregate(ownerOf, CURATED.skipOwners, false),
+  };
+
+  TODAYMS = new Date(CURATED.today).getTime();
+  todayD = new Date(CURATED.today);
+  const curatedMax = Math.max(...CURATED.curatedSeries.flatMap(s => s.data.map(d => new Date(d[0]).getTime())));
+  MAXMS = Math.max(curatedMax, ...allT);
+  maxD = new Date(MAXMS);
+  view = { startMs: new Date('2023-10-01').getTime(), endMs: new Date('2027-09-01').getTime() };
+  assemble();
+}
+
+// Build the active SERIES list = chosen tracker aggregation + curated, coloured.
+// Series data is [t, owned, rented]; labels held separately.
+function assemble(){
+  const mk = (name, data, group, emphasize) => ({
+    name, group: group ?? groupOf(name), emphasize: emphasize ?? false,
+    width: name === 'Mistral' ? 3 : 2,
+    data: data.map(d => [d[0], d[1], d[2] || 0]),
+    labels: data.map(d => d[3] || ''),
+  });
+  const out = [];
+  for (const s of TRACKER[mode]) out.push(mk(s.name, s.data));
+  for (const s of CURATED.curatedSeries)
+    out.push(mk(s.name, s.data.map(d => [new Date(d[0]).getTime(), d[1], d[2], d[3]]), s.group, true));
+
+  const finalEff = s => effOf(s.data[s.data.length-1]);
+  const order = [...Object.keys(groupsForMode()), 'Other'];
+  out.sort((a, b) => order.indexOf(a.group) - order.indexOf(b.group) || finalEff(b) - finalEff(a));
+  const palette = ["#2563eb","#16a34a","#ea580c","#0891b2","#ca8a04","#db2777","#65a30d","#b45309"];
+  let f = 0;
+  for (const s of out) s.color = CURATED.brand[s.name] || palette[f++ % palette.length];
+
+  SERIES = out;
+  const hidden = new Set(CURATED.defaultHidden || []);
+  visible = new Set(SERIES.filter(s => !hidden.has(s.name)).map(s => s.name));
+}
+
+// linear-interpolated value of a series at timestamp ts (0 before it exists)
+function valueAt(data, ts){
+  if (ts <= data[0][0]) return ts < data[0][0] ? 0 : data[0][1];
+  for (let i = 1; i < data.length; i++){
+    if (ts <= data[i][0]){
+      const [t0, v0] = data[i-1], [t1, v1] = data[i];
+      return t1 === t0 ? v1 : v0 + (v1 - v0) * (ts - t0) / (t1 - t0);
+    }
+  }
+  return data[data.length-1][1];
+}
+
+// Y-axis ceiling for the visible window's right edge (peak touches the top).
+function yMaxFor(endMs){
+  let m = 0;
+  for (const s of SERIES.filter(s => visible.has(s.name))) m = Math.max(m, valueAt(effData(s), endMs));
+  return m > 0 ? m * 1.02 : 1;
+}
+
+// Split a series at TODAY into a solid (past) and dashed (future) segment, bridged
+// by an interpolated point at today so the two join seamlessly.
+function splitToday(data){
+  const tnow = TODAYMS, past = [], future = [];
+  for (const [t, v] of data){ if (t <= tnow) past.push([t, v]); if (t >= tnow) future.push([t, v]); }
+  const first = data[0][0], last = data[data.length-1][0];
+  if (tnow > first && tnow < last){
+    const vNow = valueAt(data, tnow);
+    if (past.length && past[past.length-1][0] < tnow) past.push([tnow, vNow]);
+    if (future.length && future[0][0] > tnow) future.unshift([tnow, vNow]);
+  }
+  return { past, future };
+}
+
+function makeOption(){
+  const log = document.getElementById('logscale').checked;
+  const vis = SERIES.filter(s => visible.has(s.name));
+  const yMax = yMaxFor(view.endMs);
+
+  const conv = arr => arr.map(d => [d[0], log && d[1] <= 0 ? null : d[1]]);
+  const series = [];
+  for (const s of vis){
+    const eff = effData(s);
+    // Pure-rented Chinese entities (no owned/installed power) = point-in-time dots.
+    // Anything with owned power (incl. Chinese) renders as a line.
+    const isCN = s.group === 'China' || s.group === 'Chinese AI labs';
+    const hasOwned = s.data.some(d => d[1] > 0);
+    if (isCN && !hasOwned){
+      series.push({ name: s.name, type: 'scatter', symbolSize: 10,
+        itemStyle: { color: s.color, borderColor: '#fff', borderWidth: 1 },
+        emphasis: { focus: 'series' }, data: conv(eff) });
+      continue;
+    }
+    const { past, future } = splitToday(eff);
+    const base = { type: 'line', showSymbol: s.emphasize, symbolSize: 6, smooth: false,
+      connectNulls: true, itemStyle: { color: s.color }, emphasis: { focus: 'series' } };
+    if (past.length) series.push({ ...base, name: s.name, data: conv(past),
+      lineStyle: { width: s.width, type: 'solid', color: s.color } });
+    if (future.length) series.push({ ...base, name: s.name, data: conv(future),
+      lineStyle: { width: s.width, type: 'dashed', color: s.color } });
+  }
+  series.push({ type: 'line', name: '__today__', data: [], silent: true, tooltip: { show: false },
+    markLine: { symbol: 'none', silent: true,
+      label: { formatter: 'today', position: 'insideEndTop', color: '#94a3b8' },
+      lineStyle: { color: '#94a3b8', type: 'dashed' }, data: [{ xAxis: TODAYMS }] } });
+
+  return {
+    animationDuration: 250,
+    textStyle: { fontSize: 14 },
+    grid: { left: 78, right: 24, top: 18, bottom: 82 },
+    tooltip: { trigger: 'axis', confine: true, axisPointer: { type: 'cross' },
+      textStyle: { fontSize: 13 },
+      formatter: ps => {
+        const seen = {};                       // dedupe: each line is solid+dashed (same name)
+        ps.forEach(p => { if (p.value && p.value[1] != null && !(p.seriesName in seen)) seen[p.seriesName] = p; });
+        const arr = Object.values(seen).sort((a, b) => b.value[1] - a.value[1]);
+        if (!arr.length) return '';
+        const d = new Date(arr[0].value[0]).toLocaleString('en', { month: 'short', year: 'numeric' });
+        return `<b>${d}</b><br>` + arr.map(p =>
+          `${p.marker}${p.seriesName}: <b>${Number(p.value[1]).toLocaleString()}</b> MW`).join('<br>');
+      } },
+    legend: { show: false },
+    dataZoom: [
+      { type: 'inside', filterMode: 'none', startValue: view.startMs, endValue: view.endMs },
+      { type: 'slider', filterMode: 'none', height: 24, bottom: 16,
+        startValue: view.startMs, endValue: view.endMs,
+        labelFormatter: v => new Date(v).getFullYear() },
+    ],
+    xAxis: { type: 'time', boundaryGap: false, axisLabel: { fontSize: 13 } },
+    yAxis: { type: log ? 'log' : 'value', name: 'Installed power', nameGap: 52,
+      nameLocation: 'middle', nameTextStyle: { fontSize: 14 }, min: log ? 1 : 0, max: log ? null : yMax,
+      axisLabel: { fontSize: 13, formatter: v => v >= 1000 ? (v / 1000) + ' GW' : v + ' MW' } },
+    series,
+  };
+}
+function render(){ chart.setOption(makeOption(), true); }
+
+const finalMW = s => effOf(s.data[s.data.length-1]);
+function syncAll(){
+  document.querySelectorAll('#checks input[type=checkbox]').forEach(cb => cb.checked = visible.has(cb.dataset.name));
+  render();
+}
+function buildChecks(){
+  const host = document.getElementById('checks');
+  host.innerHTML = '';
+  const byGroup = {};
+  SERIES.forEach(s => (byGroup[s.group] = byGroup[s.group] || []).push(s));
+  [...Object.keys(groupsForMode()), 'Other'].forEach(g => {
+    const items = byGroup[g]; if (!items) return;
+    items.sort((a, b) => finalMW(b) - finalMW(a));
+    const div = document.createElement('div'); div.className = 'group';
+    const h = document.createElement('h3');
+    h.innerHTML = `<span>${g}</span><span class="tog">toggle</span>`;
+    h.onclick = () => { const any = items.some(s => !visible.has(s.name));
+      items.forEach(s => any ? visible.add(s.name) : visible.delete(s.name)); syncAll(); };
+    div.appendChild(h);
+    items.forEach(s => {
+      const lab = document.createElement('label'); lab.className = 'row';
+      const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = visible.has(s.name); cb.dataset.name = s.name;
+      cb.onchange = () => { cb.checked ? visible.add(s.name) : visible.delete(s.name); render(); };
+      const sw = document.createElement('span'); sw.className = 'swatch'; sw.style.background = s.color;
+      const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = s.name;
+      const mw = document.createElement('span'); mw.className = 'mw';
+      mw.textContent = finalMW(s) >= 1000 ? (finalMW(s)/1000).toFixed(1)+' GW' : Math.round(finalMW(s))+' MW';
+      lab.append(cb, sw, nm, mw); div.appendChild(lab);
+    });
+    host.appendChild(div);
+  });
+}
+
+function initUI(){
+  document.getElementById('app').style.display = 'flex';
+  chart = echarts.init(document.getElementById('chart'));
+  buildChecks();
+
+  document.getElementById('all').onclick = () => { SERIES.forEach(s => visible.add(s.name)); syncAll(); };
+  document.getElementById('none').onclick = () => { visible.clear(); syncAll(); };
+  document.getElementById('logscale').onchange = render;
+  document.getElementById('rented').onchange = e => { countRented = e.target.checked; buildChecks(); render(); };
+  document.querySelectorAll('input[name=mode]').forEach(r => r.onchange = () => {
+    mode = r.value; assemble(); buildChecks(); render();
+  });
+
+  // 2-handle range slider (dataZoom): track current window + rescale Y to its right edge.
+  chart.on('dataZoom', () => {
+    const ext = chart.getModel().getComponent('xAxis', 0).axis.scale.getExtent();
+    view.startMs = ext[0]; view.endMs = ext[1];
+    if (!document.getElementById('logscale').checked)
+      chart.setOption({ yAxis: { max: yMaxFor(view.endMs) } });
+  });
+
+  window.addEventListener('resize', () => chart.resize());
+  render();
+}
+
+load();
+</script>
+</body>
+</html>
