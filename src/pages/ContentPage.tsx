@@ -256,6 +256,16 @@ const ContentPage = () => {
               td: ({ node, children, ...props }) => (
                 <td {...props} className="px-3 py-2 border border-border align-top text-foreground/80">{children}</td>
               ),
+              span: ({ node, style, children, ...props }) => {
+                const st = typeof style === 'string'
+                  ? Object.fromEntries(style.split(';').filter(Boolean).map((r) => {
+                      const i = r.indexOf(':');
+                      const k = r.slice(0, i).trim().replace(/-([a-z])/g, (_m, c) => c.toUpperCase());
+                      return [k, r.slice(i + 1).trim()];
+                    }))
+                  : style;
+                return <span {...props} style={st as React.CSSProperties}>{children}</span>;
+              },
               blockquote: ({ children }) => (
                 <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">
                   {children}

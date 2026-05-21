@@ -16,7 +16,7 @@
   header h1 { margin:0; font-size:20px; }
   header p { margin:4px 0 0; color:var(--muted); font-size:13px; max-width:980px; }
   .wrap { display:flex; gap:16px; padding:12px 24px 24px; align-items:flex-start; }
-  #chart { flex:1; height:760px; background:var(--panel); border:1px solid var(--line);
+  #chart { flex:1; height:990px; background:var(--panel); border:1px solid var(--line);
            border-radius:10px; }
   .side { width:300px; max-height:680px; overflow:auto; background:var(--panel);
           border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
@@ -42,7 +42,7 @@
   @media (max-width: 820px){
     .wrap { flex-direction:column; align-items:stretch; }   /* stretch so chart gets full width */
     .side { width:100%; max-height:340px; }
-    #chart { flex:none; height:460px; width:100%; }          /* flex:1 would collapse height in a column */
+    #chart { flex:none; height:600px; width:100%; }          /* flex:1 would collapse height in a column */
   }
 </style>
 </head>
@@ -261,6 +261,22 @@ function splitToday(points){
 const SRC_LABEL = { official: 'Official source', epoch: 'Epoch AI estimate', estimate: 'Own estimate' };
 const SRC_COLOR = { official: '#16a34a', epoch: '#34d2b9', estimate: '#d97706' };
 
+// Three tier bands (trapezoids), roughly covering each tier's trajectories with leeway.
+// Colours match the bold tier headings in the blog post.
+const T0 = new Date('2023-01-01').getTime(), T1 = new Date('2030-12-01').getTime();
+const TIER_BANDS = [
+  { color: '#2563eb', up: [[T0, 800], [T1, 17000]], lo: [[T0, 100], [T1, 2200]] },  // US champions
+  { color: '#dc2626', up: [[T0, 500], [T1, 4500]],  lo: [[T0, 70],  [T1, 600]] },   // Chinese giants
+  { color: '#d97706', up: [[T0, 60],  [T1, 1200]],  lo: [[T0, 2],   [T1, 45]] },    // The contenders
+];
+function bandRender(params, api){
+  const b = TIER_BANDS[params.dataIndex];
+  const pts = [];
+  b.up.forEach(([t, v]) => pts.push(api.coord([t, v])));
+  for (let i = b.lo.length - 1; i >= 0; i--) pts.push(api.coord([b.lo[i][0], b.lo[i][1]]));
+  return { type: 'polygon', shape: { points: pts }, style: { fill: b.color, opacity: 0.08 }, silent: true };
+}
+
 function makeOption(){
   const log = document.getElementById('logscale').checked;
   const vis = SERIES.filter(s => visible.has(s.name));
@@ -298,6 +314,9 @@ function makeOption(){
     markLine: { symbol: 'none', silent: true,
       label: { formatter: 'today', position: 'insideEndTop', color: '#94a3b8' },
       lineStyle: { color: '#94a3b8', type: 'dashed' }, data: [{ xAxis: TODAYMS }] } });
+  // tier bands drawn behind everything
+  series.unshift({ type: 'custom', name: '__bands__', renderItem: bandRender, data: [0, 1, 2],
+    z: 0, silent: true, tooltip: { show: false }, clip: true, animation: false });
 
   return {
     animationDuration: 250,

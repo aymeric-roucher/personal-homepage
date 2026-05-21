@@ -8,7 +8,7 @@ url: datacenter-buildout
 
 Compute is the new oil, and the map of who controls it is being drawn right now. Below is an interactive look at AI data-center buildout: **who is installing how much power (in megawatts), where, and when.** Every player sits on a single axis, so you can compare the US hyperscalers, Europe's Mistral, and China's giants and labs at a glance. Hover any point for its source and how the number was derived; click a point to open that source.
 
-<iframe src="/compute/viewer.html?v=7" height="950"></iframe>
+<iframe src="/compute/viewer.html?v=8" height="1240"></iframe>
 
 *Tip: the labs sit at tens of MW while the US players reach gigawatts, flip on **log scale** to see everyone at once.*
 
@@ -24,15 +24,15 @@ On top of that:
 
 ## The three tiers : US champions, Chinese giants, Contenders
 
-1. **US champions lead the compute race.** Anthropic, OpenAI and Google each command
+1. <span style="color:#2563eb"><strong>US champions lead the compute race.</strong></span> Anthropic, OpenAI and Google each command
    multiple gigawatts (OpenAI ~15 GW once you count the Stargate/Azure/Oracle capacity it
    rents). Ever wondered why their Claude, GPT and Gemini consistently top benchmarks? Now
    you know.
-2. **Chinese giants scale fast.** Alibaba, ByteDance, Tencent, Huawei and the three state
+2. <span style="color:#dc2626"><strong>Chinese giants scale fast.</strong></span> Alibaba, ByteDance, Tencent, Huawei and the three state
    telcos are racing from hundreds of MW toward multi-GW, increasingly on domestic Ascend
    silicon and the national "East Data West Compute" grid. They report "computing power" in
    EFLOPS rather than MW, so their points here are estimates, not nameplates.
-3. **The contenders.** Europe's Mistral commands ~90 MW today and aims at 1 GW by 2029, an
+3. <span style="color:#d97706"><strong>The contenders.</strong></span> Europe's Mistral commands ~90 MW today and aims at 1 GW by 2029, an
    order of magnitude behind the leaders. The Chinese pure-play labs (DeepSeek, Moonshot,
    Zhipu, MiniMax) run on tens of MW, mostly rented; DeepSeek (~90 MW, the only one that owns
    its cluster) is the largest.

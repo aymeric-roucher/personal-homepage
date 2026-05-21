@@ -1,6 +1,12 @@
 https://m-ric.com/
 https://m-ric.com/blog
 https://m-ric.com/projects
+https://m-ric.com/projects/wine-price-prediction
+https://m-ric.com/projects/smollm3
+https://m-ric.com/projects/smolagents
+https://m-ric.com/projects/smolagents copy
+https://m-ric.com/projects/screensuite
+https://m-ric.com/projects/open-computer-agent
 https://m-ric.com/blog/ultra-endurance-data-science
 https://m-ric.com/blog/humanitys-role-in-global-warming
 https://m-ric.com/blog/how-producthunt-botched-our-launch
@@ -9,9 +15,3 @@ https://m-ric.com/blog/eu-agricultural-policy
 https://m-ric.com/blog/datacenter-buildout
 https://m-ric.com/blog/bordeaux-vineyard-climate
 https://m-ric.com/blog/agents-autonomy-explodes
-https://m-ric.com/projects/wine-price-prediction
-https://m-ric.com/projects/smollm3
-https://m-ric.com/projects/smolagents
-https://m-ric.com/projects/smolagents copy
-https://m-ric.com/projects/screensuite
-https://m-ric.com/projects/open-computer-agent
