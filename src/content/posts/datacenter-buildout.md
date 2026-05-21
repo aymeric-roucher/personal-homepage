@@ -13,27 +13,14 @@ Compute is the new oil, and the map of who controls it is being drawn right now.
 *Tip: the labs sit at tens of MW while the US players reach gigawatts, flip on **log scale** to see everyone at once.*
 
 ## Method
-- **Attribution toggles between USER and PROVIDER.** In *User* mode each tracked
-  facility is attributed to its primary tenant from the `Users` column (e.g.
-  Microsoft/Oracle/SoftBank/G42 → **OpenAI**; Amazon → **Anthropic**; Google →
-  **Google DeepMind**; Colossus → **xAI**). In *Provider* mode it is attributed to the
-  `Owner` (blank owners = colocation → the operator). Entities with owned/installed power
-  render as lines; pure-renting Chinese labs render as point-in-time dots.
-- **Source tagging.** Every point carries a source: the US/tracker lines come from the
-  [Epoch AI](https://epoch.ai/data/data-centers) frontier-data-center tracker; curated
-  points are tagged 🟢 *official* (a published figure) or 🟠 *own estimate* (modelled), with
-  the derivation in the tooltip.
-- **Chip-count → MW** (for Chinese players, which don't publish fleet MW):
-  `~48 MW per $1B of AI-chip spend` (~40k GPUs/$1B × ~1.2 kW all-in), anchored to the
-  hard "~230k Hopper ordered in 2024" figures. Per-GPU all-in power:
+We started from [Epoch AI](https://epoch.ai/data/data-centers) data, which provides:
+- per-facility installed power (MW) over time for the world's frontier data centers,
+- each facility's owner and its users (tenants).
 
-  | Accelerator | All-in power | Notes |
-  |---|---|---|
-  | A100 / A800 | ~0.7 kW | board ~0.4 kW × PUE/overhead |
-  | H100 / H800 | ~1.4 kW | board ~0.7 kW × overhead |
-  | H20 | ~0.9 kW | board ~0.4 kW × overhead |
-  | Huawei Ascend 910B/C | ~3 kW | cluster-level incl. cooling (CloudMatrix384 = 384 chips @ 559 kW) |
-  | ¥ → $ | ~¥7 per $1 | for capex conversions |
+On top of that:
+- **User vs Provider** toggle: credit each facility to its tenant (OpenAI, Anthropic, Google DeepMind, xAI...) or to its owner.
+- **Curated lines** add players Epoch doesn't track (Mistral, the Chinese giants and labs), each point tagged 🟢 *official* or 🟠 *own estimate*, with its derivation in the tooltip.
+- **Chip-count → MW** where fleet MW isn't published: ~48 MW per $1B of AI-chip spend; per-GPU all-in ~0.7 kW (A100), ~1.4 kW (H100/H800), ~0.9 kW (H20), ~3 kW (Ascend 910B/C).
 
 ## The three tiers : US champions, Chinese giants, Contenders
 
@@ -50,7 +37,10 @@ Compute is the new oil, and the map of who controls it is being drawn right now.
    Zhipu, MiniMax) run on tens of MW, mostly rented; DeepSeek (~90 MW, the only one that owns
    its cluster) is the largest.
 
-## Mistral (Europe), the testimony in numbers
+## Boring calculations
+The per-line derivations, source by source.
+
+### Mistral (Europe), the testimony in numbers
 From Arthur Mensch's Assemblée Nationale hearing, verified/expanded by web search.
 
 | Date | Project | Capacity | Status | Source |
@@ -79,7 +69,7 @@ Caveats: the "80 MW French cluster next year" from the testimony has no standalo
 announcement (folded into the 200 MW target); Sweden is 23 not 25 MW; the 1 GW goal leans
 on Campus IA, which Mistral only minority-owns and which is *not* added to Mistral's line.
 
-### Campus IA (Fouju, Seine-et-Marne)
+#### Campus IA (Fouju, Seine-et-Marne)
 ~€35B, **1.4 GW** ultimate (RTE: 240 MW by end-2027, +700 MW by end-2029), ~89 ha,
 10-12 buildings. Shareholders: **MGX** (Abu Dhabi, lead), **Bpifrance**, **Mistral**
 (minority), **Nvidia**. Public inquiry 30 Apr-30 May 2026; groundbreaking H2 2026.
@@ -91,7 +81,7 @@ Other European builds for context: Stargate Norway (Nscale/Aker/OpenAI, 230→52
 Nebius Finland (310 MW) & Lille (240 MW), EU AI Gigafactories (EuroHPC), EDF ~3 GW of
 nuclear-powered sites offered.
 
-## China, hyperscalers & telcos
+### China, hyperscalers & telcos
 China reports "intelligent computing power" in **EFLOPS** (FP16-class, blended, partly
 leased), rarely MW, so most lines are estimates. National context: MIIT reports ~788 EFLOPS
 intelligent compute (end-H1 2025); total DC power ~32 GW (2025) → ~40 GW (2026) [Rystad];
@@ -116,7 +106,7 @@ points are trend extrapolation.**
 | **China Telecom** | 2024 → 150 (hard); 2030 → 1,500 [est.] | Inner Mongolia DC ~150 MW; + Wuhan ICC + pooled (Xirang) | [Tom's Hardware](https://www.tomshardware.com/null/chinas-first-natively-built-supercomputer-goes-online-the-central-intelligent-computing-center-is-liquid-cooled-and-built-for-ai) |
 | **China Unicom** | 2024 → 200 [est.]; 2025 → 700 (mostly hard) | 7 × ~100 MW AIDC campuses (FY2025). Excludes Unicom's 2,650 MW *total* DC reserve (general+AI) | [PRNewswire](https://www.prnewswire.com/apac/news-releases/china-unicom-free-cash-flow-up-by-nearly-30-302718590.html) |
 
-## Chinese AI labs, total commanded (owned + rented, est.)
+### Chinese AI labs, total commanded (owned + rented, est.)
 Lab-scale once you count their standing **inference** fleets (the dominant load for popular
 apps), not just a single training run, calibrated by valuation / user-scale / cloud-spend
 since none disclose chip counts. **Only DeepSeek owns hardware** (Fire-Flyer); the rest rent,
@@ -135,7 +125,7 @@ so all except DeepSeek render as dots.
 Note: Alibaba's Qwen, Tencent's Hunyuan and ByteDance's Seed publish **no** training chip
 counts, their compute is the hyperscaler-cloud fleet above, not double-counted here.
 
-## Biggest uncertainties
+### Biggest uncertainties
 - Chinese hyperscaler MW is chip-spend-derived; the $/GPU and chip-vs-total-capex split can
   move it ±30-50%. The 2030 points are trend extrapolation.
 - EFLOPS↔MW is not done (precision/generation-dependent); telco EFLOPS double-count leased
