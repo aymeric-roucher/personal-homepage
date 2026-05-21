@@ -278,7 +278,7 @@ function tierRange(members, byName, x){
 }
 function computeBands(){
   const byName = {}; SERIES.forEach(s => byName[s.name] = s);
-  const lx = view.startMs, rx = view.endMs, M = 0.12;
+  const lx = view.startMs, rx = view.endMs, M = 0.15;
   const R = TIERS.map(t => { const r = tierRange(t.members, byName, rx); return r ? { up: r.up*(1+M), lo: r.lo*(1-M) } : null; });
   // enforce no overlap at the right edge (top tier down)
   const order = TIERS.map((_, i) => i).filter(i => R[i]).sort((a, b) => R[b].up - R[a].up);
@@ -288,8 +288,9 @@ function computeBands(){
   }
   BAND_POLYS = TIERS.map((t, i) => {
     if (!R[i]) return null;
-    const L = tierRange(t.members, byName, lx) || R[i];
-    const lUp = L.up * (1 + M), lLo = Math.max(L.lo * (1 - M), 0.5);
+    const L = tierRange(t.members, byName, lx);   // no fallback: a not-yet-started tier tapers low at left
+    const lUp = L ? L.up * (1 + M) : R[i].lo * 0.5;
+    const lLo = Math.max((L ? L.lo * (1 - M) : R[i].lo * 0.12), 0.5);
     return { color: t.color, pts: [[lx, lUp], [rx, R[i].up], [rx, R[i].lo], [lx, lLo]] };
   }).filter(Boolean);
 }
@@ -304,8 +305,9 @@ function makeOption(){
   const log = document.getElementById('logscale').checked;
   const vis = SERIES.filter(s => visible.has(s.name));
   let yMax = 0;
-  for (const s of vis) yMax = Math.max(yMax, valueAt(s.data, view.endMs));
-  yMax = yMax > 0 ? yMax * 1.02 : 1;
+  for (const s of vis){ const v = valueAt(s.data, view.endMs); if (isFinite(v)) yMax = Math.max(yMax, v); }
+  yMax = yMax > 0 ? yMax * 1.05 : 1;
+  if (!isFinite(yMax) || yMax > 40000) yMax = 40000;   // guard against blow-ups
 
   const toData = arr => arr.map(p => {
     const v = effOf(p);
