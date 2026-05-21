@@ -43,7 +43,7 @@
   @media (max-width: 820px){
     .wrap { flex-direction:column; }
     .side { width:100%; max-height:340px; }
-    #chart { height:460px; }
+    #chart { flex:none; height:460px; }   /* flex:1 would collapse height in a column */
   }
 </style>
 </head>
@@ -386,6 +386,9 @@ function initUI(){
 
   window.addEventListener('resize', () => chart.resize());
   render();
+  // In an iframe the container may finish sizing after init; resize once layout settles.
+  requestAnimationFrame(() => chart.resize());
+  setTimeout(() => chart.resize(), 300);
 }
 
 load();
