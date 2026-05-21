@@ -40,7 +40,7 @@ On top of that:
 ## Boring calculations
 The per-line derivations, source by source.
 
-### Mistral (Europe), the testimony in numbers
+### Mistral (Europe)
 From Arthur Mensch's Assemblée Nationale hearing, verified/expanded by web search.
 
 | Date | Project | Capacity | Status | Source |
