@@ -8,7 +8,7 @@ url: datacenter-buildout
 
 Compute is the new oil, and the map of who controls it is being drawn right now. Below is an interactive look at AI data-center buildout: **who is installing how much power (in megawatts), where, and when.** Every player sits on a single axis, so you can compare the US hyperscalers, Europe's Mistral, and China's giants and labs at a glance. Hover any point for its source and how the number was derived; click a point to open that source.
 
-<iframe src="/compute/viewer.html?v=6" height="950"></iframe>
+<iframe src="/compute/viewer.html?v=7" height="950"></iframe>
 
 *Tip: the labs sit at tens of MW while the US players reach gigawatts, flip on **log scale** to see everyone at once.*
 
@@ -19,7 +19,7 @@ We started from [Epoch AI](https://epoch.ai/data/data-centers) data, which provi
 
 On top of that:
 - **User vs Provider** toggle: credit each facility to its tenant (OpenAI, Anthropic, Google DeepMind, xAI...) or to its owner.
-- **Curated lines** add players Epoch doesn't track (Mistral, the Chinese giants and labs), each point tagged 🟢 *official* or 🟠 *own estimate*, with its derivation in the tooltip.
+- **Curated lines** add players Epoch doesn't track (Mistral, the Chinese giants and labs). Every point is tagged by source, 🟢 *official*, 🔵 *Epoch AI*, or 🟠 *own estimate*, and shows its derivation in the tooltip (click a point to open the source).
 - **Chip-count → MW** where fleet MW isn't published: ~48 MW per $1B of AI-chip spend; per-GPU all-in ~0.7 kW (A100), ~1.4 kW (H100/H800), ~0.9 kW (H20), ~3 kW (Ascend 910B/C).
 
 ## The three tiers : US champions, Chinese giants, Contenders

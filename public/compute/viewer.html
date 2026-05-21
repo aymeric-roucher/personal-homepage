@@ -60,14 +60,10 @@
 <div class="wrap" id="app" style="display:none">
   <div id="chart"></div>
   <div class="side">
-    <div class="toolbar">
-      <label class="row" style="flex:1;justify-content:center;gap:6px;">
-        <input type="checkbox" id="logscale"/> log scale
-      </label>
+    <div class="toolbar" style="margin-bottom:12px;">
+      <label class="row" style="gap:6px;"><input type="checkbox" id="logscale"/> Log scale</label>
+      <label class="row" style="gap:6px; font-weight:600;"><input type="checkbox" id="rented" checked/> Count rented capacity</label>
     </div>
-    <label class="row rented" style="gap:8px; font-weight:600; margin-bottom:10px;">
-      <input type="checkbox" id="rented" checked/> count rented capacity
-    </label>
     <div class="horizon" style="margin-bottom:6px;">
       Attribute by:
       <label><input type="radio" name="mode" value="user" checked/> User</label>
