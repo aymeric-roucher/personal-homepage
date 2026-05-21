@@ -12,6 +12,7 @@
   },
   "skipUsers": ["Alibaba"],
   "skipOwners": ["Alibaba"],
+  "userOwnsOwners": { "Google DeepMind": ["Google"] },
   "defaultHidden": ["China Mobile", "China Telecom", "China Unicom", "Microsoft", "xAI", "Other / undisclosed", "Meta", "Baichuan", "01.AI (Yi)"],
   "groupsUser": {
     "US AI labs & hyperscalers": ["OpenAI", "Anthropic", "Google DeepMind", "Meta", "xAI", "Microsoft"],
