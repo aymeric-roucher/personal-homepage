@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Datacenter buildout around the world, by user</title>
+<title>Datacenter buildout around the world</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <style>
   :root { --panel:#fff; --muted:#64748b; --line:#e2e8f0; }
@@ -25,7 +25,6 @@
                     background:#f1f5f9; border-radius:6px; cursor:pointer; }
   .toolbar button:hover { background:#e2e8f0; }
   .horizon { margin:2px 0 12px; font-size:12px; color:var(--muted); }
-  .horizon input { width:100%; margin-top:4px; }
   .group { margin-bottom:12px; }
   .group h3 { margin:0 0 6px; font-size:12px; text-transform:uppercase; letter-spacing:.04em;
               color:var(--muted); display:flex; justify-content:space-between; cursor:pointer; }
@@ -52,7 +51,8 @@
   <h1>Datacenter buildout around the world</h1>
   <p>Installed power (MW) over time, by the <b>user/tenant</b> running the compute (toggle
   User/Provider). Solid = up to today, dashed = projected. <b>Count rented capacity</b>
-  adds what each entity rents vs owns. Estimates &amp; method: see README.</p>
+  adds what each entity rents vs owns. <b>Hover any point</b> for its source and how the
+  number was derived. Estimates &amp; method: see README.</p>
 </header>
 
 <div id="err"></div>
@@ -75,7 +75,10 @@
       <label><input type="radio" name="mode" value="user" checked/> User</label>
       <label><input type="radio" name="mode" value="provider"/> Provider</label>
     </div>
-    <div class="horizon">Drag the slider beneath the chart to set the date range (both ends).</div>
+    <div class="horizon">Drag the slider beneath the chart to set the date range (both ends).
+      Source: <span style="color:#16a34a;font-weight:600">official</span> ·
+      <span style="color:#34d2b9;font-weight:600">Epoch AI</span> ·
+      <span style="color:#d97706;font-weight:600">own estimate</span></div>
     <div id="checks"></div>
     <div class="scale">MW = megawatts of data-center power.</div>
   </div>
@@ -110,14 +113,13 @@ function toObjects(rows){
 const numEU = x => parseFloat((x || '0').replace(',', '.')) || 0;  // decimal-comma aware
 
 // ------------------------------- main ------------------------------------- //
-let chart, CURATED, SERIES, TRACKER, MAXMS, TODAYMS, todayD, maxD, view;
+let chart, CURATED, SERIES, TRACKER, MAXMS, TODAYMS, todayD, maxD, view, EPOCH_URL;
 let mode = 'user';
 let countRented = true;          // "count rented capacity" toggle
 let visible = new Set();         // view = {startMs, endMs} x-axis window (2-handle slider)
 
-// Each datapoint is [t, owned, rented]; the plotted value depends on the toggle.
-const effOf = d => d[1] + (countRented ? (d[2] || 0) : 0);
-const effData = s => s.data.map(d => [d[0], effOf(d)]);
+// Each datapoint object is {t, owned, rented, src, url, note}; plotted value = owned (+ rented if toggled).
+const effOf = p => p.bridge ? p._eff : (p.owned + (countRented ? (p.rented || 0) : 0));
 
 async function load(){
   let timelineTxt, snapshotTxt;
@@ -137,6 +139,7 @@ async function load(){
       "then open <code>http://localhost:8000/viewer.html</code> (or use <code>npx serve</code>).";
     return;
   }
+  EPOCH_URL = CURATED.epochUrl || 'https://epoch.ai/data/data-centers';
   buildSeries(timelineTxt, snapshotTxt);
   initUI();
 }
@@ -148,11 +151,11 @@ function groupOf(name){
 }
 
 // Parse CSVs once; precompute BOTH the by-user and by-owner tracker aggregations.
+// Tracker points are Epoch AI tracker data, deduped to value-change dates.
 function buildSeries(timelineTxt, snapshotTxt){
   const snap = toObjects(parseCSV(snapshotTxt));
   const tl = toObjects(parseCSV(timelineTxt));
 
-  // facility -> tenant and facility -> owner
   const userOf = {}, ownerOf = {};
   for (const r of snap){
     const u = (r['Users'] || '').split(',')[0].split('#')[0].trim();
@@ -162,7 +165,6 @@ function buildSeries(timelineTxt, snapshotTxt){
     ownerOf[r['Name']] = CURATED.normalizeOwner[o.toLowerCase()] || o;
   }
 
-  // facility -> sorted [{t, v}] trajectory
   const traj = {};
   for (const r of tl){
     if (!r['Date']) continue;
@@ -174,8 +176,6 @@ function buildSeries(timelineTxt, snapshotTxt){
   const allT = [...new Set(Object.values(traj).flat().map(p => p.t))].sort((a, b) => a - b);
   const facPower = (obs, when) => { let v = 0; for (const p of obs){ if (p.t <= when) v = p.v; else break; } return v; };
 
-  // Split each tenant's capacity into owned (Owner==key) vs rented (Owner!=key).
-  // In provider mode the key IS the owner, so everything is owned.
   const aggregate = (keyOf, skip, byUser) => {
     const owned = {}, rented = {};
     for (const [fac, obs] of Object.entries(traj)){
@@ -188,10 +188,20 @@ function buildSeries(timelineTxt, snapshotTxt){
       allT.forEach((t, i) => { tgt[i] += facPower(obs, t); });
     }
     const names = new Set([...Object.keys(owned), ...Object.keys(rented)]);
-    return [...names].map(name => {
+    const out = [];
+    for (const name of names){
       const o = owned[name] || allT.map(() => 0), r = rented[name] || allT.map(() => 0);
-      return { name, data: allT.map((t, i) => [t, Math.round(o[i]*10)/10, Math.round(r[i]*10)/10]) };
-    }).filter(s => Math.max(...s.data.map(d => d[1] + d[2])) > 0);
+      if (Math.max(...o.map((x, i) => x + r[i])) <= 0) continue;
+      const pts = [];
+      for (let i = 0; i < allT.length; i++){            // dedupe consecutive equal (owned,rented)
+        if (i > 0 && o[i] === o[i-1] && r[i] === r[i-1] && i !== allT.length - 1) continue;
+        pts.push({ t: allT[i], owned: Math.round(o[i]*10)/10, rented: Math.round(r[i]*10)/10,
+                   src: 'epoch', url: EPOCH_URL,
+                   note: "Epoch AI Frontier Data Centers tracker: sum of " + name + "'s tracked facilities at this date" });
+      }
+      out.push({ name, data: pts });
+    }
+    return out;
   };
 
   TRACKER = {
@@ -201,26 +211,21 @@ function buildSeries(timelineTxt, snapshotTxt){
 
   TODAYMS = new Date(CURATED.today).getTime();
   todayD = new Date(CURATED.today);
-  const curatedMax = Math.max(...CURATED.curatedSeries.flatMap(s => s.data.map(d => new Date(d[0]).getTime())));
+  const curatedMax = Math.max(...CURATED.curatedSeries.flatMap(s => s.data.map(p => new Date(p.date).getTime())));
   MAXMS = Math.max(curatedMax, ...allT);
   maxD = new Date(MAXMS);
   view = { startMs: new Date('2023-10-01').getTime(), endMs: new Date('2027-09-01').getTime() };
   assemble();
 }
 
-// Build the active SERIES list = chosen tracker aggregation + curated, coloured.
-// Series data is [t, owned, rented]; labels held separately.
 function assemble(){
-  const mk = (name, data, group, emphasize) => ({
-    name, group: group ?? groupOf(name), emphasize: emphasize ?? false,
-    width: name === 'Mistral' ? 3 : 2,
-    data: data.map(d => [d[0], d[1], d[2] || 0]),
-    labels: data.map(d => d[3] || ''),
-  });
   const out = [];
-  for (const s of TRACKER[mode]) out.push(mk(s.name, s.data));
+  for (const s of TRACKER[mode])
+    out.push({ name: s.name, group: groupOf(s.name), emphasize: false, width: 2, data: s.data });
   for (const s of CURATED.curatedSeries)
-    out.push(mk(s.name, s.data.map(d => [new Date(d[0]).getTime(), d[1], d[2], d[3]]), s.group, true));
+    out.push({ name: s.name, group: s.group, emphasize: true, width: (s.name === 'Mistral' ? 3 : 2),
+      data: s.data.map(p => ({ t: new Date(p.date).getTime(), owned: p.owned, rented: p.rented,
+                               src: p.src, url: p.url, note: p.note })) });
 
   const finalEff = s => effOf(s.data[s.data.length-1]);
   const order = [...Object.keys(groupsForMode()), 'Other'];
@@ -234,64 +239,64 @@ function assemble(){
   visible = new Set(SERIES.filter(s => !hidden.has(s.name)).map(s => s.name));
 }
 
-// linear-interpolated value of a series at timestamp ts (0 before it exists)
-function valueAt(data, ts){
-  if (ts <= data[0][0]) return ts < data[0][0] ? 0 : data[0][1];
-  for (let i = 1; i < data.length; i++){
-    if (ts <= data[i][0]){
-      const [t0, v0] = data[i-1], [t1, v1] = data[i];
-      return t1 === t0 ? v1 : v0 + (v1 - v0) * (ts - t0) / (t1 - t0);
+// linear-interpolated effective value at timestamp ts (0 before the series exists)
+function valueAt(points, ts){
+  if (ts <= points[0].t) return ts < points[0].t ? 0 : effOf(points[0]);
+  for (let i = 1; i < points.length; i++){
+    if (ts <= points[i].t){
+      const a = points[i-1], b = points[i], va = effOf(a), vb = effOf(b);
+      return b.t === a.t ? vb : va + (vb - va) * (ts - a.t) / (b.t - a.t);
     }
   }
-  return data[data.length-1][1];
+  return effOf(points[points.length-1]);
 }
 
-// Y-axis ceiling for the visible window's right edge (peak touches the top).
-function yMaxFor(endMs){
-  let m = 0;
-  for (const s of SERIES.filter(s => visible.has(s.name))) m = Math.max(m, valueAt(effData(s), endMs));
-  return m > 0 ? m * 1.02 : 1;
-}
-
-// Split a series at TODAY into a solid (past) and dashed (future) segment, bridged
-// by an interpolated point at today so the two join seamlessly.
-function splitToday(data){
+// Split at TODAY into solid (past) + dashed (future) point arrays, bridged at today.
+function splitToday(points){
   const tnow = TODAYMS, past = [], future = [];
-  for (const [t, v] of data){ if (t <= tnow) past.push([t, v]); if (t >= tnow) future.push([t, v]); }
-  const first = data[0][0], last = data[data.length-1][0];
+  for (const p of points){ if (p.t <= tnow) past.push(p); if (p.t >= tnow) future.push(p); }
+  const first = points[0].t, last = points[points.length-1].t;
   if (tnow > first && tnow < last){
-    const vNow = valueAt(data, tnow);
-    if (past.length && past[past.length-1][0] < tnow) past.push([tnow, vNow]);
-    if (future.length && future[0][0] > tnow) future.unshift([tnow, vNow]);
+    const bridge = { t: tnow, bridge: true, _eff: valueAt(points, tnow) };
+    if (past.length && past[past.length-1].t < tnow) past.push(bridge);
+    if (future.length && future[0].t > tnow) future.unshift(bridge);
   }
   return { past, future };
 }
 
+const SRC_LABEL = { official: 'Official source', epoch: 'Epoch AI estimate', estimate: 'Own estimate' };
+const SRC_COLOR = { official: '#16a34a', epoch: '#34d2b9', estimate: '#d97706' };
+
 function makeOption(){
   const log = document.getElementById('logscale').checked;
   const vis = SERIES.filter(s => visible.has(s.name));
-  const yMax = yMaxFor(view.endMs);
+  let yMax = 0;
+  for (const s of vis) yMax = Math.max(yMax, valueAt(s.data, view.endMs));
+  yMax = yMax > 0 ? yMax * 1.02 : 1;
 
-  const conv = arr => arr.map(d => [d[0], log && d[1] <= 0 ? null : d[1]]);
+  const toData = arr => arr.map(p => {
+    const v = effOf(p);
+    return { value: [p.t, log && v <= 0 ? null : v],
+             src: p.src, url: p.url, note: p.bridge ? '(interpolated between dated points)' : p.note,
+             symbolSize: p.bridge ? 0 : 8 };
+  });
+
   const series = [];
   for (const s of vis){
-    const eff = effData(s);
-    // Pure-rented Chinese entities (no owned/installed power) = point-in-time dots.
-    // Anything with owned power (incl. Chinese) renders as a line.
     const isCN = s.group === 'China' || s.group === 'Chinese AI labs';
-    const hasOwned = s.data.some(d => d[1] > 0);
+    const hasOwned = s.data.some(p => p.owned > 0);
     if (isCN && !hasOwned){
-      series.push({ name: s.name, type: 'scatter', symbolSize: 10,
+      series.push({ name: s.name, type: 'scatter', symbolSize: 11,
         itemStyle: { color: s.color, borderColor: '#fff', borderWidth: 1 },
-        emphasis: { focus: 'series' }, data: conv(eff) });
+        emphasis: { focus: 'series' }, data: toData(s.data) });
       continue;
     }
-    const { past, future } = splitToday(eff);
-    const base = { type: 'line', showSymbol: s.emphasize, symbolSize: 6, smooth: false,
-      connectNulls: true, itemStyle: { color: s.color }, emphasis: { focus: 'series' } };
-    if (past.length) series.push({ ...base, name: s.name, data: conv(past),
+    const { past, future } = splitToday(s.data);
+    const base = { type: 'line', showSymbol: true, smooth: false, connectNulls: true,
+      itemStyle: { color: s.color }, emphasis: { focus: 'series' } };
+    if (past.length) series.push({ ...base, name: s.name, data: toData(past),
       lineStyle: { width: s.width, type: 'solid', color: s.color } });
-    if (future.length) series.push({ ...base, name: s.name, data: conv(future),
+    if (future.length) series.push({ ...base, name: s.name, data: toData(future),
       lineStyle: { width: s.width, type: 'dashed', color: s.color } });
   }
   series.push({ type: 'line', name: '__today__', data: [], silent: true, tooltip: { show: false },
@@ -303,17 +308,21 @@ function makeOption(){
     animationDuration: 250,
     textStyle: { fontSize: 14 },
     grid: { left: 78, right: 24, top: 18, bottom: 82 },
-    tooltip: { trigger: 'axis', confine: true, axisPointer: { type: 'cross' },
-      textStyle: { fontSize: 13 },
-      formatter: ps => {
-        const seen = {};                       // dedupe: each line is solid+dashed (same name)
-        ps.forEach(p => { if (p.value && p.value[1] != null && !(p.seriesName in seen)) seen[p.seriesName] = p; });
-        const arr = Object.values(seen).sort((a, b) => b.value[1] - a.value[1]);
-        if (!arr.length) return '';
-        const d = new Date(arr[0].value[0]).toLocaleString('en', { month: 'short', year: 'numeric' });
-        return `<b>${d}</b><br>` + arr.map(p =>
-          `${p.marker}${p.seriesName}: <b>${Number(p.value[1]).toLocaleString()}</b> MW`).join('<br>');
-      } },
+    tooltip: {
+      trigger: 'item', confine: true,
+      extraCssText: 'max-width:320px; white-space:normal; line-height:1.45;',
+      formatter: p => {
+        if (!p.data || !p.data.value || p.data.value[1] == null) return '';
+        const dt = new Date(p.data.value[0]).toLocaleString('en', { month: 'short', year: 'numeric' });
+        const mw = Number(p.data.value[1]).toLocaleString();
+        const s = p.data.src || 'estimate';
+        let h = `<b>${p.seriesName}</b>, ${dt}<br><b>${mw} MW</b>`;
+        h += `<br><span style="color:${SRC_COLOR[s] || '#d97706'}; font-weight:600">${SRC_LABEL[s] || 'Own estimate'}</span>`;
+        if (p.data.note) h += `<br><span style="color:#475569; font-size:12px">${p.data.note}</span>`;
+        if (p.data.url) h += `<br><span style="color:#2563eb">click point to open source &#8599;</span>`;
+        return h;
+      },
+    },
     legend: { show: false },
     dataZoom: [
       { type: 'inside', filterMode: 'none', startValue: view.startMs, endValue: view.endMs },
@@ -368,6 +377,9 @@ function initUI(){
   chart = echarts.init(document.getElementById('chart'));
   buildChecks();
 
+  // Click a point to open its source in a new tab (hover tooltips aren't reliably clickable).
+  chart.on('click', p => { if (p.data && p.data.url) window.open(p.data.url, '_blank', 'noopener'); });
+
   document.getElementById('all').onclick = () => { SERIES.forEach(s => visible.add(s.name)); syncAll(); };
   document.getElementById('none').onclick = () => { visible.clear(); syncAll(); };
   document.getElementById('logscale').onchange = render;
@@ -376,20 +388,24 @@ function initUI(){
     mode = r.value; assemble(); buildChecks(); render();
   });
 
-  // 2-handle range slider (dataZoom): track current window + rescale Y to its right edge.
   chart.on('dataZoom', () => {
     const ext = chart.getModel().getComponent('xAxis', 0).axis.scale.getExtent();
     view.startMs = ext[0]; view.endMs = ext[1];
     if (!document.getElementById('logscale').checked)
-      chart.setOption({ yAxis: { max: yMaxFor(view.endMs) } });
+      chart.setOption({ yAxis: { max: yMaxNow() } });
   });
 
   window.addEventListener('resize', () => chart.resize());
   render();
-  // Container may size after init (esp. in an iframe); redraw whenever it changes size.
   if (window.ResizeObserver) new ResizeObserver(() => chart.resize()).observe(document.getElementById('chart'));
   requestAnimationFrame(() => chart.resize());
   setTimeout(() => chart.resize(), 300);
+}
+
+function yMaxNow(){
+  let m = 0;
+  for (const s of SERIES.filter(s => visible.has(s.name))) m = Math.max(m, valueAt(s.data, view.endMs));
+  return m > 0 ? m * 1.02 : 1;
 }
 
 load();

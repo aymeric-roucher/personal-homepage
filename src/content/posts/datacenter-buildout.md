@@ -8,7 +8,7 @@ url: datacenter-buildout
 
 Compute is the new oil, and the map of who controls it is being drawn right now. Below is an interactive look at AI data-center buildout: **who is installing how much power (in megawatts), where, and when.** Every player sits on a single axis, so you can compare the US hyperscalers, Europe's Mistral, and China's giants and labs at a glance.
 
-<iframe src="/compute/viewer.html?v=3" height="950"></iframe>
+<iframe src="/compute/viewer.html?v=5" height="950"></iframe>
 
 *Tip: the labs sit at tens of MW while the US players reach gigawatts, flip on **log scale** to see everyone at once.*
 
