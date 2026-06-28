@@ -11,6 +11,14 @@ const BIO_CHUNKS = [
   ["", "Now I'm exploring the next steps."],
 ];
 
+const READINGS = [
+  {
+    title: "Suspicious discontinuities",
+    url: "https://danluu.com/discontinuities/",
+    note: "the bad consequences of thresholds in laws",
+  },
+];
+
 const FloatingBio = ({ onToggleControls }: { onToggleControls: () => void }) => {
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
@@ -299,6 +307,37 @@ const About = () => {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Separator */}
+        <div className="flex justify-center py-4">
+          <div className="h-px bg-border w-full max-w-xs"></div>
+        </div>
+
+        {/* Readings Section */}
+        <div className="py-4">
+          <div className="text-center mb-4">
+            <h1 className="abbey-heading text-4xl font-light">Readings</h1>
+          </div>
+
+          <ul>
+            {READINGS.map((reading) => (
+              <li key={reading.url} className="abbey-text py-2 flex items-start">
+                <span className="text-muted-foreground mr-2 mt-0.5">☞</span>
+                <span>
+                  <a
+                    href={reading.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:opacity-70 transition-opacity"
+                  >
+                    {reading.title}
+                  </a>
+                  <span className="text-muted-foreground"> - {reading.note}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
