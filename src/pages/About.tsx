@@ -22,6 +22,11 @@ const READINGS = [
     url: "https://www.gutenberg.org/cache/epub/64322/pg64322-images.html",
     note: "Famous historian Jacques Bainville commenting on the flaws of the Treaty of Versailles, and predicting 20 years in advance that Germany would rise again, annex Austria, then Poland, and would ally with Russia and Italy before turning back on France.",
   },
+  {
+    title: "History of Western Philosophy",
+    url: "https://www.ntslibrary.com/PDF%20Books/History%20of%20Western%20Philosophy.pdf",
+    note: "Bertrand Russel on philosophy's history: he's logical enough that I understand what he says, he's good enough to have the ego to call out errors in any of the forefathers. And his short historical reminders are an impressive reconciliation of concision and completeness.",
+  },
 ];
 
 const FloatingBio = ({ onToggleControls }: { onToggleControls: () => void }) => {
