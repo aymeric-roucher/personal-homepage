@@ -28,7 +28,7 @@ const READINGS = [
     title: "History of Western Philosophy",
     url: "https://www.ntslibrary.com/PDF%20Books/History%20of%20Western%20Philosophy.pdf",
     date: "1945",
-    note: "Bertrand Russel on philosophy's history: he's logical enough that I understand what he says, he has the guts to point out the flaws in any of the forefathers. And his short historical reminders are an impressive reconciliation of concision and completeness.",
+    note: "Bertrand Russel on philosophy's history: he's logical enough that I understand what he says, he has enough ego to point out the flaws in any of the forefathers. And his short historical reminders are an impressive reconciliation of concision and completeness.",
   },
 ];
 
