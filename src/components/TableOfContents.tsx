@@ -4,7 +4,14 @@ interface TocItem {
   id: string;
   text: string;
   level: number;
+  position: number;
 }
+
+const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-');
 
 interface TableOfContentsProps {
   content: string;
@@ -22,37 +29,18 @@ const TableOfContents = ({ content }: TableOfContentsProps) => {
 
     // Parse regular headings
     while ((match = headingRegex.exec(content)) !== null) {
-      const level = match[1].length;
-      let text = match[2].trim();
-      
-      // Replace emoji gear with unicode gear
-      text = text.replace(/⚙️/g, '⚙');
-      
-      const id = text
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-');
-
-      items.push({ id, text, level });
+      const text = match[2].trim().replace(/⚙️/g, '⚙');
+      items.push({ id: slugify(text), text, level: match[1].length, position: match.index });
     }
 
     // Parse technical building blocks
     while ((match = technicalBlockRegex.exec(content)) !== null) {
-      const title = match[1];
-      const id = title
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-');
-
-      items.push({ id, text: title, level: 4 });
+      const text = match[1];
+      items.push({ id: slugify(text), text, level: 4, position: match.index });
     }
 
-    // Sort items by their position in the content
-    items.sort((a, b) => {
-      const aIndex = content.indexOf(a.id) !== -1 ? content.indexOf(a.id) : content.indexOf(a.text);
-      const bIndex = content.indexOf(b.id) !== -1 ? content.indexOf(b.id) : content.indexOf(b.text);
-      return aIndex - bIndex;
-    });
+    // Sort by actual position in the content so headings and blocks interleave correctly
+    items.sort((a, b) => a.position - b.position);
 
     setTocItems(items);
   }, [content]);
