@@ -227,15 +227,32 @@ const ContentPage = () => {
                   </a>
                 );
               },
-              img: ({ src, alt, ...props }) => (
-                <img
-                  {...props}
-                  src={src}
-                  alt={alt}
-                  loading="lazy"
-                  className="w-full h-auto rounded-lg my-6 border border-border"
-                />
-              ),
+              img: ({ src, alt, width, height, ...props }) => {
+                // Images with explicit dimensions (e.g. embedded badges) keep their
+                // intrinsic size, capped so they don't dominate. Plain markdown images
+                // (no dimensions) go full width.
+                if (width) {
+                  return (
+                    <img
+                      {...props}
+                      src={src}
+                      alt={alt}
+                      loading="lazy"
+                      className="h-auto my-6"
+                      style={{ maxWidth: "220px", width: "100%" }}
+                    />
+                  );
+                }
+                return (
+                  <img
+                    {...props}
+                    src={src}
+                    alt={alt}
+                    loading="lazy"
+                    className="w-full h-auto rounded-lg my-6 border border-border"
+                  />
+                );
+              },
               code: ({ children, className }) => {
                 const isInline = !className;
                 if (isInline) {

@@ -6,7 +6,7 @@ type: blog
 url: how-to-get-number-1-on-producthunt
 ---
 
-After [failing our first productHunt launch](https://m-ric.com/blog/how-producthunt-botched-our-launch/), we came back a second time, this time for the win: we ended up as #1 Product of the Day!
+After [failing our first productHunt launch](https://m-ric.com/blog/how-producthunt-botched-our-launch/), [Folio AI](https://get-folio.ai/?ref=producthunt-playbook) came back a second time, this time for the win: we ended up as #1 Product of the Day!
 
 The goal is to gather as many points (based on upvotes + comments) as possible. The launch triggers at 9AM CET (convenient for us, based in Paris), then it's a merciless battle throughout the next 24 hours, until the next dawn.
 
@@ -84,7 +84,7 @@ So if you want people to support you, it's important to pre-warm them so that th
 
 ## On D-day
 
-Saturday the 26th, 9AM: off we went, our launch was live on ProductHunt! 🚀
+Saturday the 26th, 9AM: off we went, our launch was [live on ProductHunt](https://www.producthunt.com/products/folio-ai/launches/folio-ai)! 🚀
 
 We started off by triggering our messages to our community to let them know that now was the time to help.
 One thing that we asked them for was to comment, because comments also count for points! And we made sure to reply each and every comment, sometimes to make extra sure that people would understand, we would reply twice. And we would often ask follow-up questions to rekindle the conversation.
