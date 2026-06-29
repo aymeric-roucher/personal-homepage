@@ -19,7 +19,7 @@ It was a tight battle, and it fought out all the way to the end, so I think ever
 
 ### Why try to get Product of the Day?
 
-ProductHunt has > 100k daily visitors as of February 2021
+ProductHunt has > 100k daily visitors as of early 2025
 
 Being product of the day means that you're featured on top of the website. That brought us, in essence:
 - A huge spike in traffic on our website on the launch day, June 26th (the earlier buildup is due to an automated email reachout campaign that I launched)
@@ -64,7 +64,7 @@ Then when people click your name, they go to your product page, that displays th
 - **Screenshots and video:** ***this might be the single most important of all points***. We worked hard at:
 	- Making the screenshots look good, by using nice fonts and colors. For the screenshots, I basically vibe-coded them in javascript, even re-coding a fake Google Slides app around them: that gave me pixel-perfect full control over them.
 	- One thing about the images: it's better to make them in OpenGraph format, a very wide one, so that the thumbnails for your product on socials, which are always OpenGraph format anyway, won't be cropped off.
-	- The video: ***optional in theory, but mandatory in practice***: I edited it to be short enough (aimed for below 1 minute), not have 1 useless second.
+	- The video: ***optional in theory, but mandatory in practice***: You can go 2 ways: a boring walkthrough, or a funny ad à la Marc Louvion ([post](https://newsletter.marclou.com/p/how-to-launch-a-startup-on-product-hunt), [video](https://www.youtube.com/watch?v=Wwa5TZeMEvQ)). I had gone the [funny video](https://www.youtube.com/watch?v=L1FJFGkQ6us) route already in our failed previous launch, but this time, I decided to go the boring video route, because I felt it would help users understand the product. I edited it to be short enough (aimed for below 1 minute), and tried not to leave in it 1 second without useful info.
 - **Your first maker comment:** I used the widely-used structure that goes as follows:
 	- 0-Greetings
 	- 1-The pain
@@ -84,21 +84,21 @@ So if you want people to support you, it's important to pre-warm them so that th
 
 ## On D-day
 
-9AM, off we went, our launch went live on ProductHunt! 🚀
+Saturday the 26th, 9AM: off we went, our launch was live on ProductHunt! 🚀
 
 We started off by triggering our messages to our community to let them know that now was the time to help.
-One thing that we asked them for was to comment, because comments also count for points! And we made sure to reply each and every comment, sometimes to make extra sure that people would understand, we would reply twice. And each of our replies could also ask follow-up questions.
+One thing that we asked them for was to comment, because comments also count for points! And we made sure to reply each and every comment, sometimes to make extra sure that people would understand, we would reply twice. And we would often ask follow-up questions to rekindle the conversation.
 
 We also made posts to our socials, with limited success.
 
 Then we waited eagerly for the end of the randomization period, so at 13:00 CET (4 hours after start), for the upvote counts to start showing. But alas, at that time, we were good, but still only second. #1 was the target!
 
-That's when I burned the cartridge of making posts on socials, showing the current curve to try and mobilize readers, albeit with [limited](https://www.linkedin.com/posts/a-roucher_folio-is-live-on-producthunt-were-currently-activity-7476596719879897088-nce1?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAACblKwsBwDgtnL79PQbJBWAlA2CXtuKEhQM) [success](https://x.com/AymericRoucher/status/2070829793327665499?s=20).
+That's when I spent my one shot at making posts on socials, showing the current curve to try and mobilize readers, albeit with [limited](https://www.linkedin.com/posts/a-roucher_folio-is-live-on-producthunt-were-currently-activity-7476596719879897088-nce1?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAACblKwsBwDgtnL79PQbJBWAlA2CXtuKEhQM) [success](https://x.com/AymericRoucher/status/2070829793327665499?s=20).
 Many guides advocate to keep livestreams and keep posting regularly throughout the day: I avoided it, because readers don't like being spammed, but it seems that it can work for some audiences.
 
-One thing that helped throughout the day was to take a few guns for hire:
+One thing that helped throughout the day was to call a few guns for hire:
 - [Vikram Kushwaha](https://www.linkedin.com/in/ACoAADtyNRUBTfPBf4ZiSG9zJFW54rUaYJOu1X0) made [this cool post](https://www.linkedin.com/feed/update/urn:li:activity:7476600368676814849/), 240 reactions: that was the peak at roughly 120 points, it seems to have unlocked many votes with credibility
-- [Anuj Jangra](https://www.linkedin.com/posts/anujcodes21_powerpoint-googleslides-ai-share-7476609765314338817-mfee/?highlightedUpdateUrn=urn%3Ali%3Aactivity%3A7476609766518091776&origin=SOCIAL_SHARE&utm_source=share&utm_medium=member_desktop&rcm=ACoAACblKwsBwDgtnL79PQbJBWAlA2CXtuKEhQM) posted at 2:20PM, getting 500 reactions, this is another visible ramp
+- [Anuj Jangra](https://www.linkedin.com/posts/anujcodes21_powerpoint-googleslides-ai-share-7476609765314338817-mfee/?highlightedUpdateUrn=urn%3Ali%3Aactivity%3A7476609766518091776&origin=SOCIAL_SHARE&utm_source=share&utm_medium=member_desktop&rcm=ACoAACblKwsBwDgtnL79PQbJBWAlA2CXtuKEhQM) posted at 2:20PM, getting 500 reactions, this is another visible ramp in the curve
 
 But at that time we still were only #2, only 6 upvotes away from the #1 position!
 
