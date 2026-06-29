@@ -227,6 +227,15 @@ const ContentPage = () => {
                   </a>
                 );
               },
+              img: ({ src, alt, ...props }) => (
+                <img
+                  {...props}
+                  src={src}
+                  alt={alt}
+                  loading="lazy"
+                  className="w-full h-auto rounded-lg my-6 border border-border"
+                />
+              ),
               code: ({ children, className }) => {
                 const isInline = !className;
                 if (isInline) {
