@@ -8,7 +8,9 @@ url: how-to-get-number-1-on-producthunt
 
 After [failing our first productHunt launch](https://m-ric.com/blog/how-producthunt-botched-our-launch/), [Folio AI](https://get-folio.ai/?ref=producthunt-playbook) came back a second time, this time for the win: we ended up as #1 Product of the Day!
 
-The goal is to gather as many points (based on upvotes + comments) as possible. The launch triggers at 9AM CET (convenient for us, based in Paris), then it's a merciless battle throughout the next 24 hours, until the next dawn.
+How does this ProductHunt daily leaderboard work?
+- The goal is to gather as many points (based on upvotes + comments) as possible in 24hours.
+- Launch triggers at 9AM CET (convenient for us, based in Paris), then it's a merciless battle throughout the next 24 hours, until the next dawn.
 
 > Spear shall be shaken, shield be splintered,
 > a sword-day, a red day, ere the sun rises!
@@ -88,8 +90,6 @@ Saturday the 26th, 9AM: off we went, our launch was [live on ProductHunt](https:
 
 We started off by triggering our messages to our community to let them know that now was the time to help.
 One thing that we asked them for was to comment, because comments also count for points! And we made sure to reply each and every comment, sometimes to make extra sure that people would understand, we would reply twice. And we would often ask follow-up questions to rekindle the conversation.
-
-We also made posts to our socials, with limited success.
 
 Then we waited eagerly for the end of the randomization period, so at 13:00 CET (4 hours after start), for the upvote counts to start showing. But alas, at that time, we were good, but still only second. #1 was the target!
 
