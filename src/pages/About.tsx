@@ -28,7 +28,7 @@ const READINGS = [
     title: "History of Western Philosophy",
     url: "https://www.ntslibrary.com/PDF%20Books/History%20of%20Western%20Philosophy.pdf",
     date: "1945",
-    note: "Bertrand Russel on philosophy's history: he has an engineer-friendly logical mind, and he has enough ego to point out the flaws in any of the forefathers. And his short historical reminders are an impressive reconciliation of concision and completeness.",
+    note: "Bertrand Russel on philosophy's history: he has an engineer-friendly logical mind, enough ego to point out the flaws in any of the forefathers, and his short historical reminders are an impressive reconciliation of concision and completeness.",
   },
 ];
 
