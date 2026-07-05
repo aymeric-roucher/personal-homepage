@@ -32,13 +32,13 @@ As you increase the detuning, the beats speed up. Around 20 to 30 beats per seco
 
 Why does the ear fuse close frequencies at all? Because its frequency resolution is limited. The cochlea, the spiral organ of the inner ear, works like a mechanical frequency analyzer: each frequency makes a specific region of its membrane vibrate. But each region has some width. A single frequency stimulates nerve fibers of neighboring frequencies too, so two tones that fall within the same region, the so-called **critical band**, cannot be cleanly resolved as two sounds. They are heard as one blurred, rough tone. Our ears need glasses. (A neat proof that this happens inside the ear and not in the air: play one tone in each ear through headphones and the roughness largely disappears, since each cochlea only receives one clean frequency.)
 
-In 1965, Reinier Plomp and Willem Levelt [measured this precisely](https://www.mpi.nl/world/materials/publications/levelt/Plomp_Levelt_Tonal_1965.pdf). They played pairs of pure sine tones to subjects who rated them on a 7-point consonance scale. A clever detail: they parameterized the pairs by mean frequency and frequency *difference* rather than by frequency ratio, precisely so that musically trained ears couldn't recognize familiar intervals and rate them by habit. The result is one of the most consequential curves in psychoacoustics: dissonance is zero at unison, spikes to a maximum for small separations, then decays smoothly as the tones move apart. And the width of that "zone of discomfort" is not a fixed number of Hertz: it scales with the critical bandwidth of the register you are in. Their rule of thumb: **maximal dissonance at about 25% of the critical bandwidth, back to consonance at about 100% of it**.
+In 1965, Reinier Plomp and Willem Levelt [measured this precisely](https://www.mpi.nl/world/materials/publications/levelt/Plomp_Levelt_Tonal_1965.pdf). They played pairs of pure sine tones to subjects who rated them on a 7-point consonance scale. Each pair of tones was described by two numbers: where the pair sits overall (the average of the two frequencies, i.e. bass register or treble register) and the *gap in Hertz* between them. Note what's absent: the frequency *ratio*, the thing every musical interval is named after. That choice was deliberate, for two reasons. First, a trained ear recognizes ratios ("that's a fifth!") and rates them by learned habit, so the gaps were chosen to fall between the familiar intervals. Second, and more deeply, the law they found really is a law about the Hz gap, not the ratio: two pure tones are rough when their absolute distance in Hertz is small compared to the critical band at that register, wherever that distance happens to fall ratio-wise. Dissonance is zero at unison, spikes to a maximum for a small gap, then decays smoothly, and the width of that "zone of discomfort" scales with the critical bandwidth: **maximal dissonance at about 25% of the critical bandwidth, back to consonance at about 100% of it**. (If ratios don't matter here, where does the 3:2 fifth get its magic? Hold that thought: ratios only enter the story in the next section, through overtones.)
 
-Since the critical band is wide at low frequencies and narrow (relative to pitch) at high ones, the same musical interval can be rough in the bass and smooth in the treble. Here is the Plomp-Levelt curve computed at four different registers:
+Since the critical band is wide at low frequencies and narrow (relative to pitch) at high ones, the same musical interval can be rough in the bass and smooth in the treble. Here is the Plomp-Levelt curve computed with the lower tone placed at four different registers. The x axis uses the frequency ratio so the four registers can share one chart, and that is exactly why the curves *don't* line up: the same ratio means a small Hz gap in the bass (still inside the critical band, still rough) but a wide gap in the treble (already smooth). Click any point on a curve to hear that pair of pure tones:
 
-<div class="plotly-chart" data-src="/assets/images/math-of-harmony/pure_tone_curves.json"></div>
+<iframe src="/assets/images/math-of-harmony/chart.html?fig=pure_tone_curves&mode=pure" height="520"></iframe>
 
-This is why composers have always avoided close intervals like thirds in the deep bass: down there, even a major third leaves partials rubbing inside one critical band. Plomp and Levelt actually verified this statistically, by analyzing the chords in a Bach organ trio sonata and a Dvořák string quartet: composers keep simultaneous partials right in the zone between maximal roughness and full consonance.
+This is why composers have always avoided close intervals like thirds in the deep bass: down there, even a major third leaves partials rubbing inside one critical band. Plomp and Levelt verified this statistically by analyzing the interval spacing in the finale of one of Bach's organ trio sonatas and the Romanze of Dvořák's string quartet Op. 51: composers keep simultaneous partials right in the zone between maximal roughness and full consonance. You can put startling numbers on it. I ran the same kind of census over the 351 four-part Bach chorales bundled with music21 ([script here](https://github.com/aymeric-roucher/personal-homepage/blob/main/research/harmony-dissonance/bach_intervals.py)): when the lower note of two adjacent voices sits below C3, Bach writes them a major third or closer just **0.8%** of the time; when the lower note is at or above middle C, **43.4%** of the time. Same composer, same chords available, a **57x** difference purely driven by register: the physics of the critical band, obeyed by ear, two centuries before it was measured.
 
 Now look at that curve again, because something important is *missing* from it. There is no dip at the octave. No dip at the fifth. Nothing special happens at any musical ratio: two pure sine tones either want to be identical or want personal space, and that's all. **For pure tones, simple frequency ratios are not special.** So where does music come from?
 
@@ -66,7 +66,7 @@ The $s$ factor stretches the curve with the critical bandwidth, so the roughness
 
 Now watch what happens. Give each of the two notes a realistic harmonic timbre (partials at $1f, 2f, 3f...$ with decreasing loudness, like a string), fix one note, sweep the other from unison to past the octave, and sum the pairwise roughness at every step. Move the slider to change how many harmonics each note carries:
 
-<div class="plotly-chart" data-src="/assets/images/math-of-harmony/curve_by_partials.json"></div>
+<iframe src="/assets/images/math-of-harmony/chart.html?fig=curve_by_partials&mode=bypartials" height="540"></iframe>
 
 With 1 harmonic (a pure sine) you get the featureless Plomp-Levelt hump: no interval is special. Add the second harmonic and a deep valley appears at ratio 2.0, **the octave is born**. The third harmonic carves a valley at 3/2, the fifth. Then 4/3 (the fourth), then 5/4 and 5/3 (major third and major sixth), then 6/5 (minor third). The consonant intervals of Western music emerge one by one, in roughly their order of historical importance, as you stack up overtones.
 
@@ -74,7 +74,7 @@ The logic is beautifully simple. A valley appears wherever many partials of the 
 
 Here is the full curve for two 6-harmonic tones, with the valleys marked. This reproduces the famous Figure 11 of Plomp and Levelt's paper, and the central figure of both source essays:
 
-<div class="plotly-chart" data-src="/assets/images/math-of-harmony/dissonance_curve.json"></div>
+<iframe src="/assets/images/math-of-harmony/chart.html?fig=dissonance_curve&mode=harmonic6" height="520"></iframe>
 
 The valleys sit exactly at the small-integer frequency ratios: 6/5, 5/4, 4/3, 3/2, 5/3, 2/1. These ratios are the **just intonation** scale. This is worth stating carefully, because it inverts the usual mysticism about integer ratios going back to Pythagoras: the model never looked for pretty fractions. It only summed the roughness of sine pairs. Simple ratios win *because notes with harmonic overtones align their partials there*, and nowhere else. As Aatish Bhatia puts it: just intonation is the scale that minimizes dissonance for a harmonic sound.
 
@@ -97,11 +97,11 @@ Here is where the theory earns its keep. If consonance were about integer ratios
 
 **Synthetically stretched timbres.** Go further and build an artificial tone whose overtones sit at $1f, 2^{0.95}f, 3^{0.95}f...$ instead of $1f, 2f, 3f...$ Every valley of the dissonance curve migrates. Drag the slider below: at a stretch exponent of 0.95, the sacred 2:1 octave sits on a dissonance *bump* while a flat pseudo-octave near 1.93 becomes the consonant one; the fifth slides from 1.50 toward 1.47. With such sounds, played through such sounds, a perfectly tuned Western chord genuinely sounds wrong and the "wrong" one sounds right. This is the trick behind the opening of the minutephysics video, where a slight tweak to the overtones turns every fundamental Western chord into a dissonant mess:
 
-<div class="plotly-chart" data-src="/assets/images/math-of-harmony/stretched_timbre.json"></div>
+<iframe src="/assets/images/math-of-harmony/chart.html?fig=stretched_timbre&mode=stretched" height="540"></iframe>
 
 **Bells and bars.** No need for synthesizers: any instrument that isn't a string or an air column already has non-harmonic overtones. A struck metal bar (think xylophone, glockenspiel, or roughly a bell) has partials at $1f, 2.76f, 5.40f, 8.94f...$, dictated by the physics of bending waves. Compute its dissonance curve and the Western intervals land on hills; new valleys open at unfamiliar ratios like 1.65 and 2.09, and the octave at 2.0 is a bump flanked by valleys at 1.96 and 2.09:
 
-<div class="plotly-chart" data-src="/assets/images/math-of-harmony/bar_timbre_curve.json"></div>
+<iframe src="/assets/images/math-of-harmony/chart.html?fig=bar_timbre_curve&mode=bar" height="520"></iframe>
 
 On a bell-like sound, a "fifth" around 1.47 can beat the exact 3/2, which now sounds slightly off. This is a decent piece of why bells and drums feel unmelodic in Western harmony: their overtones simply don't vote for Western intervals. (You can hear this in the interval explorer above by switching the timbre to "metal bar".)
 
@@ -113,24 +113,20 @@ On a bell-like sound, a "fifth" around 1.47 can beat the exact 3/2, which now so
 
 Everything so far concerned two notes. Music mostly happens in chords, so take three: fix a root at middle C, and let the second and third notes float freely at ratios $r_1$ and $r_2$ above it. Sum the pairwise dissonance over *all* partial pairs of all three notes and you get, instead of a curve, a **dissonance surface** over the plane of all possible triads. Since pitch is continuous, every three-note chord that can exist, in any tuning system, from any culture, is one point on this map.
 
-First look at it from above, as a heatmap. The structure is stunning: a weave of light valley-lines crossing the plane.
+Here it is. **Drag to rotate, and click anywhere to hear the chord you're pointing at**: the keyboard underneath shows the closest piano keys for whatever you click (with the deviation in cents), and you can click the piano keys themselves to hear each note alone. The wells are the chords musicians have always known; the peaks are everything else.
 
-<div class="plotly-chart" data-src="/assets/images/math-of-harmony/dissonance_heatmap.json"></div>
+<iframe src="/assets/images/math-of-harmony/surface3d.html" height="740"></iframe>
 
-Reading the grid:
+Rotate it to look straight down and the structure is stunning: a weave of valley-lines crossing the plane.
 
-- **Vertical lines**: note 2 forms a consonant interval with the root (each line is a valley of the 2D curve we built earlier).
-- **Horizontal lines**: note 3 is consonant with the root.
+- **Lines parallel to one axis**: note 2 forms a consonant interval with the root (each line is a valley of the 2D curve we built earlier).
+- **Lines parallel to the other axis**: note 3 is consonant with the root.
 - **Diagonal lines**: notes 2 and 3 are consonant *with each other*.
-- The dark ridge along the main diagonal is where notes 2 and 3 nearly coincide and grind (pure Plomp-Levelt roughness), and the dark blob near the origin is all three notes crowded within a critical band: the most dissonant chords of all, on any instrument, though for a boring reason.
+- The ridge along the main diagonal is where notes 2 and 3 nearly coincide and grind (pure Plomp-Levelt roughness), and the huge spike near the corner is all three notes crowded within a critical band: the most dissonant chords of all, on any instrument, though for a boring reason.
 
 The truly consonant chords are the **triple intersections**, where all three pairs are simultaneously in tune. Check the coordinates of the marked points: (1.5, 1.25) is root, major third, fifth: the **major chord**. (1.5, 1.2) is the **minor chord**. (1.6, 1.2) is a first-inversion major (think E-G-C), (1.67, 1.33) a second-inversion major (C-F-A), (1.5, 1.33) a suspended fourth, (2.0, 1.5) the open fifth-plus-octave power chord of every rock guitarist. Nobody put them there: Western harmony's basic vocabulary just condenses out of one 1965 experiment on sine waves.
 
 Two more things the map teaches. First, away from the lines, most of chord space is a plateau of roughly uniform dissonance: almost every possible triad is mediocre in the same way, which is exactly why stumbling into a deep well feels so dramatic, and why those rare islands became the foundation of harmony. Second, the "most dissonant interesting chord" (the tallest peak away from the trivial crowded-notes region) sits wedged between a minor chord, a first-inversion major, and a suspended second: it sounds like all of them played badly out of tune at once, which is precisely what it is.
-
-And here it is in three dimensions, the figure this whole post was building toward. **Drag to rotate, and click anywhere to hear the chord you're pointing at.** The wells are the chords musicians have always known; the peaks are everything else:
-
-<iframe src="/assets/images/math-of-harmony/surface3d.html" height="600"></iframe>
 
 Remember, this landscape belongs to *harmonic* timbres. Recompute it for a drum, a bell, or prime-number overtones, and the whole geography rearranges: different wells, different chords, a different music theory. There is not one map of harmony; there is one map per sound.
 
@@ -148,14 +144,15 @@ Even with those caveats, the punchline stands: a huge chunk of music theory, the
 
 ## Reproduce it
 
-All figures in this post are generated by three short Python scripts in [`research/harmony-dissonance`](https://github.com/aymeric-roucher/personal-homepage/tree/main/research/harmony-dissonance): the model itself ([dissonance.py](https://github.com/aymeric-roucher/personal-homepage/blob/main/research/harmony-dissonance/dissonance.py), about 40 lines of numpy), tests asserting that the consonant valleys land where they should, and the figure generator. With [uv](https://docs.astral.sh/uv/) installed:
+All figures in this post are generated by four short Python scripts in [`research/harmony-dissonance`](https://github.com/aymeric-roucher/personal-homepage/tree/main/research/harmony-dissonance): the model itself ([dissonance.py](https://github.com/aymeric-roucher/personal-homepage/blob/main/research/harmony-dissonance/dissonance.py), about 40 lines of numpy), tests asserting that the consonant valleys land where they should, the figure generator, and the Bach chorale census. With [uv](https://docs.astral.sh/uv/) installed:
 
 ```
 uv run --with numpy --with pytest pytest test_dissonance.py
 uv run make_figures.py
+uv run bach_intervals.py
 ```
 
-The interactive widgets implement the same equations in JavaScript with live audio synthesis; view-source on any of them.
+The click-to-hear sound on every chart implements the same equations in JavaScript with live additive synthesis; view-source on any of the figures.
 
 ## Sources
 

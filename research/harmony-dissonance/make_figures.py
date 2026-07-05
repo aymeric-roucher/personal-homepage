@@ -112,7 +112,12 @@ INTERVAL_NAMES = {
 
 
 def fig_pure_tone_curves() -> dict:
-    registers = [(125, "125 Hz", BLUE), (250, "250 Hz", AQUA), (500, "500 Hz", YELLOW), (1000, "1000 Hz", GREEN)]
+    registers = [
+        (125, "lower tone at 125 Hz (bass)", BLUE),
+        (250, "lower tone at 250 Hz", AQUA),
+        (500, "lower tone at 500 Hz", YELLOW),
+        (1000, "lower tone at 1000 Hz (treble)", GREEN),
+    ]
     ratios = np.linspace(1.0, 2.3, 800)
     traces = []
     global_max = 0.0
@@ -134,7 +139,7 @@ def fig_pure_tone_curves() -> dict:
             }
         )
     layout = base_layout(
-        xaxis={"title": {"text": "Frequency ratio of the two pure tones"}},
+        xaxis={"title": {"text": "Frequency ratio between the two tones (upper / lower)"}},
         yaxis={"title": {"text": "Roughness (normalized)"}},
         legend={"orientation": "h", "y": 1.12, "font": {"color": INK_SECONDARY}},
         margin={"t": 50},

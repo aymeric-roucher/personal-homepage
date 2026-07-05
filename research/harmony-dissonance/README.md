@@ -20,6 +20,7 @@ The `s` factor rescales the curve with register, following Plomp & Levelt's find
 - `dissonance.py` - the model: pairwise kernel, complex-tone dissonance, dissonance curve (two notes), dissonance surface (three notes)
 - `test_dissonance.py` - tests asserting the physics: zero dissonance at unison, roughness peak location for pure tones, curve minima at the just-intonation ratios 6/5, 5/4, 4/3, 3/2, 5/3, 2/1
 - `make_figures.py` - generates all the Plotly JSON figures used in the post into `public/assets/images/math-of-harmony/`
+- `bach_intervals.py` - census of the 351 four-part Bach chorales in music21: narrow intervals (a major third or closer) are written between low voices 0.8% of the time when the lower note is below C3, versus 43.4% when it is at or above middle C (57x), exemplifying the critical-band register effect
 
 ## Run it
 
@@ -28,6 +29,7 @@ Requires [uv](https://docs.astral.sh/uv/) (dependencies are declared inline in e
 ```bash
 uv run --with numpy --with pytest pytest test_dissonance.py   # tests
 uv run make_figures.py                                        # regenerate all figures
+uv run bach_intervals.py                                      # Bach chorale interval census
 ```
 
 ## Figures produced
@@ -40,7 +42,9 @@ uv run make_figures.py                                        # regenerate all f
 | `bar_timbre_curve.json` | same computation for an idealized metal bar (bell-like overtones): Western intervals land on bumps |
 | `stretched_timbre.json` | slider over an overtone stretch exponent: at 0.95 the 2:1 octave becomes dissonant |
 | `dissonance_surface_3d.json` | the final 3D surface: dissonance of every three-note chord, consonance wells marked |
-| `dissonance_heatmap.json` | the same surface seen from above |
+| `dissonance_heatmap.json` | the same surface seen from above (generated for completeness, not embedded in the post) |
+
+In the post, each figure is wrapped in a small HTML widget (`chart.html`, `surface3d.html`, etc. in the same assets folder) that re-implements the Sethares model in JavaScript so every chart is click-to-hear.
 
 ## Sources
 
