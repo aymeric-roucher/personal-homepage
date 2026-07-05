@@ -409,16 +409,24 @@ def fig_surface_and_heatmap() -> tuple[dict, dict]:
     # Keep only reasonably consonant, prominent valleys
     minima = [(i, j) for (i, j) in minima if z_norm[i, j] <= 0.4]
 
-    marker_x = [round(float(ratios[j]), 4) for i, j in minima]
-    marker_y = [round(float(ratios[i]), 4) for i, j in minima]
+    # Markers mirrored into the note3 >= note2 triangle (surface is symmetric):
+    # detected (i, j) has col j >= row i, so swap to put note 2 (x) below note 3 (y).
+    marker_x = [round(float(ratios[i]), 4) for i, j in minima]
+    marker_y = [round(float(ratios[j]), 4) for i, j in minima]
     marker_z = [round(float(z_norm[i, j]), 4) for i, j in minima]
     marker_text = [
-        f"chord 1 : {name_ratio(float(ratios[j]))} : {name_ratio(float(ratios[i]))}"
+        f"chord 1 : {name_ratio(float(ratios[i]))} : {name_ratio(float(ratios[j]))}"
         for i, j in minima
     ]
 
     x_list = ratios.round(4).tolist()
     z_list = [[round(float(v), 4) for v in row] for row in z_norm]
+    # The 3D surface shows only the triangle where note 3 >= note 2 (the other
+    # half is its mirror image): mask cells below the diagonal.
+    z_triangle = [
+        [z_list[i][j] if i >= j else None for j in range(len(x_list))]
+        for i in range(len(x_list))
+    ]
 
     axis_3d = {
         "gridcolor": GRID,
@@ -432,7 +440,7 @@ def fig_surface_and_heatmap() -> tuple[dict, dict]:
                 "type": "surface",
                 "x": x_list,
                 "y": x_list,
-                "z": z_list,
+                "z": z_triangle,
                 "colorscale": BLUE_COLORSCALE,
                 "showscale": True,
                 "colorbar": {
@@ -467,7 +475,7 @@ def fig_surface_and_heatmap() -> tuple[dict, dict]:
                 "xaxis": {**axis_3d, "title": {"text": "Interval of note 2 (ratio)", "font": {"color": INK_SECONDARY, "size": 12}}},
                 "yaxis": {**axis_3d, "title": {"text": "Interval of note 3 (ratio)", "font": {"color": INK_SECONDARY, "size": 12}}},
                 "zaxis": {**axis_3d, "title": {"text": "Dissonance", "font": {"color": INK_SECONDARY, "size": 12}}},
-                "camera": {"eye": {"x": -1.4, "y": -1.6, "z": 0.9}},
+                "camera": {"eye": {"x": -1.5, "y": 1.3, "z": 1.1}},
             },
         },
     }
