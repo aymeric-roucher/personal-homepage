@@ -12,8 +12,8 @@
     --foreground: 25 15% 25%;
     /* Deep brown text */
 
-    --card: 45 20% 96%;
-    /* Lighter card background */
+    --card: 48 15% 94%;
+    /* Écru card background (former page background) */
     --card-foreground: 25 15% 25%;
     /* Card text */
 
@@ -29,8 +29,8 @@
     /* Warm secondary */
     --secondary-foreground: 25 15% 25%;
 
-    --muted: 42 18% 90%;
-    /* Subtle muted background */
+    --muted: 48 15% 94%;
+    /* Écru muted / hover background (former page background) */
     --muted-foreground: 25 10% 50%;
     /* Muted text */
 
