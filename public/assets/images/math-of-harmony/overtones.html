@@ -36,11 +36,12 @@
         <option value="flute">Flute (nearly pure)</option>
         <option value="clarinet">Clarinet (odd overtones)</option>
         <option value="bell">Metal bar / bell</option>
+        <option value="drum">Drum (membrane)</option>
       </select>
     </label>
     <span class="readout" id="readout"></span>
   </div>
-  <div class="hint">One note at 220 Hz. At zero overtones it is a bare sine wave: a dull electronic whistle. Drag the slider to stack overtones on top (2x, 3x, 4x... the fundamental, each much quieter than the one below it): the pitch does not change, but the waveform sharpens and the sound gains body. Then switch the timbre. Each real instrument has its own recipe of overtone strengths: a flute is almost a pure tone, a clarinet skips the even overtones, and a metal bar puts its overtones at un-integer multiples (2.76x, 5.41x...), which is why a xylophone can never be mistaken for a violin. Click the waveform to start or stop the sound, and change anything while it plays.</div>
+  <div class="hint">One note at 220 Hz. At zero overtones it is a bare sine wave: a dull electronic whistle. Drag the slider to stack overtones on top (2x, 3x, 4x... the fundamental, each much quieter than the one below it): the pitch does not change, but the waveform sharpens and the sound gains body. Then switch the timbre. Each real instrument has its own recipe of overtone strengths: a flute is almost a pure tone, a clarinet skips the even overtones, a metal bar puts its overtones at un-integer multiples (2.76x, 5.41x...), and a drum membrane crowds them even closer (1.59x, 2.14x, 2.30x...), so unlike a xylophone or a violin it barely has a pitch at all. Click the waveform to start or stop the sound, and change anything while it plays.</div>
 </div>
 <script>
 const F1 = 220;
@@ -57,6 +58,8 @@ const TIMBRES = {
               amp:  [1, 0.38, 0.20, 0.11, 0.06, 0.04, 0.025, 0.015] },
   bell:     { mult: [1, 2.758, 5.406, 8.936, 13.35, 18.645, 24.82, 31.6],
               amp:  [1, 0.5, 0.33, 0.22, 0.15, 0.1, 0.07, 0.05] },
+  drum:     { mult: [1, 1.594, 2.136, 2.296, 2.653, 2.918, 3.156, 3.501],
+              amp:  [1, 0.55, 0.4, 0.35, 0.25, 0.2, 0.15, 0.1] },
 };
 const canvas = document.getElementById('wave');
 const ctx = canvas.getContext('2d');

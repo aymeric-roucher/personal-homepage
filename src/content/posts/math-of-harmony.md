@@ -25,7 +25,7 @@ One caveat before we start: "sounding good" can obviously depend, on the second 
 
 ## A note is a stack of frequencies
 
-Press a single piano key and you don't get a single frequency. You get the **fundamental** (the pitch you perceive, say 261.6 Hz for middle C) plus a whole ladder of quieter **overtones** above it. For a vibrating string or an air column in a pipe, physics forces these overtones to sit at exact integer multiples of the fundamental: $2f$, $3f$, $4f$, and so on. A string of length $L$ can only vibrate in shapes that pin down both ends, giving frequencies $f_n = n \cdot v / 2L$. Overtones that follow this integer pattern are called **harmonics**.
+Press a single piano key and you don't get a single frequency. You get the **fundamental** (the pitch you perceive, say 261.6 Hz for middle C) plus a whole ladder of quieter **overtones** above it. For a vibrating string or an air column in a pipe (and the human voice is exactly that: the vocal folds driving the air column of your throat and mouth), physics forces these overtones to sit at exact integer multiples of the fundamental: $2f$, $3f$, $4f$, and so on. A string of length $L$ can only vibrate in shapes that pin down both ends, giving frequencies $f_n = n \cdot v / 2L$. Overtones that follow this integer pattern are called **harmonics**.
 
 This works because sound superposes: pressure waves add up linearly, so any instrument's sound can be decomposed into a sum of pure sine waves (this is Fourier analysis; 3Blue1Brown's videos are the best introduction[^threeblue]). A violin and a piano playing the same middle C have the same fundamental but different loudness ratios between their overtones. That recipe of relative loudnesses is what we call **timbre**: it is why you can tell the two instruments apart.
 
@@ -87,9 +87,9 @@ With 1 harmonic (a pure sine) you get the featureless Plomp-Levelt hump: no inte
 
 The logic is beautifully simple. A valley appears wherever many partials of the two notes *coincide*: at a 3:2 interval, the third harmonic of the low note lands exactly on the second harmonic of the high note, so instead of two nearby partials grinding inside a critical band, they fuse into one. Between the valleys, partials fall close-but-not-equal and roughness spikes.
 
-You can watch this happen. Below, every partial of both notes is a glowing line, stacked by frequency (fundamentals low and yellow, overtones reddening as they climb). The lower note is fixed; hold the slider and raise the second note, and its whole ladder of overtones slides upward through the fixed one. At most positions the lines pack close together and you hear the grind; but at the simple ratios, lines from the two notes snap exactly onto each other and the sound locks into tune:
+You can watch this happen. In the top panel below, every partial of both notes is a vertical bar placed at its frequency: blue for the fixed note, orange for the one you move, each overtone dimmer than the one below it. Hold the slider and raise the moving note, and its whole ladder of overtones slides rightward through the fixed one. At most positions the bars pack close together and you hear the grind; at the simple ratios, orange bars land exactly on blue ones and the sound locks into tune. The bottom panel traces out the dissonance of every interval you have swept through, red dot on your current position:
 
-<iframe src="/assets/images/math-of-harmony/spectrum.html" height="500"></iframe>
+<iframe src="/assets/images/math-of-harmony/spectrum.html" height="560"></iframe>
 
 In physics terms the dissonance curve reads like a potential energy landscape: like two hydrogen atoms settling at the separation that minimizes their energy to form a molecule, two notes "want" to roll downhill into the nearest valley. That pull is what musicians feel as an interval wanting to resolve.
 
