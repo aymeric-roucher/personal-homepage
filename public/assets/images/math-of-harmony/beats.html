@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beats between two pure tones</title>
+<style>
+  :root {
+    --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --blue: #2a78d6; --orange: #eb6834; --ring: rgba(11,11,11,0.10);
+  }
+  html, body { margin: 0; background: var(--surface); color: var(--ink-2);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; }
+  .wrap { padding: 12px 14px; }
+  canvas { width: 100%; height: 170px; display: block; border: 1px solid var(--ring); border-radius: 6px; }
+  .controls { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+  button { background: var(--blue); color: #fff; border: none; border-radius: 6px;
+    padding: 7px 16px; font-size: 14px; cursor: pointer; font-family: inherit; }
+  button:hover { opacity: 0.9; }
+  input[type=range] { width: 220px; accent-color: var(--blue); }
+  .readout { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .hint { color: var(--muted); margin-top: 6px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <canvas id="wave" width="1600" height="340"></canvas>
+  <div class="controls">
+    <button id="play">▶ Play</button>
+    <label>Detuning
+      <input id="detune" type="range" min="0" max="40" step="0.5" value="4">
+    </label>
+    <span class="readout" id="readout"></span>
+  </div>
+  <div class="hint">Two pure sine waves: 220 Hz and a second one you detune. Close frequencies drift in and out of sync, so the sum swells and fades: beats. Push past ~20 Hz and the pulsing blurs into roughness.</div>
+</div>
+<script>
+const F1 = 220;
+const canvas = document.getElementById('wave');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('detune');
+const readout = document.getElementById('readout');
+const playBtn = document.getElementById('play');
+
+function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+function draw() {
+  const delta = parseFloat(slider.value);
+  const f2 = F1 + delta;
+  const W = canvas.width, H = canvas.height, mid = H / 2;
+  ctx.clearRect(0, 0, W, H);
+  // 0.5 s window
+  const T = 0.5;
+  ctx.strokeStyle = css('--grid');
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(W, mid); ctx.stroke();
+  // envelope
+  ctx.strokeStyle = css('--orange');
+  ctx.lineWidth = 2;
+  for (const sign of [1, -1]) {
+    ctx.beginPath();
+    for (let px = 0; px <= W; px++) {
+      const t = px / W * T;
+      const env = 2 * Math.abs(Math.cos(Math.PI * (f2 - F1) * t));
+      const y = mid - sign * env * (H * 0.42) / 2;
+      px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+    }
+    ctx.stroke();
+  }
+  // summed waveform
+  ctx.strokeStyle = css('--blue');
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let px = 0; px <= W; px++) {
+    const t = px / W * T;
+    const v = Math.sin(2 * Math.PI * F1 * t) + Math.sin(2 * Math.PI * f2 * t);
+    const y = mid - v * (H * 0.42) / 2;
+    px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+  }
+  ctx.stroke();
+  readout.textContent = `${F1} Hz + ${f2.toFixed(1)} Hz → ${delta.toFixed(1)} beats per second`;
+}
+
+let audioCtx = null, oscs = [], gain = null;
+function stop() {
+  oscs.forEach(o => o.stop());
+  oscs = [];
+  playBtn.textContent = '▶ Play';
+}
+function updateFreqs() {
+  if (oscs.length === 2 && audioCtx) {
+    oscs[1].frequency.setTargetAtTime(F1 + parseFloat(slider.value), audioCtx.currentTime, 0.02);
+  }
+}
+playBtn.addEventListener('click', () => {
+  if (oscs.length) { stop(); return; }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  gain = audioCtx.createGain();
+  gain.gain.value = 0.12;
+  gain.connect(audioCtx.destination);
+  for (const f of [F1, F1 + parseFloat(slider.value)]) {
+    const o = audioCtx.createOscillator();
+    o.type = 'sine';
+    o.frequency.value = f;
+    o.connect(gain);
+    o.start();
+    oscs.push(o);
+  }
+  playBtn.textContent = '■ Stop';
+});
+slider.addEventListener('input', () => { draw(); updateFreqs(); });
+draw();
+</script>
+</body>
+</html>
