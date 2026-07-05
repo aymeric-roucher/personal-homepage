@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roughness lives in the ear, not the air</title>
+<style>
+  :root {
+    --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --blue: #2a78d6; --orange: #eb6834; --ring: rgba(11,11,11,0.10);
+  }
+  html, body { margin: 0; background: var(--surface); color: var(--ink-2);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; }
+  .wrap { padding: 12px 14px; }
+  .headphones { display: inline-flex; align-items: center; gap: 6px; color: var(--orange);
+    font-weight: 600; margin-bottom: 10px; }
+  .row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  button { background: var(--blue); color: #fff; border: none; border-radius: 6px;
+    padding: 8px 18px; font-size: 14px; cursor: pointer; font-family: inherit; }
+  button:hover { opacity: 0.92; }
+  .toggle { display: inline-flex; border: 1px solid var(--grid); border-radius: 8px; overflow: hidden; }
+  .toggle button { background: var(--surface); color: var(--ink-2); border: none; border-radius: 0;
+    padding: 8px 14px; font-weight: 500; }
+  .toggle button.on { background: var(--blue); color: #fff; }
+  .toggle button:not(.on):hover { background: #f1f0ec; }
+  .ears { display: flex; gap: 10px; margin-top: 12px; }
+  .ear { flex: 1; border: 1px solid var(--ring); border-radius: 8px; padding: 10px 12px; text-align: center;
+    background: #f7f6f3; }
+  .ear .side { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .ear .tones { color: var(--ink); font-variant-numeric: tabular-nums; margin-top: 4px; font-size: 15px; }
+  .hint { color: var(--muted); margin-top: 12px; font-size: 13px; }
+  .disabled { opacity: 0.5; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="headphones">🎧 Put on headphones for this one.</div>
+  <div class="row">
+    <button id="play">▶ Play</button>
+    <div class="toggle" id="toggle">
+      <button data-mode="mixed" class="on">Both tones in both ears</button>
+      <button data-mode="split">One tone per ear</button>
+    </div>
+  </div>
+  <div class="ears">
+    <div class="ear"><div class="side">Left ear</div><div class="tones" id="left"></div></div>
+    <div class="ear"><div class="side">Right ear</div><div class="tones" id="right"></div></div>
+  </div>
+  <div class="hint">Two pure tones, 220 Hz and 250 Hz, close enough to grind. With <strong>both in both ears</strong> they land in the same critical band and fuse into one rough, beating tone. Switch to <strong>one tone per ear</strong> while it plays: each ear now gets a single clean frequency, nothing to grind against, and the roughness melts into two calm pitches. The tones never changed; only which ear heard what. So the roughness was made in your ear, not in the air.</div>
+</div>
+<script>
+const F1 = 220, F2 = 250;
+let audioCtx = null, oscs = [], panners = [], gain = null;
+let mode = 'mixed';
+
+const playBtn = document.getElementById('play');
+const leftEl = document.getElementById('left');
+const rightEl = document.getElementById('right');
+const toggle = document.getElementById('toggle');
+
+function renderEars() {
+  if (mode === 'mixed') {
+    leftEl.textContent = '220 + 250 Hz';
+    rightEl.textContent = '220 + 250 Hz';
+  } else {
+    leftEl.textContent = '220 Hz';
+    rightEl.textContent = '250 Hz';
+  }
+}
+
+function applyPan() {
+  if (!panners.length) return;
+  const now = audioCtx.currentTime;
+  if (mode === 'mixed') {
+    panners[0].pan.setTargetAtTime(0, now, 0.02);
+    panners[1].pan.setTargetAtTime(0, now, 0.02);
+  } else {
+    panners[0].pan.setTargetAtTime(-1, now, 0.02);
+    panners[1].pan.setTargetAtTime(1, now, 0.02);
+  }
+}
+
+function stop() {
+  oscs.forEach(o => o.stop());
+  oscs = []; panners = [];
+  playBtn.textContent = '▶ Play';
+}
+
+playBtn.addEventListener('click', () => {
+  if (oscs.length) { stop(); return; }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  gain = audioCtx.createGain();
+  gain.gain.value = 0.16;
+  gain.connect(audioCtx.destination);
+  for (const f of [F1, F2]) {
+    const o = audioCtx.createOscillator();
+    const p = audioCtx.createStereoPanner();
+    o.type = 'sine';
+    o.frequency.value = f;
+    o.connect(p);
+    p.connect(gain);
+    o.start();
+    oscs.push(o); panners.push(p);
+  }
+  applyPan();
+  playBtn.textContent = '■ Stop';
+});
+
+toggle.addEventListener('click', (e) => {
+  const m = e.target.dataset.mode;
+  if (!m) return;
+  mode = m;
+  toggle.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.mode === m));
+  renderEars();
+  applyPan();
+});
+
+renderEars();
+</script>
+</body>
+</html>

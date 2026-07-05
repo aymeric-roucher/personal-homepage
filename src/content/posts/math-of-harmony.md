@@ -6,13 +6,22 @@ type: blog
 url: math-of-harmony
 ---
 
-Play a C and a G together and something feels right. Shift the G by a quarter of a tone and the same instrument now sounds broken. What changed? Nothing about the instrument, nothing about you: just two numbers, the frequencies of the notes.
+Why does music sound harmonious or jarring?
 
-It turns out there is a mathematical model, resting on one psychoacoustics experiment from 1965, that predicts which combinations of notes sound "in tune". It explains why Western music picked the intervals it did, why a piano tuner deliberately tunes your piano "wrong", why Indonesian gamelan orchestras use scales that sound alien to Western ears (and why both cultures are right), and it can even design new scales for instruments that don't exist. At the end of this post, we'll condense all of it into a single 3D landscape containing every possible three-note chord, where the valleys are the chords humans actually use.
+I have this sometimes unpopular opinion that the concepts "beautiful" or "ugly" are not just peculiar social constructs, but that they bear some universal truth, and that relativizing their importance leads to [missing opportunities to do good](https://youtu.be/4u0K0xdOx_k?si=htzJs8Cnz5PGXKzd&t=85).
 
-This post is a synthesis of two excellent sources, Aatish Bhatia's interactive essay[^aatish] and minutephysics' video The Physics of Dissonance[^minutephysics], plus the original papers behind them. Every figure below is computed from scratch, and you can reproduce everything[^code].
+I've recently been very happy to stumble upon the beginning of an explanation: the sensory theory of consonance and dissonance.
 
-One caveat before we start: "sounding good" obviously depends on the person, their culture, and their musical history. But before sound ever reaches psychology, it is a pressure wave hitting a physical organ. This post is about that physical and physiological layer, what researchers call **sensory dissonance**. It won't explain why a chord progression gives you chills. It explains something more basic: why some pairs of notes physically grind.
+It explains:
+- why the intervals originally set by Pythagoricians have become the basis for all Western music
+- why certain chords sound better than others
+- why a piano tuner deliberately tunes your piano "wrong"
+- why other cultures can very rightly NOT use the Western harmonic scale of A-B-C-D-E-F-G (or Do-Re-Mi-Fa-Sol-La-Si-Do in latin notation)
+- how to design new scales for different instruments, even the ones that don't exist.
+
+This post is 95% based on two excellent sources, Aatish Bhatia's interactive essay[^aatish] and minutephysics' video The Physics of Dissonance[^minutephysics], plus the original papers behind them. You can reproduce everything[^code].
+
+One caveat before we start: "sounding good" can obviously depend, on the second order, on the person, their culture, and their musical history. But before sound ever reaches psychology, it is a pressure wave hitting a physical organ.
 
 ## A note is a stack of frequencies
 
@@ -20,7 +29,7 @@ Press a single piano key and you don't get a single frequency. You get the **fun
 
 This works because sound superposes: pressure waves add up linearly, so any instrument's sound can be decomposed into a sum of pure sine waves (this is Fourier analysis; 3Blue1Brown's videos are the best introduction[^threeblue]). A violin and a piano playing the same middle C have the same fundamental but different loudness ratios between their overtones. That recipe of relative loudnesses is what we call **timbre**: it is why you can tell the two instruments apart.
 
-The claim of this whole post, and it is a strong one, is that overtones do much more than color the sound. **The overtones determine which scales and which chords a sound belongs to.** To see why, we first need to understand what happens when two pure sine waves meet.
+But **the overtones also determine which  notes fit well together.** To see why, we first need to understand what happens when two pure sine waves meet.
 
 ## Two pure tones: beats, roughness, and our blurry audition
 
@@ -30,7 +39,11 @@ Take one sine wave at 220 Hz and another at 224 Hz. Each alone is a perfectly sm
 
 As you increase the detuning, the beats speed up. Around 20 to 30 beats per second, something changes: your ear can no longer follow individual pulses, and the sound takes on a grinding quality that psychoacousticians call **roughness**. Push further and the roughness fades: the two tones finally separate into two distinct, peaceful pitches.
 
-Why does the ear fuse close frequencies at all? Because its frequency resolution is limited. The cochlea, the spiral organ of the inner ear, works like a mechanical frequency analyzer: each frequency makes a specific region of its membrane vibrate. But each region has some width. A single frequency stimulates nerve fibers of neighboring frequencies too, so two tones that fall within the same region, the so-called **critical band**, cannot be cleanly resolved as two sounds. They are heard as one blurred, rough tone: our audition is blurry, and roughness is what the blur sounds like. (A neat proof that this happens inside the ear and not in the air: play one tone in each ear through headphones and the roughness largely disappears, since each cochlea only receives one clean frequency.)
+Why does the ear fuse close frequencies at all? Because its frequency resolution is limited. The cochlea, the spiral organ of the inner ear, works like a mechanical frequency analyzer: each frequency makes a specific region of its membrane vibrate. But each region has some width. A single frequency stimulates nerve fibers of neighboring frequencies too, so two tones that fall within the same region, the so-called **critical band**, cannot be cleanly resolved as two sounds. They are heard as one blurred, rough tone: our audition is blurry, and roughness is what the blur sounds like.
+
+Here is a neat proof that this happens inside the ear and not in the air. Put on headphones and play the two grinding tones below, then switch from both-tones-in-both-ears to one-tone-per-ear. The roughness vanishes, because each cochlea now receives a single clean frequency with nothing to grind against, even though the two tones in the air never changed:
+
+<iframe src="/assets/images/math-of-harmony/binaural.html" height="290"></iframe>
 
 In 1965, Reinier Plomp and Willem Levelt measured this precisely[^plomplevelt]. They played pairs of pure sine tones to subjects who rated them on a 7-point consonance scale. Each pair of tones was described by two numbers: where the pair sits overall (the average of the two frequencies, i.e. bass register or treble register) and the *gap in Hertz* between them. Note what's absent: the frequency *ratio*, the thing every musical interval is named after. That choice was deliberate, for two reasons. First, a trained ear recognizes ratios ("that's a fifth!") and rates them by learned habit, so the gaps were chosen to fall between the familiar intervals. Second, and more deeply, the law they found really is a law about the Hz gap, not the ratio: two pure tones are rough when their absolute distance in Hertz is small compared to the critical band at that register, wherever that distance happens to fall ratio-wise. Dissonance is zero at unison, spikes to a maximum for a small gap, then decays smoothly, and the width of that "zone of discomfort" scales with the critical bandwidth: **maximal dissonance at about 25% of the critical bandwidth, back to consonance at about 100% of it**. (If ratios don't matter here, where does the 3:2 fifth get its magic? Hold that thought: ratios only enter the story in the next section, through overtones.)
 
@@ -42,11 +55,9 @@ This is why composers have always avoided close intervals like thirds in the dee
 
 Now look at that curve again, because something important is *missing* from it. There is no dip at the octave. No dip at the fifth. Nothing special happens at any musical ratio: two pure sine tones either want to be identical or want personal space, and that's all. **For pure tones, simple frequency ratios are not special.** So where does music come from?
 
-(One fine-print caveat: careful listeners can hear faint "secondary beats" when two pure tones sit slightly off a simple ratio like 2:1, so the pure-tone curve may deserve tiny corrections there. Nobody considers this musically decisive, and we'll ignore it, as everyone does.)
-
 ## Harmony comes from overtones
 
-Before any math, experience what overtones actually are. Below is a single note. At zero overtones it is a bare sine wave. Click the wave to hear it, then drag the slider while it plays: each step stacks another overtone (at 2x, 3x, 4x... the fundamental frequency, each quieter than the last) on top of the same note. The pitch never moves, but the dull whistle thickens into something with body, close to a plucked string. Then switch the timbre while it plays: a metal bar puts its overtones at completely different multiples of the same fundamental, and the note instantly stops sounding like a string. That transformation, and nothing else, is timbre:
+Below is a single note. At zero overtones it is a bare sine wave. Click the wave to hear it, then drag the slider while it plays: each step stacks another overtone (at 2x, 3x, 4x... the fundamental frequency, each quieter than the last) on top of the same note. The pitch never moves, but the dull whistle thickens into something with body, close to a plucked string. Then switch the timbre while it plays: a metal bar puts its overtones at completely different multiples of the same fundamental, and the note instantly stops sounding like a string. That transformation, and nothing else, is timbre:
 
 <iframe src="/assets/images/math-of-harmony/overtones.html" height="330"></iframe>
 
@@ -74,7 +85,13 @@ Now watch what happens. Give each of the two notes a realistic harmonic timbre (
 
 With 1 harmonic (a pure sine) you get the featureless Plomp-Levelt hump: no interval is special. Add the second harmonic and a deep valley appears at ratio 2.0, **the octave is born**. The third harmonic carves a valley at 3/2, the fifth. Then 4/3 (the fourth), then 5/4 and 5/3 (major third and major sixth), then 6/5 (minor third). The consonant intervals of Western music emerge one by one, in roughly their order of historical importance, as you stack up overtones.
 
-The logic is beautifully simple. A valley appears wherever many partials of the two notes *coincide*: at a 3:2 interval, the third harmonic of the low note lands exactly on the second harmonic of the high note, so instead of two nearby partials grinding inside a critical band, they fuse into one. Between the valleys, partials fall close-but-not-equal and roughness spikes. In physics terms the curve reads like a potential energy landscape: like two hydrogen atoms settling at the separation that minimizes their energy to form a molecule, two notes "want" to roll downhill into the nearest valley. That pull is what musicians feel as an interval wanting to resolve.
+The logic is beautifully simple. A valley appears wherever many partials of the two notes *coincide*: at a 3:2 interval, the third harmonic of the low note lands exactly on the second harmonic of the high note, so instead of two nearby partials grinding inside a critical band, they fuse into one. Between the valleys, partials fall close-but-not-equal and roughness spikes.
+
+You can watch this happen. Below, every partial of both notes is a glowing line, stacked by frequency (fundamentals low and yellow, overtones reddening as they climb). The lower note is fixed; hold the slider and raise the second note, and its whole ladder of overtones slides upward through the fixed one. At most positions the lines pack close together and you hear the grind; but at the simple ratios, lines from the two notes snap exactly onto each other and the sound locks into tune:
+
+<iframe src="/assets/images/math-of-harmony/spectrum.html" height="500"></iframe>
+
+In physics terms the dissonance curve reads like a potential energy landscape: like two hydrogen atoms settling at the separation that minimizes their energy to form a molecule, two notes "want" to roll downhill into the nearest valley. That pull is what musicians feel as an interval wanting to resolve.
 
 Here is the full curve for two 6-harmonic tones, with the valleys marked. This reproduces the famous Figure 11 of Plomp and Levelt's 1965 paper:
 
