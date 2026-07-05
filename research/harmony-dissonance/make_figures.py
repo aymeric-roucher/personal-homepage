@@ -287,69 +287,49 @@ def fig_bar_timbre_curve() -> dict:
     return {"data": traces, "layout": layout}
 
 
-def fig_stretched_timbre() -> dict:
-    """Slider over the stretch exponent: partials at j**gamma * f0. At
-    gamma != 1 the 2:1 octave turns dissonant and a pseudo-octave appears."""
-    from dissonance import amp_to_loudness
+def fig_railsback() -> dict:
+    """Schematic of the Railsback curve (after O. L. Railsback, 1938): the
+    deviation, in cents, of aural piano tunings from equal temperament across
+    the 88 keys. Smooth cubic shape matching the classic measured figure:
+    bass tuned up to ~30 cents flat, middle on pitch, treble up to ~30 sharp."""
+    keys = np.arange(1, 89)
+    x = (keys - 44) / 44.0
+    cents = 32 * x**3
+    octave_c = [4, 16, 28, 40, 52, 64, 76, 88]
+    octave_labels = ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8"]
 
-    gammas = [0.90, 0.95, 1.00, 1.05, 1.10]
-    j = np.arange(1, 9, dtype=float)
-    louds = amp_to_loudness(1.0 / j)
-    traces = []
-    for idx, gamma in enumerate(gammas):
-        ratios, d = dissonance_curve(
-            REF_FREQ, r_min=1.0, r_max=2.3, n_points=1200,
-            partials=(j**gamma, louds),
-        )
-        d_norm = d / d.max()
-        traces.append(
-            {
-                "type": "scatter",
-                "mode": "lines",
-                "x": ratios.round(4).tolist(),
-                "y": d_norm.round(4).tolist(),
-                "visible": gamma == 1.00,
-                "line": {"color": BLUE, "width": 2},
-                "hovertemplate": "Ratio %{x:.3f}: dissonance %{y:.2f}<extra></extra>",
-            }
-        )
-    steps = [
+    traces = [
         {
-            "method": "update",
-            "label": f"{g:.2f}",
-            "args": [{"visible": [i == idx for i in range(len(gammas))]}],
+            "type": "scatter",
+            "mode": "lines",
+            "x": keys.tolist(),
+            "y": cents.round(1).tolist(),
+            "line": {"color": BLUE, "width": 2},
+            "hovertemplate": "Key %{x}: %{y:.0f} cents<extra></extra>",
         }
-        for idx, g in enumerate(gammas)
-    ]
-    shapes = [
-        {
-            "type": "line",
-            "x0": r, "x1": r, "y0": 0, "y1": 1.03,
-            "line": {"color": INK_MUTED, "width": 1, "dash": "dot"},
-            "layer": "below",
-        }
-        for r in (1.5, 2.0)
-    ]
-    annotations = [
-        {"x": 1.5, "y": 1.06, "text": "Fifth 3/2", "showarrow": False, "font": {"color": INK_MUTED, "size": 11}},
-        {"x": 2.0, "y": 1.06, "text": "Octave 2/1", "showarrow": False, "font": {"color": INK_MUTED, "size": 11}},
     ]
     layout = base_layout(
-        xaxis={"title": {"text": "Interval (frequency ratio)"}},
-        yaxis={"title": {"text": "Dissonance (normalized)"}, "range": [0, 1.12]},
-        shapes=shapes,
-        annotations=annotations,
-        showlegend=False,
-        sliders=[
+        xaxis={
+            "title": {"text": "Piano key"},
+            "tickvals": octave_c,
+            "ticktext": octave_labels,
+        },
+        yaxis={"title": {"text": "Deviation from equal temperament (cents)"}},
+        shapes=[
             {
-                "active": 2,
-                "currentvalue": {"prefix": "Overtone stretch exponent: ", "font": {"color": INK_SECONDARY}},
-                "pad": {"t": 35},
-                "steps": steps,
-                "font": {"color": INK_MUTED},
+                "type": "line",
+                "x0": 1, "x1": 88, "y0": 0, "y1": 0,
+                "line": {"color": INK_MUTED, "width": 1, "dash": "dot"},
+                "layer": "below",
             }
         ],
-        margin={"b": 30, "t": 40},
+        annotations=[
+            {"x": 10, "y": -24, "text": "Bass tuned flat", "showarrow": False, "font": {"color": INK_SECONDARY, "size": 12}},
+            {"x": 78, "y": 24, "text": "Treble tuned sharp", "showarrow": False, "font": {"color": INK_SECONDARY, "size": 12}},
+            {"x": 88, "y": 2.5, "text": "Exact equal temperament", "showarrow": False, "xanchor": "right", "font": {"color": INK_MUTED, "size": 11}},
+        ],
+        showlegend=False,
+        margin={"t": 20},
     )
     return {"data": traces, "layout": layout}
 
@@ -570,8 +550,8 @@ def main() -> None:
         "pure_tone_curves.json": fig_pure_tone_curves(),
         "curve_by_partials.json": fig_curve_by_partials(),
         "dissonance_curve.json": fig_dissonance_curve(),
+        "railsback_curve.json": fig_railsback(),
         "bar_timbre_curve.json": fig_bar_timbre_curve(),
-        "stretched_timbre.json": fig_stretched_timbre(),
     }
     surface, heatmap = fig_surface_and_heatmap()
     figures["dissonance_surface_3d.json"] = surface

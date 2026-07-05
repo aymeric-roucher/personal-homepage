@@ -39,8 +39,8 @@ uv run bach_intervals.py                                      # Bach chorale int
 | `pure_tone_curves.json` | Plomp-Levelt roughness of two pure sine tones at four registers: no dips at any musical ratio |
 | `curve_by_partials.json` | dissonance curve with a slider over the number of harmonics: consonant valleys appear one by one |
 | `dissonance_curve.json` | the 8-harmonic curve, minima marked at just-intonation ratios, 12-tone equal temperament shown as dotted lines |
+| `railsback_curve.json` | schematic Railsback curve: aural piano tunings deviate from equal temperament, bass flat and treble sharp |
 | `bar_timbre_curve.json` | same computation for an idealized metal bar (bell-like overtones): Western intervals land on bumps |
-| `stretched_timbre.json` | slider over an overtone stretch exponent: at 0.95 the 2:1 octave becomes dissonant |
 | `dissonance_surface_3d.json` | the final 3D surface: dissonance of every three-note chord, consonance wells marked |
 | `dissonance_heatmap.json` | the same surface seen from above (generated for completeness, not embedded in the post) |
 
