@@ -500,50 +500,10 @@ def fig_surface_and_heatmap() -> tuple[dict, dict]:
             "font": {"family": FONT, "color": INK_SECONDARY, "size": 12},
             "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
             "scene": {
-                # Built-in tick labels sit on cube edges bordering the empty
-                # half of the plane; hide them and draw our own labels as
-                # scene annotations along the filled triangle's edges instead.
-                "xaxis": {**axis_3d, "showticklabels": False, "title": {"text": ""}},
-                "yaxis": {**axis_3d, "showticklabels": False, "title": {"text": ""}},
+                "xaxis": {**axis_3d, "title": {"text": "Interval of Note 2 (ratio)", "font": {"color": INK_SECONDARY, "size": 12}}},
+                "yaxis": {**axis_3d, "title": {"text": "Interval of Note 3 (ratio)", "font": {"color": INK_SECONDARY, "size": 12}}},
                 "zaxis": {**axis_3d, "title": {"text": "Dissonance", "font": {"color": INK_SECONDARY, "size": 12}}},
                 "camera": {"eye": {"x": -1.5, "y": 1.3, "z": 1.1}},
-                "annotations": (
-                    [
-                        # Note 2 (x) ticks just beyond the back edge y = 2.05,
-                        # floating in free space next to the filled triangle
-                        {
-                            "x": t, "y": 2.18, "z": 0,
-                            "text": f"{t:.1f}", "showarrow": False,
-                            "xanchor": "right",
-                            "font": {"color": INK_MUTED, "size": 11},
-                        }
-                        for t in [1.2, 1.4, 1.6, 1.8, 2.0]
-                    ]
-                    + [
-                        # Note 3 (y) ticks along the x = 1 edge
-                        {
-                            "x": 1.0, "y": t, "z": 0,
-                            "text": f"{t:.1f}", "showarrow": False,
-                            "xanchor": "right", "xshift": -6, "yshift": -8,
-                            "font": {"color": INK_MUTED, "size": 11},
-                        }
-                        for t in [1.2, 1.4, 1.6, 1.8, 2.0]
-                    ]
-                    + [
-                        {
-                            "x": 1.6, "y": 2.42, "z": 0,
-                            "text": "Interval of Note 2 (ratio)", "showarrow": False,
-                            "xanchor": "right",
-                            "font": {"color": INK_SECONDARY, "size": 12},
-                        },
-                        {
-                            "x": 1.0, "y": 1.45, "z": 0,
-                            "text": "Interval of Note 3 (ratio)", "showarrow": False,
-                            "xanchor": "right", "xshift": -14, "yshift": -62,
-                            "font": {"color": INK_SECONDARY, "size": 12},
-                        },
-                    ]
-                ),
             },
         },
     }
