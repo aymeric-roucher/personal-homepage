@@ -8,7 +8,7 @@ url: math-of-harmony
 
 Why does music sound harmonious or jarring?
 
-I have this sometimes unpopular opinion that the concepts "beautiful" or "ugly" are not just peculiar social constructs, but that they bear some universal truth, and that relativizing their importance leads to [missing opportunities to do good](https://youtu.be/4u0K0xdOx_k?si=htzJs8Cnz5PGXKzd&t=85).
+I have this sometimes unpopular opinion that the concepts "beautiful" or "ugly" are not just peculiar social constructs, but that they bear some universal truth, and that denying the importance of harmony can lead to [awful missteps](https://youtu.be/4u0K0xdOx_k?si=htzJs8Cnz5PGXKzd&t=85).
 
 I've recently been very happy to stumble upon the beginning of an explanation: the sensory theory of consonance and dissonance.
 
@@ -57,7 +57,7 @@ Experience it below: a single note, starting as a bare sine wave. Click the wave
 
 The idea that unlocks everything dates back to Hermann Helmholtz's 1863 book *On the Sensations of Tone*[^helmholtz]: dissonance comes from beats, and real notes carry overtones. So when two notes sound together, roughness can arise between *any* partial of one and *any* partial of the other: fundamental against fundamental, fundamental against overtone, overtone against overtone. (Helmholtz thought maximal roughness sat at a fixed 30 to 40 Hz separation regardless of register; Plomp and Levelt's critical-band scaling is the modern correction to this single error, and his hand-drawn dissonance curves look remarkably close to the computed ones below.)
 
-Plomp and Levelt turned that idea into arithmetic with one assumption: **the total dissonance of two complex tones is just the sum of the pairwise dissonances of all their partials.** In the 1990s, William Sethares fitted a clean formula to their experimental curve[^sethares], giving the model we compute with today.
+Plomp and Levelt turned that idea into arithmetic with one assumption: **the total dissonance of two complex tones is just the sum of the pairwise dissonances of all their partials.** In the 1990s, [Pr. William Sethares](https://scholar.google.com/citations?user=R_2UugQAAAAJ&hl=en), who might be the most important music theorist alive, fitted a clean formula to their experimental curve[^sethares], giving the model we compute with today.
 
 <div class="technical-block" data-title="The Sethares dissonance formula">
 
