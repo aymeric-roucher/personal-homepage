@@ -46,7 +46,7 @@ Now look at that curve again, because something important is *missing* from it. 
 
 ## Harmony comes from overtones
 
-Before any math, experience what overtones actually are. Below is a single note. At zero overtones it is a bare sine wave. Click the wave to hear it, then drag the slider while it plays: each step stacks another overtone (at 2x, 3x, 4x... the fundamental frequency, each quieter than the last) on top of the same note. The pitch never moves, but the dull whistle thickens into something with body, close to a plucked string. That transformation, and nothing else, is timbre:
+Before any math, experience what overtones actually are. Below is a single note. At zero overtones it is a bare sine wave. Click the wave to hear it, then drag the slider while it plays: each step stacks another overtone (at 2x, 3x, 4x... the fundamental frequency, each quieter than the last) on top of the same note. The pitch never moves, but the dull whistle thickens into something with body, close to a plucked string. Then switch the timbre while it plays: a metal bar puts its overtones at completely different multiples of the same fundamental, and the note instantly stops sounding like a string. That transformation, and nothing else, is timbre:
 
 <iframe src="/assets/images/math-of-harmony/overtones.html" height="330"></iframe>
 
