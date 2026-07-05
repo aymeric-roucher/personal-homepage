@@ -173,7 +173,7 @@ def fig_curve_by_partials() -> dict:
     ratios_list = None
     traces = []
     steps = []
-    n_values = list(range(1, 8))
+    n_values = list(range(1, 9))
     for idx, n in enumerate(n_values):
         ratios, d = dissonance_curve(REF_FREQ, n_partials=n, r_min=1.0, r_max=2.3, n_points=800)
         ratios_list = ratios
