@@ -13,7 +13,7 @@ I have this sometimes unpopular opinion that the concepts "beautiful" or "ugly" 
 I've recently been very happy to stumble upon the beginning of an explanation: the sensory theory of consonance and dissonance.
 
 It explains:
-- why the intervals originally set by Pythagoreans have become the basis for all Western music
+- why the intervals originally set by Pythagoreans[^pythagorean] have become the basis for all Western music
 - why certain chords sound better than others
 - why a piano tuner deliberately tunes your piano "wrong"
 - why other cultures can very rightly NOT use the Western harmonic scale of A-B-C-D-E-F-G (or Do-Re-Mi-Fa-Sol-La-Si-Do in latin notation)
@@ -98,7 +98,7 @@ Two more things to read off this figure:
 - **Sharper valleys for simpler ratios.** The octave and fifth are narrow slits: mistune them slightly and dissonance shoots up. The thirds sit in shallow bowls: they tolerate mistuning. Sethares proved this pattern in general (a timbre with $n$ partials has at most $2n(n-1)$ local minima, the steep ones exactly where partials coincide)[^sethares]. This asymmetry is why equal temperament is livable: the dotted vertical lines show the 12 notes of **equal temperament**, the modern compromise tuning where every semitone is an identical ratio of $2^{1/12}$. Its fifth (1.4983) lands imperceptibly close to 3/2, but its major third (1.2599) visibly misses the 5/4 valley and sits partway up a dissonance slope. Tempered thirds really are slightly sour, and the model shows why we accept them: their valley is shallow, so the penalty is mild. Mistuned octaves would be unbearable, and indeed equal temperament keeps octaves exact.
 - **The relative depths of the valleys** reproduce the classical ranking of consonances that music theorists established by ear centuries ago (octave, fifth, fourth, sixths, thirds), which Malmberg had measured empirically in 1918.
 
-And why twelve notes in the first place? Because of a number-theoretic near-miracle that the Pythagoreans stumbled on while building scales by stacking fifths: after exactly twelve fifths you land almost precisely back on your starting note, seven octaves up ($(3/2)^{12} = 129.7$, versus $2^7 = 128$, an overshoot of only 1.4%, the "Pythagorean comma"). That coincidence is the same statement as $2^{7/12}$ being within 0.1% of a perfect fifth. So dividing the octave into twelve equal steps buys you, all at once, a near-perfect fifth (1.4983 vs 3/2), a near-perfect fourth (1.3348 vs 4/3), and serviceable thirds and sixths (1.26 vs 5/4, 1.68 vs 5/3): **no other small division of the octave lands so many of the dissonance valleys with so few notes.** Twelve is simply the best cheap approximation.
+And why twelve notes in the first place? Because of a number-theoretic near-miracle that the Pythagoreans stumbled on while building scales by stacking fifths[^pythagorean]: after exactly twelve fifths you land almost precisely back on your starting note, seven octaves up ($(3/2)^{12} = 129.7$, versus $2^7 = 128$, an overshoot of only 1.4%, the "Pythagorean comma"). That coincidence is the same statement as $2^{7/12}$ being within 0.1% of a perfect fifth. So dividing the octave into twelve equal steps buys you, all at once, a near-perfect fifth (1.4983 vs 3/2), a near-perfect fourth (1.3348 vs 4/3), and serviceable thirds and sixths (1.26 vs 5/4, 1.68 vs 5/3): **no other small division of the octave lands so many of the dissonance valleys with so few notes.** Twelve is simply the best cheap approximation.
 
 One crucial point here: an A and an E don't sound in tune because their fundamentals are at a 3/2 ratio: those two sine waves alone are far outside each other's critical band and sound fine at almost any spacing. With pure sines a mistuned fifth passes unnoticed; add overtones one by one and the wobble becomes audible, until the mistuned fifth openly grinds. **Tuning comes from overtones, not from numerology on fundamentals.** A fifth is only "well defined" once the notes carry two or three overtones; the fourth needs one more still.
 
@@ -163,6 +163,8 @@ This does not explain all of music; only some of the harmony. It lays the ground
 [^minutephysics]: minutephysics, [The Physics of Dissonance](https://www.youtube.com/watch?v=tCsl6ZcY9ag) (2025).
 
 [^threeblue]: 3Blue1Brown, [But what is the Fourier Transform? A visual introduction](https://www.youtube.com/watch?v=spUNpyF58BY).
+
+[^pythagorean]: [Pythagorean tuning](https://en.wikipedia.org/wiki/Pythagorean_tuning) on Wikipedia: how stacking 3/2 fifths and folding them back into a single octave generates the twelve-note chromatic scale, and how the leftover comma haunted tuning systems for two millennia.
 
 [^plomplevelt]: "A better hypothesis seems to be that they are related to critical bandwidth, with the rule of thumb that maximal tonal dissonance is produced by intervals subtending 25% of the critical bandwidth, and that maximal tonal consonance is reached for interval widths of 100% of the critical bandwidth." Reinier Plomp and Willem Levelt, [Tonal Consonance and Critical Bandwidth](https://www.mpi.nl/world/materials/publications/levelt/Plomp_Levelt_Tonal_1965.pdf), Journal of the Acoustical Society of America 38, 548-560 (1965). The founding experiment, the sum-over-partials idea, and (Section IV) the statistical analysis of Bach and Dvořák scores.
 
