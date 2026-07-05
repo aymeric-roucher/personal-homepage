@@ -23,7 +23,7 @@ This post is 95% based on two excellent sources, Aatish Bhatia's interactive ess
 
 One caveat before we start: "sounding good" obviously also depends, at second order, on the person, their culture, and their musical history. But before sound ever reaches psychology, it is a pressure wave hitting a physical organ.
 
-## Two pure tones: beats, roughness, and our blurry audition
+## Two pure tones: beats, roughness, and our approximative audition
 
 Start with the simplest possible sound: a pure sine wave, a single frequency and nothing else. Take one sine wave at 220 Hz and another at 224 Hz. Each alone is a perfectly smooth tone. Together, they drift in and out of sync: sometimes their peaks align and reinforce, sometimes they cancel. The result is a single tone whose volume pulses, at exactly the difference of the two frequencies (here 4 times per second). These pulses are called **beats**. Try it, and drag the slider while it plays:
 
