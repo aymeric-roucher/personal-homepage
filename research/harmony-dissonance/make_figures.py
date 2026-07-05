@@ -98,22 +98,26 @@ INTERVAL_NAMES = {
     (1, 1): "Unison",
     (16, 15): "Minor second",
     (9, 8): "Major second",
-    (8, 7): "Septimal whole tone",
-    (7, 6): "Septimal minor third",
     (6, 5): "Minor third",
     (5, 4): "Major third",
-    (9, 7): "Septimal major third",
     (4, 3): "Perfect fourth",
     (7, 5): "Tritone",
     (3, 2): "Perfect fifth",
     (8, 5): "Minor sixth",
     (5, 3): "Major sixth",
-    (12, 7): "Septimal major sixth",
-    (7, 4): "Harmonic seventh",
     (9, 5): "Minor seventh",
     (15, 8): "Major seventh",
     (2, 1): "Octave",
 }
+
+
+def involves_seven(x: float) -> bool:
+    """Septimal intervals (7 in the ratio) have no equivalent on a piano, so
+    figures don't mark them. Exception: 7/5, which reads as the tritone."""
+    frac = nearest_just_ratio(x)
+    if (frac.numerator, frac.denominator) == (7, 5):
+        return False
+    return frac.numerator % 7 == 0 or frac.denominator % 7 == 0
 
 
 def fig_pure_tone_curves() -> dict:
@@ -342,6 +346,7 @@ def fig_dissonance_curve() -> dict:
     ratios, d = dissonance_curve(REF_FREQ, n_partials=8, r_min=1.0, r_max=2.05, n_points=2000)
     d_norm = d / d.max()
     minima_idx = find_local_minima(ratios, d_norm)
+    minima_idx = [i for i in minima_idx if not involves_seven(float(ratios[i]))]
 
     annotations = []
     marker_x, marker_y, marker_text = [], [], []
@@ -435,6 +440,10 @@ def fig_surface_and_heatmap() -> tuple[dict, dict]:
     minima = detect_surface_minima(ratios, z_norm, radius=max(2, round(0.02 * 211 / 1.05)))
     # Keep only reasonably consonant, prominent valleys
     minima = [(i, j) for (i, j) in minima if z_norm[i, j] <= 0.4]
+    minima = [
+        (i, j) for (i, j) in minima
+        if not involves_seven(float(ratios[i])) and not involves_seven(float(ratios[j]))
+    ]
 
     # Markers mirrored into the note3 >= note2 triangle (surface is symmetric):
     # detected (i, j) has col j >= row i, so swap to put note 2 (x) below note 3 (y).
