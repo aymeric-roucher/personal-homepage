@@ -112,37 +112,59 @@ INTERVAL_NAMES = {
 
 
 def fig_pure_tone_curves() -> dict:
-    registers = [
-        (125, "lower tone at 125 Hz (bass)", BLUE),
-        (250, "lower tone at 250 Hz", AQUA),
-        (500, "lower tone at 500 Hz", YELLOW),
-        (1000, "lower tone at 1000 Hz (treble)", GREEN),
-    ]
+    # One curve at a time, with a slider over the register of the lower tone.
+    # The slider makes the register-scaling tangible: the roughness peak marches
+    # toward unison as the register rises. The steps' labels are the lower-tone
+    # frequency in Hz, which the chart widget reads back to play the tones.
+    registers = [80, 125, 200, 320, 500, 800, 1250]
+    default_idx = registers.index(200)
     ratios = np.linspace(1.0, 2.3, 800)
-    traces = []
     global_max = 0.0
     curves = []
-    for f0, label, color in registers:
+    for f0 in registers:
         d = np.array([dissonance_pair(f0, f0 * r, 0.0625, 0.0625) for r in ratios])
-        curves.append((d, label, color))
+        curves.append(d)
         global_max = max(global_max, d.max())
-    for d, label, color in curves:
+
+    traces = []
+    for idx, (f0, d) in enumerate(zip(registers, curves)):
         traces.append(
             {
                 "type": "scatter",
                 "mode": "lines",
                 "x": ratios.round(4).tolist(),
                 "y": (d / global_max).round(4).tolist(),
-                "name": label,
-                "line": {"color": color, "width": 2},
-                "hovertemplate": label + ", ratio %{x:.3f}: roughness %{y:.2f}<extra></extra>",
+                "visible": idx == default_idx,
+                "line": {"color": BLUE, "width": 2},
+                "hovertemplate": "ratio %{x:.3f}: roughness %{y:.2f}<extra></extra>",
             }
         )
+    steps = [
+        {
+            "method": "update",
+            "label": str(f0),
+            "args": [{"visible": [i == idx for i in range(len(registers))]}],
+        }
+        for idx, f0 in enumerate(registers)
+    ]
     layout = base_layout(
         xaxis={"title": {"text": "Frequency ratio between the two tones (upper / lower)"}},
-        yaxis={"title": {"text": "Roughness (normalized)"}},
-        legend={"orientation": "h", "y": 1.12, "font": {"color": INK_SECONDARY}},
-        margin={"t": 50},
+        yaxis={"title": {"text": "Roughness (normalized)"}, "range": [0, 1.05]},
+        showlegend=False,
+        sliders=[
+            {
+                "active": default_idx,
+                "currentvalue": {
+                    "prefix": "Lower tone at ",
+                    "suffix": " Hz",
+                    "font": {"color": INK_SECONDARY},
+                },
+                "pad": {"t": 35},
+                "steps": steps,
+                "font": {"color": INK_MUTED},
+            }
+        ],
+        margin={"b": 30},
     )
     return {"data": traces, "layout": layout}
 
