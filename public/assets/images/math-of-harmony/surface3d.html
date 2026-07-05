@@ -78,7 +78,7 @@ const keyEls = {};
   piano.addEventListener('click', (e) => {
     const m = e.target.dataset && e.target.dataset.midi;
     if (!m) return;
-    playPartials(harmonicPartials(midiFreq(parseInt(m)), 6), 1.5);
+    playPianoNote(midiFreq(parseInt(m)), 2.2);
   });
 })();
 
@@ -96,10 +96,7 @@ function highlightChord(r1, r2) {
 }
 
 function playTriad(r1, r2) {
-  playPartials(
-    harmonicPartials(F0, 6).concat(harmonicPartials(F0 * r1, 6), harmonicPartials(F0 * r2, 6)),
-    2.2
-  );
+  for (const mult of [1, r1, r2]) playPianoNote(F0 * mult, 2.6, 0.6);
 }
 
 fetch('dissonance_surface_3d.json')

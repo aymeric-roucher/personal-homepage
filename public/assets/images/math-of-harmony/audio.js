@@ -54,3 +54,34 @@ function playPartials(partials, dur = 1.8, gainScale = 1) {
 function playInterval(makeTimbre, f0, ratio, dur = 1.8) {
   playPartials(makeTimbre(f0).concat(makeTimbre(f0 * ratio)), dur);
 }
+
+// Piano-like note: percussive attack, higher partials decay faster, slight
+// string-stiffness inharmonicity, and doubled slightly-detuned oscillators
+// per partial (real unison strings are never perfectly in tune).
+function playPianoNote(f0, dur = 2.6, gainScale = 1) {
+  const ctx = audioCtx();
+  const now = ctx.currentTime;
+  const B = 0.0004; // inharmonicity coefficient
+  const master = ctx.createGain();
+  master.gain.value = 0.34 * gainScale;
+  master.connect(ctx.destination);
+  for (let k = 1; k <= 8; k++) {
+    const f = f0 * k * Math.sqrt(1 + B * k * k);
+    if (f > 12000) continue;
+    const peak = 0.3 / Math.pow(k, 1.15);
+    const decay = dur * Math.pow(k, -0.6); // upper partials die sooner
+    for (const cents of [-0.7, 0.7]) {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.value = f * Math.pow(2, cents / 1200);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(peak / 2, now + 0.004);
+      g.gain.exponentialRampToValueAtTime(0.0008, now + decay);
+      o.connect(g);
+      g.connect(master);
+      o.start(now);
+      o.stop(now + decay + 0.05);
+    }
+  }
+}

@@ -128,7 +128,7 @@ On a bell-like sound, a "fifth" around 1.47 can beat the exact 3/2, which now so
 
 **Invented scales.** The logic runs forward too. Want a scale nobody has heard? Put overtones at prime multiples ($1, 2, 3, 5, 7, 11...$) and the model hands you consonant intervals at prime fractions. Sethares even ran the inverse problem, using optimization to *design a timbre* whose dissonance valleys land on an arbitrary target scale, like 10-tone equal temperament, which no natural instrument supports. Instrument and scale are two halves of one system, and you can engineer either half.
 
-## Now let's move to real harmony: 3-note chords
+## Three notes at once: a map of every possible chord
 
 Everything so far concerned two notes. Music mostly happens in chords, so take three: fix a root at middle C, and let the second and third notes float freely at ratios $r_1$ and $r_2$ above it. Sum the pairwise dissonance over *all* partial pairs of all three notes and you get, instead of a curve, a **dissonance surface** over the plane of all possible triads. Since pitch is continuous, every three-note chord that can exist, in any tuning system, from any culture, is one point on this map. (Only the half where note 3 sits above note 2 is shown: the other half is the same chords with the two upper notes swapped.)
 
