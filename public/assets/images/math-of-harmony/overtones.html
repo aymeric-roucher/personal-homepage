@@ -32,19 +32,32 @@
     </label>
     <label>Timbre
       <select id="timbre">
-        <option value="harmonic">string / pipe (harmonic)</option>
-        <option value="stretched">stretched (n^0.95)</option>
-        <option value="bar">metal bar (bell-like)</option>
+        <option value="string">Bowed string</option>
+        <option value="flute">Flute (nearly pure)</option>
+        <option value="clarinet">Clarinet (odd overtones)</option>
+        <option value="bell">Metal bar / bell</option>
       </select>
     </label>
     <span class="readout" id="readout"></span>
   </div>
-  <div class="hint">One note at 220 Hz. At zero overtones it is a bare sine wave: a dull electronic whistle. Drag the slider to stack overtones on top (for a string: 2x, 3x, 4x... the fundamental, each quieter): the pitch does not change, but the waveform sharpens and the sound thickens toward something like a plucked string. Then switch the timbre: a metal bar places its overtones at wildly un-integer multiples (2.76x, 5.40x...), which is why a xylophone can never be mistaken for a violin. Click the waveform to start or stop the sound, and change anything while it plays.</div>
+  <div class="hint">One note at 220 Hz. At zero overtones it is a bare sine wave: a dull electronic whistle. Drag the slider to stack overtones on top (2x, 3x, 4x... the fundamental, each much quieter than the one below it): the pitch does not change, but the waveform sharpens and the sound gains body. Then switch the timbre. Each real instrument has its own recipe of overtone strengths: a flute is almost a pure tone, a clarinet skips the even overtones, and a metal bar puts its overtones at un-integer multiples (2.76x, 5.41x...), which is why a xylophone can never be mistaken for a violin. Click the waveform to start or stop the sound, and change anything while it plays.</div>
 </div>
 <script>
 const F1 = 220;
 const MAX_PARTIALS = 8; // fundamental + up to 7 overtones
-const BAR_MULTIPLIERS = [1, 2.758, 5.406, 8.936, 13.35, 18.645, 24.82, 31.6];
+// Each real instrument: frequency multipliers of the fundamental, and the
+// relative loudness of each partial. Fundamental (index 0) is always 1 and
+// clearly the loudest; overtones fall off steeply, as in real spectra.
+const TIMBRES = {
+  string:   { mult: [1, 2, 3, 4, 5, 6, 7, 8],
+              amp:  [1, 0.42, 0.28, 0.16, 0.11, 0.08, 0.05, 0.04] },
+  flute:    { mult: [1, 2, 3, 4, 5, 6, 7, 8],
+              amp:  [1, 0.18, 0.06, 0.025, 0.012, 0.007, 0.004, 0.002] },
+  clarinet: { mult: [1, 3, 5, 7, 9, 11, 13, 15],
+              amp:  [1, 0.38, 0.20, 0.11, 0.06, 0.04, 0.025, 0.015] },
+  bell:     { mult: [1, 2.758, 5.406, 8.936, 13.35, 18.645, 24.82, 31.6],
+              amp:  [1, 0.5, 0.33, 0.22, 0.15, 0.1, 0.07, 0.05] },
+};
 const canvas = document.getElementById('wave');
 const ctx = canvas.getContext('2d');
 const slider = document.getElementById('overtones');
@@ -53,36 +66,31 @@ const readout = document.getElementById('readout');
 const stateBadge = document.getElementById('state');
 
 function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-
-function multiplier(k) {
-  if (timbreSel.value === 'stretched') return Math.pow(k, 0.95);
-  if (timbreSel.value === 'bar') return BAR_MULTIPLIERS[k - 1];
-  return k;
-}
+function timbre() { return TIMBRES[timbreSel.value] || TIMBRES.string; }
 
 function draw() {
   const n = parseInt(slider.value) + 1; // number of partials
+  const t0 = timbre();
   const W = canvas.width, H = canvas.height, mid = H / 2;
   ctx.clearRect(0, 0, W, H);
   const T = 3 / F1; // three fundamental periods
   ctx.strokeStyle = css('--grid');
   ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(W, mid); ctx.stroke();
-  // normalization: worst-case amplitude of the sum
   let norm = 0;
-  for (let k = 1; k <= n; k++) norm += 1 / k;
+  for (let i = 0; i < n; i++) norm += t0.amp[i];
   ctx.strokeStyle = css('--blue');
   ctx.lineWidth = 2;
   ctx.beginPath();
   for (let px = 0; px <= W; px++) {
     const t = px / W * T;
     let v = 0;
-    for (let k = 1; k <= n; k++) v += Math.sin(2 * Math.PI * F1 * multiplier(k) * t) / k;
+    for (let i = 0; i < n; i++) v += t0.amp[i] * Math.sin(2 * Math.PI * F1 * t0.mult[i] * t);
     const y = mid - (v / norm) * (H * 0.44);
     px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
   }
   ctx.stroke();
-  readout.textContent = n === 1 ? 'pure sine, 220 Hz' : `220 Hz + ${n - 1} overtone${n > 2 ? 's' : ''}`;
+  readout.textContent = n === 1 ? 'Pure sine, 220 Hz' : `220 Hz + ${n - 1} overtone${n > 2 ? 's' : ''}`;
 }
 
 let audioCtx = null, oscs = [], gains = [];
@@ -94,23 +102,23 @@ function stop() {
 function updateVoices() {
   if (!oscs.length) return;
   const n = parseInt(slider.value) + 1;
+  const t0 = timbre();
   const now = audioCtx.currentTime;
-  oscs.forEach((o, i) => {
-    o.frequency.setTargetAtTime(F1 * multiplier(i + 1), now, 0.02);
-  });
+  oscs.forEach((o, i) => o.frequency.setTargetAtTime(F1 * t0.mult[i], now, 0.02));
   gains.forEach((g, i) => {
-    const target = i < n ? 0.14 / (i + 1) : 0;
+    const target = i < n ? 0.32 * t0.amp[i] : 0;
     g.gain.setTargetAtTime(target, now, 0.03);
   });
 }
 canvas.addEventListener('click', () => {
   if (oscs.length) { stop(); return; }
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  for (let k = 1; k <= MAX_PARTIALS; k++) {
+  const t0 = timbre();
+  for (let i = 0; i < MAX_PARTIALS; i++) {
     const o = audioCtx.createOscillator();
     const g = audioCtx.createGain();
     o.type = 'sine';
-    o.frequency.value = F1 * multiplier(k);
+    o.frequency.value = F1 * t0.mult[i];
     g.gain.value = 0;
     o.connect(g);
     g.connect(audioCtx.destination);

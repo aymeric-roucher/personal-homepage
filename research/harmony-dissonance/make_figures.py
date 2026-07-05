@@ -95,19 +95,19 @@ def nearest_just_ratio(x: float, max_den: int = 9) -> Fraction:
 
 
 INTERVAL_NAMES = {
-    (1, 1): "unison",
-    (16, 15): "minor second",
-    (9, 8): "major second",
-    (6, 5): "minor third",
-    (5, 4): "major third",
-    (4, 3): "perfect fourth",
-    (7, 5): "tritone",
-    (3, 2): "perfect fifth",
-    (8, 5): "minor sixth",
-    (5, 3): "major sixth",
-    (9, 5): "minor seventh",
-    (15, 8): "major seventh",
-    (2, 1): "octave",
+    (1, 1): "Unison",
+    (16, 15): "Minor second",
+    (9, 8): "Major second",
+    (6, 5): "Minor third",
+    (5, 4): "Major third",
+    (4, 3): "Perfect fourth",
+    (7, 5): "Tritone",
+    (3, 2): "Perfect fifth",
+    (8, 5): "Minor sixth",
+    (5, 3): "Major sixth",
+    (9, 5): "Minor seventh",
+    (15, 8): "Major seventh",
+    (2, 1): "Octave",
 }
 
 
@@ -136,7 +136,7 @@ def fig_pure_tone_curves() -> dict:
                 "y": (d / global_max).round(4).tolist(),
                 "visible": idx == default_idx,
                 "line": {"color": BLUE, "width": 2},
-                "hovertemplate": "ratio %{x:.3f}: roughness %{y:.2f}<extra></extra>",
+                "hovertemplate": "Ratio %{x:.3f}: roughness %{y:.2f}<extra></extra>",
             }
         )
     steps = [
@@ -187,7 +187,7 @@ def fig_curve_by_partials() -> dict:
                 "name": f"{n} harmonic{'s' if n > 1 else ''}",
                 "visible": idx == 5,  # start at 6 harmonics
                 "line": {"color": BLUE, "width": 2},
-                "hovertemplate": "ratio %{x:.3f}: dissonance %{y:.2f}<extra></extra>",
+                "hovertemplate": "Ratio %{x:.3f}: dissonance %{y:.2f}<extra></extra>",
             }
         )
     for idx, n in enumerate(n_values):
@@ -228,7 +228,7 @@ def fig_bar_timbre_curve() -> dict:
         partials=(bar_multipliers, louds),
     )
     d_norm = d / d.max()
-    western = {"minor 3rd": 6 / 5, "major 3rd": 5 / 4, "fourth": 4 / 3, "fifth": 3 / 2, "major 6th": 5 / 3, "octave": 2.0}
+    western = {"Minor 3rd": 6 / 5, "Major 3rd": 5 / 4, "Fourth": 4 / 3, "Fifth": 3 / 2, "Major 6th": 5 / 3, "Octave": 2.0}
     shapes = [
         {
             "type": "line",
@@ -252,7 +252,7 @@ def fig_bar_timbre_curve() -> dict:
             "x": ratios.round(4).tolist(),
             "y": d_norm.round(4).tolist(),
             "line": {"color": BLUE, "width": 2},
-            "hovertemplate": "ratio %{x:.3f}: dissonance %{y:.2f}<extra></extra>",
+            "hovertemplate": "Ratio %{x:.3f}: dissonance %{y:.2f}<extra></extra>",
         }
     ]
     layout = base_layout(
@@ -289,7 +289,7 @@ def fig_stretched_timbre() -> dict:
                 "y": d_norm.round(4).tolist(),
                 "visible": gamma == 1.00,
                 "line": {"color": BLUE, "width": 2},
-                "hovertemplate": "ratio %{x:.3f}: dissonance %{y:.2f}<extra></extra>",
+                "hovertemplate": "Ratio %{x:.3f}: dissonance %{y:.2f}<extra></extra>",
             }
         )
     steps = [
@@ -310,8 +310,8 @@ def fig_stretched_timbre() -> dict:
         for r in (1.5, 2.0)
     ]
     annotations = [
-        {"x": 1.5, "y": 1.06, "text": "fifth 3/2", "showarrow": False, "font": {"color": INK_MUTED, "size": 11}},
-        {"x": 2.0, "y": 1.06, "text": "octave 2/1", "showarrow": False, "font": {"color": INK_MUTED, "size": 11}},
+        {"x": 1.5, "y": 1.06, "text": "Fifth 3/2", "showarrow": False, "font": {"color": INK_MUTED, "size": 11}},
+        {"x": 2.0, "y": 1.06, "text": "Octave 2/1", "showarrow": False, "font": {"color": INK_MUTED, "size": 11}},
     ]
     layout = base_layout(
         xaxis={"title": {"text": "Interval (frequency ratio)"}},
@@ -379,7 +379,7 @@ def fig_dissonance_curve() -> dict:
             "y": d_norm.round(4).tolist(),
             "name": "dissonance",
             "line": {"color": BLUE, "width": 2},
-            "hovertemplate": "ratio %{x:.3f}: dissonance %{y:.2f}<extra></extra>",
+            "hovertemplate": "Ratio %{x:.3f}: dissonance %{y:.2f}<extra></extra>",
         },
         {
             "type": "scatter",
@@ -437,7 +437,7 @@ def fig_surface_and_heatmap() -> tuple[dict, dict]:
     marker_y = [round(float(ratios[j]), 4) for i, j in minima]
     marker_z = [round(float(z_norm[i, j]), 4) for i, j in minima]
     marker_text = [
-        f"chord 1 : {name_ratio(float(ratios[i]))} : {name_ratio(float(ratios[j]))}"
+        f"Chord 1 : {name_ratio(float(ratios[i]))} : {name_ratio(float(ratios[j]))}"
         for i, j in minima
     ]
 
@@ -474,7 +474,7 @@ def fig_surface_and_heatmap() -> tuple[dict, dict]:
                 "contours": {
                     "z": {"show": True, "usecolormap": True, "project": {"z": True}}
                 },
-                "hovertemplate": "note 2: %{x:.3f} x<br>note 3: %{y:.3f} x<br>dissonance %{z:.2f}<extra></extra>",
+                "hovertemplate": "Note 2: %{x:.3f}x<br>Note 3: %{y:.3f}x<br>Dissonance %{z:.2f}<extra></extra>",
             },
             {
                 "type": "scatter3d",
@@ -494,8 +494,8 @@ def fig_surface_and_heatmap() -> tuple[dict, dict]:
             "font": {"family": FONT, "color": INK_SECONDARY, "size": 12},
             "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
             "scene": {
-                "xaxis": {**axis_3d, "title": {"text": "Interval of note 2 (ratio)", "font": {"color": INK_SECONDARY, "size": 12}}},
-                "yaxis": {**axis_3d, "title": {"text": "Interval of note 3 (ratio)", "font": {"color": INK_SECONDARY, "size": 12}}},
+                "xaxis": {**axis_3d, "title": {"text": "Interval of Note 2 (ratio)", "font": {"color": INK_SECONDARY, "size": 12}}},
+                "yaxis": {**axis_3d, "title": {"text": "Interval of Note 3 (ratio)", "font": {"color": INK_SECONDARY, "size": 12}}},
                 "zaxis": {**axis_3d, "title": {"text": "Dissonance", "font": {"color": INK_SECONDARY, "size": 12}}},
                 "camera": {"eye": {"x": -1.5, "y": 1.3, "z": 1.1}},
             },
@@ -516,7 +516,7 @@ def fig_surface_and_heatmap() -> tuple[dict, dict]:
                     "thickness": 12,
                     "outlinewidth": 0,
                 },
-                "hovertemplate": "note 2: %{x:.3f} x<br>note 3: %{y:.3f} x<br>dissonance %{z:.2f}<extra></extra>",
+                "hovertemplate": "Note 2: %{x:.3f}x<br>Note 3: %{y:.3f}x<br>Dissonance %{z:.2f}<extra></extra>",
             },
             {
                 "type": "scatter",
@@ -530,8 +530,8 @@ def fig_surface_and_heatmap() -> tuple[dict, dict]:
             },
         ],
         "layout": base_layout(
-            xaxis={"title": {"text": "Interval of note 2 (frequency ratio)"}, "constrain": "domain"},
-            yaxis={"title": {"text": "Interval of note 3 (frequency ratio)"}, "scaleanchor": "x"},
+            xaxis={"title": {"text": "Interval of Note 2 (frequency ratio)"}, "constrain": "domain"},
+            yaxis={"title": {"text": "Interval of Note 3 (frequency ratio)"}, "scaleanchor": "x"},
         ),
     }
     return surface, heatmap

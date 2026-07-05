@@ -90,10 +90,10 @@ function markSwept(r) {
 
 function nearestRatioName(r) {
   const table = [
-    [1, 'unison'], [16/15, 'minor second'], [9/8, 'major second'], [6/5, 'minor third'],
-    [5/4, 'major third'], [4/3, 'fourth'], [7/5, 'tritone'], [3/2, 'fifth'],
-    [8/5, 'minor sixth'], [5/3, 'major sixth'], [9/5, 'minor seventh'],
-    [15/8, 'major seventh'], [2, 'octave'],
+    [1, 'Unison'], [16/15, 'Minor second'], [9/8, 'Major second'], [6/5, 'Minor third'],
+    [5/4, 'Major third'], [4/3, 'Fourth'], [7/5, 'Tritone'], [3/2, 'Fifth'],
+    [8/5, 'Minor sixth'], [5/3, 'Major sixth'], [9/5, 'Minor seventh'],
+    [15/8, 'Major seventh'], [2, 'Octave'],
   ];
   let best = table[0];
   for (const row of table) if (Math.abs(r - row[0]) < Math.abs(r - best[0])) best = row;
@@ -160,9 +160,9 @@ function draw() {
     ctx.strokeStyle = 'rgba(255,255,255,0.07)';
     ctx.beginPath(); ctx.moveTo(rx0, y); ctx.lineTo(rx1, y); ctx.stroke();
   }
-  ctx.fillText('dissonance', rx0, specTop - 12);
+  ctx.fillText('Dissonance', rx0, specTop - 12);
   ctx.fillStyle = 'rgba(255,255,255,0.32)';
-  ctx.fillText('ratio', rx0 - 46, specTop - 12);
+  ctx.fillText('Ratio', rx0 - 46, specTop - 12);
 
   // filled area + curve stroke over contiguous explored runs
   let i = 0;
@@ -199,7 +199,7 @@ function draw() {
   ctx.shadowBlur = 0;
 
   const name = nearestRatioName(r);
-  readout.textContent = `ratio ${r.toFixed(3)}${name ? '  (' + name + ')' : ''}`;
+  readout.textContent = `Ratio ${r.toFixed(3)}${name ? '  (' + name + ')' : ''}`;
 }
 
 // audio: sustained oscillators, only while the slider is held
