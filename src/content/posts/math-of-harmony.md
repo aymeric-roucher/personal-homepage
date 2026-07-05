@@ -1,5 +1,5 @@
 ---
-title: How math defines what sounds good
+title: Music is grounded in math
 thumbnail: Why do some notes sound sweet together and others clash? Starting from two sine waves, we derive the physics of dissonance, rebuild musical scales from scratch, and end on a 3D map of every possible chord.
 date: 2026-07-05
 type: blog
