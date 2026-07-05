@@ -23,17 +23,9 @@ This post is 95% based on two excellent sources, Aatish Bhatia's interactive ess
 
 One caveat before we start: "sounding good" can obviously depend, on the second order, on the person, their culture, and their musical history. But before sound ever reaches psychology, it is a pressure wave hitting a physical organ.
 
-## A note is a stack of frequencies
-
-Press a single piano key and you don't get a single frequency. You get the **fundamental** (the pitch you perceive, say 261.6 Hz for middle C) plus a whole ladder of quieter **overtones** above it. For a vibrating string or an air column in a pipe (and the human voice is exactly that: the vocal folds driving the air column of your throat and mouth), physics forces these overtones to sit at exact integer multiples of the fundamental: $2f$, $3f$, $4f$, and so on. A string of length $L$ can only vibrate in shapes that pin down both ends, giving frequencies $f_n = n \cdot v / 2L$. Overtones that follow this integer pattern are called **harmonics**.
-
-This works because sound superposes: pressure waves add up linearly, so any instrument's sound can be decomposed into a sum of pure sine waves (this is Fourier analysis; 3Blue1Brown's videos are the best introduction[^threeblue]). A violin and a piano playing the same middle C have the same fundamental but different loudness ratios between their overtones. That recipe of relative loudnesses is what we call **timbre**: it is why you can tell the two instruments apart.
-
-But **the overtones also determine which  notes fit well together.** To see why, we first need to understand what happens when two pure sine waves meet.
-
 ## Two pure tones: beats, roughness, and our blurry audition
 
-Take one sine wave at 220 Hz and another at 224 Hz. Each alone is a perfectly smooth tone. Together, they drift in and out of sync: sometimes their peaks align and reinforce, sometimes they cancel. The result is a single tone whose volume pulses, at exactly the difference of the two frequencies (here 4 times per second). These pulses are called **beats**. Try it, and drag the slider while it plays:
+Start with the simplest possible sound: a pure sine wave, a single frequency and nothing else. Take one sine wave at 220 Hz and another at 224 Hz. Each alone is a perfectly smooth tone. Together, they drift in and out of sync: sometimes their peaks align and reinforce, sometimes they cancel. The result is a single tone whose volume pulses, at exactly the difference of the two frequencies (here 4 times per second). These pulses are called **beats**. Try it, and drag the slider while it plays:
 
 <iframe src="/assets/images/math-of-harmony/beats.html" height="330"></iframe>
 
@@ -51,13 +43,15 @@ Since the critical band is wide at low frequencies and narrow (relative to pitch
 
 <iframe src="/assets/images/math-of-harmony/chart.html?fig=pure_tone_curves&mode=pure" height="540"></iframe>
 
-This is why composers have always avoided close intervals like thirds in the deep bass: down there, even a major third (two notes at a frequency ratio of 5/4, like C and E) leaves partials rubbing inside one critical band. You can put startling numbers on it. I ran a census over the 351 four-part Bach chorales bundled with music21[^code]: when the lower note of two adjacent voices sits below C3, Bach writes them a major third or closer just **0.8%** of the time; when the lower note is at or above middle C, **43.4%** of the time. Same composer, same chords available, a **57x** difference purely driven by register: the physics of the critical band, obeyed by ear, two centuries before it was measured.
-
 Now look at that curve again, because something important is *missing* from it. There is no dip at the octave. No dip at the fifth. Nothing special happens at any musical ratio: two pure sine tones either want to be identical or want personal space, and that's all. **For pure tones, simple frequency ratios are not special.** So where does music come from?
 
 ## Harmony comes from overtones
 
-Below is a single note. At zero overtones it is a bare sine wave. Click the wave to hear it, then drag the slider while it plays: each step stacks another overtone (at 2x, 3x, 4x... the fundamental frequency, each quieter than the last) on top of the same note. The pitch never moves, but the dull whistle thickens into something with body, close to a plucked string. Then switch the timbre while it plays: a metal bar puts its overtones at completely different multiples of the same fundamental, and the note instantly stops sounding like a string. That transformation, and nothing else, is timbre:
+Real notes are actually not one, but many sines stacked together. Press a single piano key and you don't get a single frequency: you get the **fundamental** (the pitch you perceive, say 261.6 Hz for middle C) plus a whole ladder of quieter **overtones** above it. For a vibrating string or an air column in a pipe (and the human voice is exactly that: the vocal folds driving the air column of your throat and mouth), physics forces these overtones to sit at exact integer multiples of the fundamental: $2f$, $3f$, $4f$, and so on. A string of length $L$ can only vibrate in shapes that pin down both ends, giving frequencies $f_n = n \cdot v / 2L$. Overtones that follow this integer pattern are called **harmonics**.
+
+This stacking works because sound superposes: pressure waves add up linearly, so any instrument's sound can be decomposed into a sum of pure sine waves (this is Fourier analysis; 3Blue1Brown's videos are the best introduction[^threeblue]). A violin and a piano playing the same middle C have the same fundamental but different loudness ratios between their overtones. That recipe of relative loudnesses is what we call **timbre**: it is why you can tell the two instruments apart.
+
+Experience it below: a single note, starting as a bare sine wave. Click the wave to hear it, then drag the slider while it plays: each step stacks another overtone on top of the same note. The pitch never moves, but the dull whistle thickens into something with body, close to a plucked string. Then switch the timbre while it plays: a metal bar puts its overtones at completely different multiples of the same fundamental, and the note instantly stops sounding like a string. That transformation, and nothing else, is timbre:
 
 <iframe src="/assets/images/math-of-harmony/overtones.html" height="330"></iframe>
 
@@ -107,6 +101,8 @@ Two more things to read off this figure:
 Click anywhere on the graph to hear what that interval sounds like.
 
 One crucial point here: an A and an E don't sound in tune because their fundamentals are at a 3:2 ratio: those two sine waves alone are far outside each other's critical band and sound fine at almost any spacing. With pure sines a mistuned fifth passes unnoticed; add overtones one by one and the wobble becomes audible, until the mistuned fifth openly grinds. **Tuning comes from overtones, not from numerology on fundamentals.** A fifth is only "well defined" once the notes carry two or three overtones; the fourth needs one more still.
+
+Overtones also explain why composers have always avoided close intervals like thirds in the deep bass: remember that the roughness zone widens at low register, so down there even a major third (two notes at a frequency ratio of 5/4, like C and E) leaves partials rubbing inside one critical band. You can put startling numbers on it. I ran a census over the 351 four-part Bach chorales bundled with music21[^code]: when the lower note of two adjacent voices sits below C3, Bach writes them a major third or closer just **0.8%** of the time; when the lower note is at or above middle C, **43.4%** of the time. Same composer, same chords available, a **57x** difference purely driven by register: the physics of the critical band, obeyed by ear, two centuries before it was measured.
 
 ## Change the sound, change the scale
 
