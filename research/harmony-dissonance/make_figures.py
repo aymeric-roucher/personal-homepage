@@ -121,60 +121,72 @@ def involves_seven(x: float) -> bool:
 
 
 def fig_pure_tone_curves() -> dict:
-    # One curve at a time, with a slider over the register of the lower tone.
-    # The slider makes the register-scaling tangible: the roughness peak marches
-    # toward unison as the register rises. The steps' labels are the lower-tone
-    # frequency in Hz, which the chart widget reads back to play the tones.
-    registers = [80, 125, 200, 320, 500, 800, 1250]
-    default_idx = registers.index(200)
+    # Three stacked panels, one register each (bass to treble), sharing the
+    # ratio axis: the roughness bump visibly squeezes toward unison as the
+    # register rises. Each trace carries its base frequency in `meta` so the
+    # chart widget can play the clicked pair of pure tones.
+    registers = [(125, BLUE, "Bass: lower tone at 125 Hz"),
+                 (500, AQUA, "Middle: lower tone at 500 Hz"),
+                 (1500, YELLOW, "Treble: lower tone at 1500 Hz")]
     ratios = np.linspace(1.0, 2.3, 800)
-    global_max = 0.0
-    curves = []
-    for f0 in registers:
-        d = np.array([dissonance_pair(f0, f0 * r, 0.0625, 0.0625) for r in ratios])
-        curves.append(d)
-        global_max = max(global_max, d.max())
+    curves = [
+        np.array([dissonance_pair(f0, f0 * r, 0.0625, 0.0625) for r in ratios])
+        for f0, _, _ in registers
+    ]
+    global_max = max(c.max() for c in curves)
 
     traces = []
-    for idx, (f0, d) in enumerate(zip(registers, curves)):
+    annotations = []
+    # Panels stacked top to bottom: bass on top (yaxis), treble at the bottom (yaxis3)
+    gap = 0.07
+    panel = (1 - 2 * gap) / 3
+    domains = [[1 - panel, 1], [panel + gap, 2 * panel + gap], [0, panel]]
+    axis_style = {
+        "gridcolor": GRID,
+        "zeroline": False,
+        "linecolor": GRID,
+        "tickfont": {"color": INK_MUTED},
+        "range": [0, 1.1],
+        "tickvals": [0, 1],
+    }
+    layout = base_layout(
+        xaxis={
+            "title": {"text": "Frequency ratio between the two tones (upper / lower)"},
+            "anchor": "y3",
+        },
+        yaxis={**axis_style, "domain": domains[0]},
+        showlegend=False,
+        margin={"t": 30, "b": 55},
+    )
+    for idx, ((f0, color, label), d) in enumerate(zip(registers, curves)):
+        yaxis_name = "y" if idx == 0 else f"y{idx + 1}"
+        if idx > 0:
+            layout[f"yaxis{idx + 1}"] = {**axis_style, "domain": domains[idx]}
         traces.append(
             {
                 "type": "scatter",
                 "mode": "lines",
                 "x": ratios.round(4).tolist(),
                 "y": (d / global_max).round(4).tolist(),
-                "visible": idx == default_idx,
-                "line": {"color": BLUE, "width": 2},
-                "hovertemplate": "Ratio %{x:.3f}: roughness %{y:.2f}<extra></extra>",
+                "yaxis": yaxis_name,
+                "meta": f0,
+                "line": {"color": color, "width": 2},
+                "hovertemplate": label + ". Ratio %{x:.3f}: roughness %{y:.2f}<extra></extra>",
             }
         )
-    steps = [
-        {
-            "method": "update",
-            "label": str(f0),
-            "args": [{"visible": [i == idx for i in range(len(registers))]}],
-        }
-        for idx, f0 in enumerate(registers)
-    ]
-    layout = base_layout(
-        xaxis={"title": {"text": "Frequency ratio between the two tones (upper / lower)"}},
-        yaxis={"title": {"text": "Roughness (normalized)"}, "range": [0, 1.05]},
-        showlegend=False,
-        sliders=[
+        annotations.append(
             {
-                "active": default_idx,
-                "currentvalue": {
-                    "prefix": "Lower tone at ",
-                    "suffix": " Hz",
-                    "font": {"color": INK_SECONDARY},
-                },
-                "pad": {"t": 35},
-                "steps": steps,
-                "font": {"color": INK_MUTED},
+                "x": 2.28,
+                "y": domains[idx][1] - 0.01,
+                "xref": "x",
+                "yref": "paper",
+                "text": label,
+                "showarrow": False,
+                "xanchor": "right",
+                "font": {"color": color, "size": 13},
             }
-        ],
-        margin={"b": 30},
-    )
+        )
+    layout["annotations"] = annotations
     return {"data": traces, "layout": layout}
 
 
