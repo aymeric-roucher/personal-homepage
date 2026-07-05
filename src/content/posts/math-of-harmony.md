@@ -27,7 +27,7 @@ One caveat before we start: "sounding good" obviously also depends, at second or
 
 Start with the simplest possible sound: a pure sine wave, a single frequency and nothing else. Take one sine wave at 220 Hz and another at 224 Hz. Each alone is a perfectly smooth tone. Together, they drift in and out of sync: sometimes their peaks align and reinforce, sometimes they cancel. The result is a single tone whose volume pulses, at exactly the difference of the two frequencies (here 4 times per second). These pulses are called **beats**. Try it, and drag the slider while it plays:
 
-<iframe src="/assets/images/math-of-harmony/beats.html" height="330"></iframe>
+<iframe src="/assets/images/math-of-harmony/beats.html" height="360"></iframe>
 
 As you increase the detuning, the beats speed up. Around 20 to 30 beats per second, something changes: your ear can no longer follow individual pulses, and the sound takes on a grinding quality that psychoacousticians call **roughness**. Push further and the roughness fades: the two tones finally separate into two distinct, peaceful pitches.
 
@@ -35,7 +35,7 @@ Why does the ear fuse close frequencies at all? Because its frequency resolution
 
 Here is a neat proof that this happens inside the ear and not in the air. Put on headphones and play the two grinding tones below, then switch from both-tones-in-both-ears to one-tone-per-ear. The roughness vanishes, because each cochlea now receives a single clean frequency with nothing to grind against, even though the two tones in the air never changed:
 
-<iframe src="/assets/images/math-of-harmony/binaural.html" height="290"></iframe>
+<iframe src="/assets/images/math-of-harmony/binaural.html" height="320"></iframe>
 
 In 1965, Reinier Plomp and Willem Levelt measured this precisely[^plomplevelt]. They played pairs of pure sine tones to subjects who rated them on a 7-point consonance scale. Each pair of tones was described by two numbers: where the pair sits overall (the average of the two frequencies, i.e. bass register or treble register) and the *gap in Hertz* between them. Note what's absent: the frequency *ratio*, the thing every musical interval is named after. That choice was deliberate, for two reasons. First, a trained ear recognizes ratios ("that's a fifth!") and rates them by learned habit, so the gaps were chosen to fall between the familiar intervals. Second, and more deeply, the law they found really is a law about the Hz gap, not the ratio: two pure tones are rough when their absolute distance in Hertz is small compared to the critical band at that register, wherever that distance happens to fall ratio-wise. Dissonance is zero at unison, spikes to a maximum for a small gap, then decays smoothly, and the width of that "zone of discomfort" scales with the critical bandwidth: **maximal dissonance at about 25% of the critical bandwidth, back to consonance at about 100% of it**. (If ratios don't matter here, where does the 3/2 fifth get its magic? Hold that thought: ratios only enter the story in the next section, through overtones.)
 
@@ -53,7 +53,7 @@ This stacking works because sound superposes: pressure waves add up linearly, so
 
 Experience it below: a single note, starting as a bare sine wave. Click the wave to hear it, then drag the slider while it plays: each step stacks another overtone on top of the same note. The pitch never moves, but the dull whistle thickens into something with body, close to a bowed string. Then switch the timbre while it plays: a metal bar puts its overtones at completely different multiples of the same fundamental, and the note instantly stops sounding like a string. That transformation, and nothing else, is timbre:
 
-<iframe src="/assets/images/math-of-harmony/overtones.html" height="330"></iframe>
+<iframe src="/assets/images/math-of-harmony/overtones.html" height="360"></iframe>
 
 The idea that unlocks everything dates back to Hermann Helmholtz's 1863 book *On the Sensations of Tone*[^helmholtz]: dissonance comes from beats, and real notes carry overtones. So when two notes sound together, roughness can arise between *any* partial of one and *any* partial of the other: fundamental against fundamental, fundamental against overtone, overtone against overtone. (Helmholtz thought maximal roughness sat at a fixed 30 to 40 Hz separation regardless of register; Plomp and Levelt's critical-band scaling is the modern correction to this single error, and his hand-drawn dissonance curves look remarkably close to the computed ones below.)
 
@@ -83,7 +83,7 @@ The logic is beautifully simple. A valley appears wherever many partials of the 
 
 You can watch this happen. In the top panel below, every partial of both notes is a vertical bar placed at its frequency: blue for the fixed note, orange for the one you move, each overtone dimmer than the one below it. Hold the slider and raise the moving note, and its whole ladder of overtones slides rightward through the fixed one. At most positions the bars pack close together and you hear the grind; at the simple ratios, orange bars land exactly on blue ones and the sound locks into tune. The bottom panel traces out the dissonance of every interval you have swept through, red dot on your current position:
 
-<iframe src="/assets/images/math-of-harmony/spectrum.html" height="560"></iframe>
+<iframe src="/assets/images/math-of-harmony/spectrum.html" height="600"></iframe>
 
 In physics terms the dissonance curve reads like a potential energy landscape: like two hydrogen atoms settling at the separation that minimizes their energy to form a molecule, two notes "want" to roll downhill into the nearest valley. That pull is what musicians feel as an interval wanting to resolve.
 
@@ -130,7 +130,7 @@ Everything so far concerned two notes. Music mostly happens in chords, so take t
 
 Here it is. **Drag to rotate, and click anywhere to hear the chord you're pointing at**: the keyboard underneath shows the closest piano keys for whatever you click (with the deviation in cents), and you can click the piano keys themselves to hear each note alone. The wells are the chords musicians have always known; the peaks are everything else.
 
-<iframe src="/assets/images/math-of-harmony/surface3d.html" height="740"></iframe>
+<iframe src="/assets/images/math-of-harmony/surface3d.html" height="780"></iframe>
 
 Rotate it to look straight down and the structure is stunning: a weave of valley-lines crossing the plane.
 

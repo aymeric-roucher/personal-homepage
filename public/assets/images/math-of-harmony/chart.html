@@ -6,7 +6,7 @@
 <title>Dissonance chart</title>
 <style>
   :root { --surface: #ffffff; --muted: #898781; }
-  html, body { margin: 0; background: transparent; color: var(--muted);
+  html, body { margin: 0; background: transparent; overflow: hidden; color: var(--muted);
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 13px; }
   #plot { width: 100%; }
   #plot .js-plotly-plot .plotly .cursor-crosshair,
@@ -53,13 +53,21 @@ function handleClick(el, pt) {
   }
 }
 
+function plotHeight() {
+  // Fit the plot to whatever vertical room the hint leaves, so the iframe
+  // never needs an internal scrollbar.
+  const hint = document.getElementById('hint');
+  return Math.max(300, window.innerHeight - hint.offsetHeight - 12);
+}
+
 fetch(figName + '.json')
   .then(res => res.json())
   .then(fig => {
     const el = document.getElementById('plot');
-    fig.layout.height = Math.max(300, window.innerHeight - 40);
+    fig.layout.height = plotHeight();
     Plotly.newPlot(el, fig.data, fig.layout, { responsive: true, displayModeBar: false });
     el.on('plotly_click', data => handleClick(el, data.points[0]));
+    window.addEventListener('resize', () => Plotly.relayout(el, { height: plotHeight() }));
   })
   .catch(err => {
     document.getElementById('plot').textContent = 'Could not load the chart data.';
