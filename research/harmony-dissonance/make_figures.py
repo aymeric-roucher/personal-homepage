@@ -12,7 +12,7 @@ Figures:
                                several registers (no dips at simple ratios)
   2. curve_by_partials.json  - dissonance curve with a slider over the number
                                of harmonics (dips appear as harmonics are added)
-  3. dissonance_curve.json   - the classic 6-harmonic curve, minima marked and
+  3. dissonance_curve.json   - the 8-harmonic curve, minima marked and
                                labeled with just-intonation ratios
   4. dissonance_heatmap.json - triad dissonance heatmap with detected chords
   5. dissonance_surface_3d.json - the final 3D dissonance surface
@@ -185,7 +185,7 @@ def fig_curve_by_partials() -> dict:
                 "x": ratios.round(4).tolist(),
                 "y": d_norm.round(4).tolist(),
                 "name": f"{n} harmonic{'s' if n > 1 else ''}",
-                "visible": idx == 5,  # start at 6 harmonics
+                "visible": idx == 7,  # start at 8 harmonics
                 "line": {"color": BLUE, "width": 2},
                 "hovertemplate": "Ratio %{x:.3f}: dissonance %{y:.2f}<extra></extra>",
             }
@@ -203,7 +203,7 @@ def fig_curve_by_partials() -> dict:
         yaxis={"title": {"text": "Dissonance (normalized)"}, "range": [0, 1.05]},
         sliders=[
             {
-                "active": 5,
+                "active": 7,
                 "currentvalue": {"prefix": "Harmonics in each tone: ", "font": {"color": INK_SECONDARY}},
                 "pad": {"t": 35},
                 "steps": steps,
@@ -272,7 +272,7 @@ def fig_stretched_timbre() -> dict:
     from dissonance import amp_to_loudness
 
     gammas = [0.90, 0.95, 1.00, 1.05, 1.10]
-    j = np.arange(1, 7, dtype=float)
+    j = np.arange(1, 9, dtype=float)
     louds = amp_to_loudness(1.0 / j)
     traces = []
     for idx, gamma in enumerate(gammas):
@@ -334,7 +334,7 @@ def fig_stretched_timbre() -> dict:
 
 
 def fig_dissonance_curve() -> dict:
-    ratios, d = dissonance_curve(REF_FREQ, n_partials=6, r_min=1.0, r_max=2.05, n_points=2000)
+    ratios, d = dissonance_curve(REF_FREQ, n_partials=8, r_min=1.0, r_max=2.05, n_points=2000)
     d_norm = d / d.max()
     minima_idx = find_local_minima(ratios, d_norm)
 
@@ -425,7 +425,7 @@ def name_ratio(x: float) -> str:
 
 
 def fig_surface_and_heatmap() -> tuple[dict, dict]:
-    ratios, z = dissonance_surface(REF_FREQ, n_partials=6, r_min=1.0, r_max=2.05, n_points=211)
+    ratios, z = dissonance_surface(REF_FREQ, n_partials=8, r_min=1.0, r_max=2.05, n_points=211)
     z_norm = z / z.max()
     minima = detect_surface_minima(ratios, z_norm, radius=max(2, round(0.02 * 211 / 1.05)))
     # Keep only reasonably consonant, prominent valleys

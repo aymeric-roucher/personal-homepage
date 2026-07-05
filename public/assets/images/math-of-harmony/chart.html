@@ -26,7 +26,7 @@ const mode = params.get('mode');
 const F0 = 261.6256; // middle C
 const HINTS = {
   pure: 'Click anywhere on the curve to hear the two pure tones at that spacing, and drag the slider to move the register.',
-  harmonic6: 'Click anywhere on the curve to hear that interval (two notes with 6 harmonics each).',
+  harmonic6: 'Click anywhere on the curve to hear that interval (two notes with 8 harmonics each).',
   bypartials: 'Click anywhere on the curve to hear that interval with the currently selected number of harmonics.',
   bar: 'Click anywhere on the curve to hear that interval played with bar-like overtones.',
   stretched: 'Click anywhere on the curve to hear that interval with the currently selected overtone stretch.',
@@ -44,13 +44,13 @@ function handleClick(el, pt) {
     const n = (el._fullLayout.sliders?.[0]?.active ?? 5) + 1;
     playInterval(f => harmonicPartials(f, n), F0, r);
   } else if (mode === 'bar') {
-    playInterval(f => barPartials(f, 7), F0, r);
+    playInterval(f => barPartials(f, 8), F0, r);
   } else if (mode === 'stretched') {
     const s = el._fullLayout.sliders?.[0];
     const gamma = s ? parseFloat(s.steps[s.active].label) : 1.0;
-    playInterval(f => stretchedPartials(f, 6, gamma), F0, r);
+    playInterval(f => stretchedPartials(f, 8, gamma), F0, r);
   } else {
-    playInterval(f => harmonicPartials(f, 6), F0, r);
+    playInterval(f => harmonicPartials(f, 8), F0, r);
   }
 }
 

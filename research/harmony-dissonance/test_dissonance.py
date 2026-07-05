@@ -23,7 +23,7 @@ def test_identical_pure_tones_have_zero_dissonance():
 
 
 def test_unison_is_local_minimum_of_complex_curve():
-    ratios, d = dissonance_curve(261.63, n_partials=6, r_min=1.0, r_max=1.1, n_points=500)
+    ratios, d = dissonance_curve(261.63, n_partials=8, r_min=1.0, r_max=1.1, n_points=500)
     assert d[0] == d.min()
 
 
@@ -45,10 +45,10 @@ def test_pure_tones_far_apart_are_smooth():
 
 
 def test_complex_tone_curve_has_minima_at_simple_ratios():
-    # With 6 harmonics, the dissonance curve must dip at the classic
+    # With 8 harmonics, the dissonance curve must dip at the classic
     # consonances: octave 2/1, fifth 3/2, fourth 4/3, major third 5/4,
     # major sixth 5/3.
-    ratios, d = dissonance_curve(261.63, n_partials=6, r_min=1.02, r_max=2.15, n_points=4000)
+    ratios, d = dissonance_curve(261.63, n_partials=8, r_min=1.02, r_max=2.15, n_points=4000)
     interior = np.arange(1, len(d) - 1)
     is_local_min = (d[interior] < d[interior - 1]) & (d[interior] <= d[interior + 1])
     min_ratios = ratios[interior[is_local_min]]
@@ -58,7 +58,7 @@ def test_complex_tone_curve_has_minima_at_simple_ratios():
 
 
 def test_octave_is_deepest_minimum_after_unison():
-    ratios, d = dissonance_curve(261.63, n_partials=6, r_min=1.1, r_max=2.05, n_points=4000)
+    ratios, d = dissonance_curve(261.63, n_partials=8, r_min=1.1, r_max=2.05, n_points=4000)
     octave = d[(ratios > 1.98) & (ratios < 2.02)].min()
     fifth = d[(ratios > 1.48) & (ratios < 1.52)].min()
     assert octave < fifth

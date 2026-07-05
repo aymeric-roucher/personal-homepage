@@ -64,7 +64,7 @@ def dissonance_total(freqs: np.ndarray, louds: np.ndarray) -> float:
     return float(d.sum())
 
 
-def harmonic_tone(f0: float, n_partials: int = 6) -> tuple[np.ndarray, np.ndarray]:
+def harmonic_tone(f0: float, n_partials: int = 8) -> tuple[np.ndarray, np.ndarray]:
     """Partials of an idealized harmonic tone: f0, 2*f0, ..., n*f0 with
     amplitudes 1, 1/2, ..., 1/n (sawtooth-like rolloff, as in aatishb's essay).
     Returns (frequencies, loudnesses)."""
@@ -76,7 +76,7 @@ def harmonic_tone(f0: float, n_partials: int = 6) -> tuple[np.ndarray, np.ndarra
 
 def dissonance_curve(
     f0: float,
-    n_partials: int = 6,
+    n_partials: int = 8,
     r_min: float = 1.0,
     r_max: float = 2.3,
     n_points: int = 1000,
@@ -101,7 +101,7 @@ def dissonance_curve(
 
 def dissonance_surface(
     f0: float,
-    n_partials: int = 6,
+    n_partials: int = 8,
     r_min: float = 1.0,
     r_max: float = 2.05,
     n_points: int = 150,
