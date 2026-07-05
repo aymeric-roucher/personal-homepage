@@ -11,7 +11,7 @@ const FigureCard = ({ src, alt, caption }: FigureCardProps) => {
         <img 
           src={src} 
           alt={alt}
-          className="mx-auto max-w-full h-auto rounded-md shadow-sm"
+          className="mx-auto max-w-full h-auto"
         />
         <p className="mt-3 mb-0 text-sm text-card-foreground/70 italic leading-relaxed [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80"
           dangerouslySetInnerHTML={{ __html: caption }}

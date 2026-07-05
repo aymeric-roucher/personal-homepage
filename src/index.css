@@ -7,8 +7,8 @@
 @layer base {
   :root {
     /* Écru/Abbey color palette - warm, minimal, contemplative */
-    --background: 48 15% 94%;
-    /* Soft écru background */
+    --background: 0 0% 100%;
+    /* Pure white background */
     --foreground: 25 15% 25%;
     /* Deep brown text */
 
