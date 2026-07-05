@@ -10,7 +10,7 @@ Play a C and a G together and something feels right. Shift the G by a quarter of
 
 It turns out there is a mathematical model, resting on one psychoacoustics experiment from 1965, that predicts which combinations of notes sound "in tune". It explains why Western music picked the intervals it did, why a piano tuner deliberately tunes your piano "wrong", why Indonesian gamelan orchestras use scales that sound alien to Western ears (and why both cultures are right), and it can even design new scales for instruments that don't exist. At the end of this post, we'll condense all of it into a single 3D landscape containing every possible three-note chord, where the valleys are the chords humans actually use.
 
-This post is a synthesis of two excellent sources, Aatish Bhatia's interactive essay[^aatish] and minutephysics' video The Physics of Dissonance[^minutephysics], plus the original papers behind them. Every figure below is computed from scratch; the code lives in [this repository's research folder](https://github.com/aymeric-roucher/personal-homepage/tree/main/research/harmony-dissonance) so you can reproduce everything.
+This post is a synthesis of two excellent sources, Aatish Bhatia's interactive essay[^aatish] and minutephysics' video The Physics of Dissonance[^minutephysics], plus the original papers behind them. Every figure below is computed from scratch, and you can reproduce everything[^code].
 
 One caveat before we start: "sounding good" obviously depends on the person, their culture, and their musical history. But before sound ever reaches psychology, it is a pressure wave hitting a physical organ. This post is about that physical and physiological layer, what researchers call **sensory dissonance**. It won't explain why a chord progression gives you chills. It explains something more basic: why some pairs of notes physically grind.
 
@@ -38,7 +38,7 @@ Since the critical band is wide at low frequencies and narrow (relative to pitch
 
 <iframe src="/assets/images/math-of-harmony/chart.html?fig=pure_tone_curves&mode=pure" height="520"></iframe>
 
-This is why composers have always avoided close intervals like thirds in the deep bass: down there, even a major third leaves partials rubbing inside one critical band. Plomp and Levelt verified this statistically by analyzing the interval spacing in the finale of one of Bach's organ trio sonatas and the Romanze of Dvořák's string quartet Op. 51: composers keep simultaneous partials right in the zone between maximal roughness and full consonance[^plomplevelt]. You can put startling numbers on it. I ran the same kind of census over the 351 four-part Bach chorales bundled with music21 ([script here](https://github.com/aymeric-roucher/personal-homepage/blob/main/research/harmony-dissonance/bach_intervals.py)): when the lower note of two adjacent voices sits below C3, Bach writes them a major third or closer just **0.8%** of the time; when the lower note is at or above middle C, **43.4%** of the time. Same composer, same chords available, a **57x** difference purely driven by register: the physics of the critical band, obeyed by ear, two centuries before it was measured.
+This is why composers have always avoided close intervals like thirds in the deep bass: down there, even a major third leaves partials rubbing inside one critical band. Plomp and Levelt verified this statistically by analyzing the interval spacing in the finale of one of Bach's organ trio sonatas and the Romanze of Dvořák's string quartet Op. 51: composers keep simultaneous partials right in the zone between maximal roughness and full consonance[^plomplevelt]. You can put startling numbers on it. I ran the same kind of census over the 351 four-part Bach chorales bundled with music21[^code]: when the lower note of two adjacent voices sits below C3, Bach writes them a major third or closer just **0.8%** of the time; when the lower note is at or above middle C, **43.4%** of the time. Same composer, same chords available, a **57x** difference purely driven by register: the physics of the critical band, obeyed by ear, two centuries before it was measured.
 
 Now look at that curve again, because something important is *missing* from it. There is no dip at the octave. No dip at the fifth. Nothing special happens at any musical ratio: two pure sine tones either want to be identical or want personal space, and that's all. **For pure tones, simple frequency ratios are not special.** So where does music come from?
 
@@ -64,7 +64,7 @@ with $b_1 = 3.51$, $b_2 = 5.75$, and a register-dependent scale factor
 
 $$s = \frac{d^*}{s_1 f_1 + s_2}, \qquad d^* = 0.24,\; s_1 = 0.0207,\; s_2 = 18.96$$
 
-The $s$ factor stretches the curve with the critical bandwidth, so the roughness peak always sits at the same *fraction* of the critical band, per Plomp and Levelt's finding. The $\min(l_1, l_2)$ says a pair can only be as rough as its quieter member. The dissonance of two complex tones is then the sum of $d$ over every pair of partials. Constants are from Sethares' published code (the 1993 paper fits slightly different values); amplitudes are converted to loudness before summing. That is the entire model: about ten lines of code, [reproduced here](https://github.com/aymeric-roucher/personal-homepage/blob/main/research/harmony-dissonance/dissonance.py).
+The $s$ factor stretches the curve with the critical bandwidth, so the roughness peak always sits at the same *fraction* of the critical band, per Plomp and Levelt's finding. The $\min(l_1, l_2)$ says a pair can only be as rough as its quieter member. The dissonance of two complex tones is then the sum of $d$ over every pair of partials. Constants are from Sethares' published code (the 1993 paper fits slightly different values); amplitudes are converted to loudness before summing. That is the entire model: about ten lines of code[^code].
 
 </div>
 
@@ -145,17 +145,7 @@ Honesty section. This is a model of one perceptual mechanism, and it has known g
 
 This does not explain all of music; only some of the harmony. It lays the ground architectural rules in which the creativity and expression will happen. It's the physics for the ballet: the choreography is the creation act.
 
-## Reproduce it
-
-All figures in this post are generated by four short Python scripts in [`research/harmony-dissonance`](https://github.com/aymeric-roucher/personal-homepage/tree/main/research/harmony-dissonance): the model itself ([dissonance.py](https://github.com/aymeric-roucher/personal-homepage/blob/main/research/harmony-dissonance/dissonance.py), about 40 lines of numpy), tests asserting that the consonant valleys land where they should, the figure generator, and the Bach chorale census. With [uv](https://docs.astral.sh/uv/) installed:
-
-```
-uv run --with numpy --with pytest pytest test_dissonance.py
-uv run make_figures.py
-uv run bach_intervals.py
-```
-
-The click-to-hear sound on every chart implements the same equations in JavaScript with live additive synthesis; view-source on any of the figures.
+[^code]: All figures in this post are generated by four short Python scripts in [`research/harmony-dissonance`](https://github.com/aymeric-roucher/personal-homepage/tree/main/research/harmony-dissonance): the model itself ([dissonance.py](https://github.com/aymeric-roucher/personal-homepage/blob/main/research/harmony-dissonance/dissonance.py), about 40 lines of numpy), tests asserting that the consonant valleys land where they should, the figure generator, and the Bach chorale census ([bach_intervals.py](https://github.com/aymeric-roucher/personal-homepage/blob/main/research/harmony-dissonance/bach_intervals.py)). Run them with [uv](https://docs.astral.sh/uv/): `uv run make_figures.py`, `uv run bach_intervals.py`, tests via `uv run --with numpy --with pytest pytest test_dissonance.py`. The click-to-hear sound on every chart implements the same equations in JavaScript with live additive synthesis; view-source on any of the figures.
 
 [^aatish]: Aatish Bhatia, [Dissonance: a journey through musical possibility space](https://aatishb.com/dissonance/), interactive essay ([source code](https://github.com/aatishb/dissonance)). Origin of the interactive dissonance surface.
 
