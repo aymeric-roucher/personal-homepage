@@ -90,18 +90,18 @@ const CathedralViewer = ({ className, style, showControls = false }: CathedralVi
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    // Exact sRGB values for hsl(48, 15%, 94%) — hardcoded so LinearSRGBColorSpace
-    // output matches CSS pixel-for-pixel (no gamma conversion to mismatch).
-    const fogColor = new THREE.Color(0.949, 0.9454, 0.931);
+    // Pure white fog so anti-aliased edges blend into the white page background.
+    const fogColor = new THREE.Color(1, 1, 1);
     const scene = new THREE.Scene();
-    scene.background = fogColor;
+    // No scene background — the canvas is transparent and the white page shows through.
 
     const camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 1000);
     // Camera at ~75% of model height, looking slightly down
     camera.position.set(0, 15, 140);
     camera.lookAt(0, -5, 0);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setClearColor(0x000000, 0);
     renderer.setSize(width, height);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.toneMapping = THREE.NoToneMapping;
