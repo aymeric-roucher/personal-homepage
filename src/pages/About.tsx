@@ -22,7 +22,22 @@ const READINGS = [
     title: "Les conséquences politiques de la paix",
     url: "https://www.gutenberg.org/cache/epub/64322/pg64322-images.html",
     date: "1920",
-    note: "Famous historian Jacques Bainville commenting on the flaws of the Treaty of Versailles, and predicting 20 years in advance that Germany would rise again, annex Austria, then Poland, and would ally with Russia and Italy before turning back on France.",
+    note: (
+      <>
+        Famous historian Jacques Bainville commenting on the flaws of the Treaty of Versailles, and
+        predicting 20 years in advance that Germany would rise again, annex Austria, then Poland,
+        and would ally with Russia and Italy before turning back on France. Plus de détails dans{" "}
+        <a
+          href="https://x.com/Valen10Francois/status/1652630776976924673?s=20"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary hover:opacity-70 transition-opacity"
+        >
+          cet excellent thread
+        </a>
+        .
+      </>
+    ),
   },
   {
     title: "History of Western Philosophy",
