@@ -26,14 +26,14 @@ const READINGS = [
       <>
         Famous historian Jacques Bainville commenting on the flaws of the Treaty of Versailles, and
         predicting 20 years in advance that Germany would rise again, annex Austria, then Poland,
-        and would ally with Russia and Italy before turning back on France. Plus de détails dans{" "}
+        and would ally with Russia and Italy before turning back on France. More detail in{" "}
         <a
           href="https://x.com/Valen10Francois/status/1652630776976924673?s=20"
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary hover:opacity-70 transition-opacity"
         >
-          cet excellent thread
+          this awesome thread
         </a>
         .
       </>
