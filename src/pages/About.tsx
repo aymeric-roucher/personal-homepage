@@ -286,7 +286,7 @@ const About = () => {
           <div>
             {blogLoading ? (
               Array.from({ length: blogPosts.length || 3 }).map((_, index) => (
-                <div key={index} className="flex items-start py-6 border-t border-border first:border-t-0 transition-colors">
+                <div key={index} className="flex items-start py-6 px-4 border-t border-border first:border-t-0 transition-colors">
                   <div className="flex-shrink-0 w-20 mr-6">
                     <div className="h-4 bg-muted rounded w-16 animate-pulse"></div>
                   </div>
@@ -304,7 +304,7 @@ const About = () => {
                 <Link
                   key={post.slug}
                   to={`/blog/${post.slug}`}
-                  className="group flex items-start py-6 border-t border-border first:border-t-0 transition-colors hover:bg-muted/50 no-underline"
+                  className="group flex items-start py-6 px-4 border-t border-border first:border-t-0 transition-colors hover:bg-muted/50 no-underline"
                 >
                   <div className="flex-shrink-0 w-20 mr-6">
                     {post.date && (
