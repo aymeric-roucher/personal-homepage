@@ -16,12 +16,11 @@ It explains:
 - why the intervals originally set by Pythagoreans[^pythagorean] have become the basis for all Western music
 - why certain chords sound better than others
 - why a piano tuner deliberately tunes your piano "wrong"
-- why other cultures can very rightly NOT use the Western harmonic scale of A-B-C-D-E-F-G (or Do-Re-Mi-Fa-Sol-La-Si-Do in latin notation)
-- how to design new scales for different instruments, even the ones that don't exist.
+- why other cultures can very rightly NOT use the Western harmonic scale of A-B-C-D-E-F-G (or Do-Re-Mi-Fa-Sol-La-Si-Do in latin notation), depending on the instruments that they favor.
 
 This post is 95% based on two excellent sources, Aatish Bhatia's interactive essay[^aatish] and minutephysics' video The Physics of Dissonance[^minutephysics], plus the original papers behind them. You can reproduce everything[^code].
 
-One caveat before we start: "sounding good" obviously also depends, at second order, on the person, their culture, and their musical history. But before sound ever reaches psychology, it is a pressure wave hitting a physical organ.
+One caveat before we start: "sounding good" obviously also depends, at second order, on the person, their culture, and their musical history. But the first order is: a pressure wave hitting your ear.
 
 ## Two pure tones: beats, roughness, and our approximative audition
 
@@ -33,7 +32,7 @@ As you increase the detuning, the beats speed up. Around 20 to 30 beats per seco
 
 Why does the ear fuse close frequencies at all? Because its frequency resolution is limited. The cochlea, the spiral organ of the inner ear, works like a mechanical frequency analyzer: each frequency makes a specific region of its membrane vibrate. But each region has some width. A single frequency stimulates nerve fibers of neighboring frequencies too, so two tones that fall within the same region, the so-called **critical band**, cannot be cleanly resolved as two sounds. They are heard as one blurred, rough tone: our audition is blurry, and roughness is what the blur sounds like.
 
-Here is a neat proof that this happens inside the ear and not in the air. Put on headphones and play the two grinding tones below, then switch from both-tones-in-both-ears to one-tone-per-ear. The roughness vanishes, because each cochlea now receives a single clean frequency with nothing to grind against, even though the two tones in the air never changed:
+Here is proof that this happens inside the ear and not in the air: put on headphones and play the two grinding tones below, then switch from both-tones-in-both-ears to one-tone-per-ear. The roughness vanishes, because each cochlea now receives a single clean frequency with nothing to grind against, even though the two tones in the air never changed:
 
 <iframe src="/assets/images/math-of-harmony/binaural.html" height="320"></iframe>
 
@@ -43,19 +42,19 @@ Since the critical band is wide at low frequencies and narrow (relative to pitch
 
 <iframe src="/assets/images/math-of-harmony/chart.html?fig=pure_tone_curves&mode=pure" height="560"></iframe>
 
-Now look at that curve again, because something important is *missing* from it. There is no dip at the octave. No dip at the fifth. Nothing special happens at any musical ratio: two pure sine tones either want to be identical or want personal space, and that's all. **For pure tones, simple frequency ratios are not special.** So where does music come from?
+Note that on the curve above, there is nothing particular at well known consonant ratios, like 2:1 (octave) or 3:2 (fifth). **For pure tones, simple frequency ratios are not special.** Two pure sine tones either want to be identical or want personal space, and that's all. So where does music come from?
 
 ## Harmony comes from overtones
 
-Real notes are actually not one, but many sines stacked together. Press a single piano key and you don't get a single frequency: you get the **fundamental** (the pitch you perceive, say 261.6 Hz for middle C) plus a whole ladder of quieter **overtones** above it. For a vibrating string or an air column in a pipe (and the human voice is exactly that: the vocal folds driving the air column of your throat and mouth), physics forces these overtones to sit at exact integer multiples of the fundamental: $2f$, $3f$, $4f$, and so on. A string of length $L$ can only vibrate in shapes that pin down both ends, giving frequencies $f_n = n \cdot v / 2L$. Overtones that follow this integer pattern are called **harmonics**.
+Real notes are actually not one, but many sines stacked together. Press a single piano key and you don't get a single frequency: you get the **fundamental** (the pitch you perceive, say 261.6 Hz for middle C) plus a whole ladder of quieter **overtones** above it. For a vibrating string or an air column in a pipe (and the human voice is exactly that: the vocal folds driving the air column of your throat and mouth), physics creates vibration nodes at regularly spaced intervals of the total length (the fundamental being the total length), which means that the overtones sit at exact integer multiples of the fundamental: $2f$, $3f$, $4f$, and so on. A string of length $L$ can only vibrate in shapes that pin down both ends, giving frequencies $f_n = n \cdot v / 2L$. Overtones that follow this integer pattern are called **harmonics**.
 
 This stacking works because sound superposes: pressure waves add up linearly, so any instrument's sound can be decomposed into a sum of pure sine waves (this is Fourier analysis; 3Blue1Brown's videos are the best introduction[^threeblue]). A violin and a piano playing the same middle C have the same fundamental but different loudness ratios between their overtones. That recipe of relative loudnesses is what we call **timbre**: it is why you can tell the two instruments apart.
 
-Experience it below: a single note, starting as a bare sine wave. Click the wave to hear it, then drag the slider while it plays: each step stacks another overtone on top of the same note. The pitch never moves, but the dull whistle thickens into something with body, close to a bowed string. Then switch the timbre while it plays: a metal bar puts its overtones at completely different multiples of the same fundamental, and the note instantly stops sounding like a string. That transformation, and nothing else, is timbre:
+Experience it below: a single note, starting as a bare sine wave. Click the wave to hear it, then drag the slider while it plays: each step stacks another overtone on top of the same note. The pitch never moves, but the dull whistle thickens into something with body, close to a bowed string. Then switch the timbre while it plays: a metal bar puts its overtones at completely different multiples of the same fundamental, and the note instantly stops sounding like a string.
 
 <iframe src="/assets/images/math-of-harmony/overtones.html" height="360"></iframe>
 
-The idea that unlocks everything dates back to Hermann Helmholtz's 1863 book *On the Sensations of Tone*[^helmholtz]: dissonance comes from beats, and real notes carry overtones. So when two notes sound together, roughness can arise between *any* partial of one and *any* partial of the other: fundamental against fundamental, fundamental against overtone, overtone against overtone. (Helmholtz thought maximal roughness sat at a fixed 30 to 40 Hz separation regardless of register; Plomp and Levelt's critical-band scaling is the modern correction to this single error, and his hand-drawn dissonance curves look remarkably close to the computed ones below.)
+This idea that dissonance comes from beats, and real notes carry overtones, dats back to Hermann Helmholtz's 1863 book *On the Sensations of Tone*[^helmholtz]. So when two notes sound together, roughness can arise between *any* partial of one and *any* partial of the other: fundamental against fundamental, fundamental against overtone, overtone against overtone.
 
 Plomp and Levelt turned that idea into arithmetic with one assumption: **the total dissonance of two complex tones is just the sum of the pairwise dissonances of all their partials.** In the 1990s, [Pr. William Sethares](https://scholar.google.com/citations?user=R_2UugQAAAAJ&hl=en), who might be the most important music theorist alive, fitted a clean formula to their experimental curve[^sethares], giving the model we compute with today.
 
@@ -77,21 +76,17 @@ Now watch what happens. Give each of the two notes a realistic harmonic timbre (
 
 <iframe src="/assets/images/math-of-harmony/chart.html?fig=curve_by_partials&mode=bypartials" height="540"></iframe>
 
-With 1 harmonic (a pure sine) you get the featureless Plomp-Levelt hump: no interval is special. Add the second harmonic and a deep valley appears at ratio 2.0, **the octave is born**. The third harmonic carves a valley at 3/2, the fifth (the interval from C to G). Then 4/3 (the fourth), then 5/4 and 5/3 (major third and major sixth), then 6/5 (minor third). The consonant intervals of Western music emerge one by one, in roughly their order of historical importance, as you stack up overtones.
+With 1 harmonic, a pure sine, you get the featureless Plomp-Levelt hump: no interval is special. Add the second harmonic and a deep valley appears at ratio 2.0, **the octave is born**. The third harmonic carves a valley at 3/2, the fifth (the interval from C to G). Then 4/3 (the fourth), then 5/4 and 5/3 (major third and major sixth), then 6/5 (minor third). The consonant intervals of Western music emerge one by one as you stack up overtones.
 
-The logic is beautifully simple. A valley appears wherever many partials of the two notes *coincide*: at a 3/2 interval, the third harmonic of the low note lands exactly on the second harmonic of the high note, so instead of two nearby partials grinding inside a critical band, they fuse into one. Between the valleys, partials fall close-but-not-equal and roughness spikes.
-
-You can watch this happen. In the top panel below, every partial of both notes is a vertical bar placed at its frequency: blue for the fixed note, orange for the one you move, each overtone dimmer than the one below it. Hold the slider and raise the moving note, and its whole ladder of overtones slides rightward through the fixed one. At most positions the bars pack close together and you hear the grind; at the simple ratios, orange bars land exactly on blue ones and the sound locks into tune. The bottom panel traces out the dissonance of every interval you have swept through, red dot on your current position:
+You can watch this happen below. Hold the slider and raise the moving note, and its whole ladder of overtones slides rightward through the fixed one. At most positions the bars pack close together and you hear the grind; at the simple ratios, orange bars land exactly on blue ones and the sound locks into tune. The bottom panel traces out the dissonance of every interval you have swept through. A valley appears wherever many partials of the two notes *coincide*: at a 3/2 interval, the third harmonic of the low note lands exactly on the second harmonic of the high note, so instead of two nearby partials grinding inside a critical band, they fuse into one.
 
 <iframe src="/assets/images/math-of-harmony/spectrum.html" height="600"></iframe>
-
-In physics terms the dissonance curve reads like a potential energy landscape: like two hydrogen atoms settling at the separation that minimizes their energy to form a molecule, two notes "want" to roll downhill into the nearest valley. That pull is what musicians feel as an interval wanting to resolve.
 
 Here is the full curve for two 8-harmonic tones, with the valleys marked; click anywhere to hear that interval:
 
 <iframe src="/assets/images/math-of-harmony/chart.html?fig=dissonance_curve&mode=harmonic6" height="520"></iframe>
 
-The deep valleys sit exactly at the small-integer frequency ratios: 6/5, 5/4, 4/3, 3/2, 5/3, 2/1. These ratios are the **just intonation** scale (the 7th and 8th harmonics also carve shallower dips at septimal ratios like 7/6, 7/5 and 7/4, intervals Western music never adopted). This is worth stating carefully, because it inverts the usual mysticism about integer ratios going back to Pythagoras: the model never looked for pretty fractions. It only summed the roughness of sine pairs. Simple ratios win *because notes with harmonic overtones align their partials there*, and nowhere else. Put differently: just intonation is simply the scale that minimizes dissonance for a harmonic sound.
+The deep valleys sit exactly at the small-integer frequency ratios: 6/5, 5/4, 4/3, 3/2, 5/3, 2/1. These ratios are the **just intonation** scale (the 7th and 8th harmonics also carve shallower dips at septimal ratios like 7/6, 7/5 and 7/4, intervals Western music never adopted). One belief dating back to Pythagoras was that simple integer ratios were "naturally" the good-sounding intervals: our model of dissonance applied to harmonics actually shows that the real cause sits one layer deeper. Simple ratios win *because notes with harmonic overtones align their partials there*, thus minimizing dissonance.
 
 Two more things to read off this figure:
 
@@ -100,13 +95,11 @@ Two more things to read off this figure:
 
 And why twelve notes in the first place? Because of a number-theoretic near-miracle that the Pythagoreans stumbled on while building scales by stacking fifths[^pythagorean]: after exactly twelve fifths you land almost precisely back on your starting note, seven octaves up ($(3/2)^{12} = 129.7$, versus $2^7 = 128$, an overshoot of only 1.4%, the "Pythagorean comma"). This also means that $2^{7/12}$ is within 0.1% of a perfect fifth. So dividing the octave into twelve equal steps buys you, all at once, a near-perfect fifth (1.4983 vs 3/2), a near-perfect fourth (1.3348 vs 4/3), and serviceable thirds and sixths (1.26 vs 5/4, 1.68 vs 5/3): **no other small division of the octave lands so many of the dissonance valleys with so few notes.**
 
-One crucial point here: an A and an E don't sound in tune because their fundamentals are at a 3/2 ratio: those two sine waves alone are far outside each other's critical band and sound fine at almost any spacing. With pure sines a mistuned fifth passes unnoticed; add overtones one by one and the wobble becomes audible, until the mistuned fifth openly grinds. **Tuning comes from overtones.**
-
 Overtones also explain why composers have always avoided close intervals like thirds in the deep bass: remember that the roughness zone widens at low register, so down there even a major third (two notes at a frequency ratio of 5/4, like C and E) leaves partials rubbing inside one critical band. You can put startling numbers on it. I ran a census over the 351 four-part Bach chorales bundled with music21[^code]: when the lower note of two adjacent voices sits below C3, Bach writes them a major third or closer just **0.8%** of the time; when the lower note is at or above middle C, **43.4%** of the time. Same composer, same chords available, a **57x** difference purely driven by register: the physics of the critical band, obeyed by ear, two centuries before it was measured.
 
 ## Change the sound, change the scale
 
-Here is where the theory earns its keep. If consonance were about integer ratios of fundamentals, it would be universal: the same scale for every instrument on Earth. But if consonance is about *aligning overtones*, then a sound with different overtones should prefer **different intervals**. This is a falsifiable prediction, and it turns out to be the strongest evidence for the whole framework.
+Now, we'll see where the theory earns its keep. If consonance were about integer ratios of fundamentals, it would be universal: the same scale for every instrument on Earth. But if consonance is about *aligning overtones*, then a sound with different overtones should prefer **different intervals**. So, is it the case? YES, it is!
 
 **Real pianos.** Piano strings are stiff, so they don't behave as ideal strings: their overtones land slightly sharp of integer multiples (this is called inharmonicity, worse for the short strings of small pianos). A piano tuned to mathematically exact octaves sounds out of tune *with itself*, because each note's stretched overtones beat against the note an octave up. So tuners stretch the tuning: treble notes sharp, bass notes flat, following the measured **Railsback curve**, the deviation from mathematically exact tuning that piano tuners converge to by ear:
 
@@ -126,7 +119,7 @@ Maybe the best point about this explanation of harmony is that **it holds well a
 
 Everything so far concerned two notes. Music mostly happens in chords, so take three: fix a root at middle C, and let the second and third notes float freely at ratios $r_1$ and $r_2$ above it. Sum the pairwise dissonance over *all* partial pairs of all three notes and you get, instead of a curve, a **dissonance surface** over the plane of all possible triads. Since pitch is continuous, every three-note chord that can exist, in any tuning system, from any culture, is one point on this map. (Only the half where note 3 sits above note 2 is shown: the other half is the same chords with the two upper notes swapped.)
 
-Here it is. **Drag to rotate, and click anywhere to hear the chord you're pointing at**: the keyboard underneath shows the closest piano keys for whatever you click (with the deviation in cents), and you can click the piano keys themselves to hear each note alone. The wells are the chords musicians have always known; the peaks are everything else.
+Here it is. **Drag to rotate, and click anywhere to hear the chord you're pointing at**. The wells are the chords musicians have always known; the peaks are everything else.
 
 <iframe src="/assets/images/math-of-harmony/surface3d.html" height="780"></iframe>
 
@@ -137,22 +130,19 @@ Rotate it to look straight down and the structure is stunning: a weave of valley
 - **Diagonal lines**: notes 2 and 3 are consonant *with each other*.
 - The tall wall along the triangle's straight edge is where notes 2 and 3 nearly coincide and grind (pure Plomp-Levelt roughness), and the huge spike at the unison corner is all three notes crowded within a critical band: the most dissonant chords of all, on any instrument, though for a boring reason.
 
-The truly consonant chords are the **triple intersections**, where all three pairs are simultaneously in tune. Check the coordinates of the marked points: (1.25, 1.5) is root, major third, fifth: the **major chord**. (1.2, 1.5) is the **minor chord**. (1.2, 1.6) is a first-inversion major (think E-G-C), (1.33, 1.67) a second-inversion major (C-F-A), (1.33, 1.5) a suspended fourth, (1.5, 2.0) the open fifth-plus-octave power chord of every rock guitarist. Nobody put them there: Western harmony's basic vocabulary just condenses out of one 1965 experiment on sine waves.
+The truly consonant chords are the **triple intersections**, where all three pairs are simultaneously in tune. Check the coordinates of the marked points: (1.25, 1.5) is root, major third, fifth: the **major chord**. (1.2, 1.5) is the **minor chord**. (1.2, 1.6) is a first-inversion major (think E-G-C), (1.33, 1.67) a second-inversion major (C-F-A), (1.33, 1.5) a suspended fourth, etc.
 
-Two more things the map teaches. First, away from the lines, most of chord space is a plateau of roughly uniform dissonance: almost every possible triad is mediocre in the same way, which is exactly why stumbling into a deep well feels so dramatic, and why those rare islands became the foundation of harmony. Second, the "most dissonant interesting chord" (the tallest peak away from the trivial crowded-notes region) sits wedged between a minor chord, a first-inversion major, and a suspended second: it sounds like all of them played badly out of tune at once, which is precisely what it is.
-
-Remember, this landscape belongs to *harmonic* timbres. Recompute it for a drum, a bell, or prime-number overtones, and the whole geography rearranges: different wells, different chords, a different music theory.
+Remember, this landscape belongs to *harmonic* timbres, so strings or piipes/voice. Recompute it for a drum, a bell, or prime-number overtones, and the whole geography rearranges: different wells, different chords, a different music theory.
 
 ## What this model doesn't explain
 
-Honesty section. This is a model of one perceptual mechanism, and it has known gaps:
+This model still leaves some gaps for future investigation:
 
 - **Tritones.** The curve gives the tritone (ratio around 1.4) a modest valley, roughly on par with a minor sixth. Yet Western theory treats the tritone as the tensest of intervals ("the devil in music"). Sensory roughness clearly isn't the whole story of musical tension.
-- **The exact curve is soft.** Its precise shape varies across studies, ears, and loudness levels[^helmholtz], and summing the partial-pair roughnesses linearly is just a convenient assumption.
 - **Real instruments are messier than their idealization.** A violin is not a pure string: its wooden body resonates like a drum and its cavity like a pipe, at fixed frequencies that don't move with the note. Real spectra are blends.
 - **Harmony is dynamic, and this model is static.** It says nothing about dissonance deliberately sought to create emotion and motion. When the child in Schubert's *Erlkönig* cries "Mein Vater!" on an extremely dissonant minor ninth, the dissonance is the fear made audible, and its resolution, when the Father answers, is the comfort. On this post's map that cry is just a bad chord; in the song it is the whole point. This static model does nothing to explain why *cadences* like the widely used IV-V-I feel so good.
 
-This does not explain all of music; only some of the harmony. It lays the ground architectural rules in which the creativity and expression will happen. It's physics constraining the ballet; but that leaves lots of room for human creativity in the choreography.
+This does not try to explain all of music, it simply lays the ground architectural rules in which the creativity and expression will happen. It's physics constraining the ballet; but that leaves lots of room for human creativity in the choreography.
 
 [^code]: All figures in this post are generated by four short Python scripts in [`research/harmony-dissonance`](https://github.com/aymeric-roucher/personal-homepage/tree/main/research/harmony-dissonance): the model itself ([dissonance.py](https://github.com/aymeric-roucher/personal-homepage/blob/main/research/harmony-dissonance/dissonance.py)), tests asserting that the consonant valleys land where they should, the figure generator, and the Bach chorale census ([bach_intervals.py](https://github.com/aymeric-roucher/personal-homepage/blob/main/research/harmony-dissonance/bach_intervals.py)). Run them with [uv](https://docs.astral.sh/uv/): `uv run make_figures.py`, `uv run bach_intervals.py`, tests via `uv run --with numpy --with pytest pytest test_dissonance.py`. The click-to-hear sound on every chart implements the same equations in JavaScript with live additive synthesis; view-source on any of the figures.
 
