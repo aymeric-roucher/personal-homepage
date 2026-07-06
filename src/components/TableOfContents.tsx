@@ -81,28 +81,36 @@ const TableOfContents = ({ content }: TableOfContentsProps) => {
     }
   };
 
+  const activeIndex = tocItems.findIndex((item) => item.id === activeId);
+
   return (
     <div className="sticky top-4">
       <div className="bg-background/90 backdrop-blur border rounded-lg p-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
         <nav className="space-y-1">
-          {tocItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleClick(item.id)}
-              className={`
-                block w-full text-left text-base transition-colors duration-200 hover:text-primary flex items-start gap-1
-                ${activeId === item.id ? 'text-primary font-medium' : 'text-muted-foreground'}
-              `}
-              style={{ paddingLeft: `${(item.level - 1) * 12}px` }}
-            >
-              {item.level === 4 && (
-                <span className="text-xs mt-1 flex-shrink-0">⚙</span>
-              )}
-              <span className={item.level === 4 ? 'flex-1' : ''}>
-                {item.text}
-              </span>
-            </button>
-          ))}
+          {tocItems.map((item, index) => {
+            const isActive = activeId === item.id;
+            // Titles below the current reading position are not yet read: dim them
+            const isUpcoming = !isActive && index > activeIndex;
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleClick(item.id)}
+                className={`
+                  block w-full text-left text-base transition-all duration-200 hover:text-primary flex items-start gap-1
+                  ${isActive ? 'text-primary font-medium' : 'text-muted-foreground'}
+                  ${isUpcoming ? 'opacity-40 hover:opacity-100' : ''}
+                `}
+                style={{ paddingLeft: `${(item.level - 1) * 12}px` }}
+              >
+                {item.level === 4 && (
+                  <span className="text-xs mt-1 flex-shrink-0">⚙</span>
+                )}
+                <span className={item.level === 4 ? 'flex-1' : ''}>
+                  {item.text}
+                </span>
+              </button>
+            );
+          })}
         </nav>
       </div>
     </div>
