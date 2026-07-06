@@ -103,8 +103,12 @@ const ContentPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="lg:grid lg:grid-cols-12 lg:gap-8 lg:px-6 lg:py-4">
-        {/* Left column - empty spacer */}
-        <div className="hidden lg:block lg:col-span-3"></div>
+        {/* Left column - Table of Contents */}
+        <div className="hidden lg:block lg:col-span-3">
+          {type === 'blog' && parsedContent?.toc !== false && parsedContent?.content && (
+            <TableOfContents content={parsedContent.content} />
+          )}
+        </div>
 
         {/* Center column - main content */}
         <div className="lg:col-span-6 max-w-4xl mx-auto px-6 py-4 lg:px-0 lg:py-0">
@@ -382,14 +386,8 @@ const ContentPage = () => {
           </article>
         </div>
         
-        {/* Right column - Table of Contents */}
-        <div className="hidden lg:block lg:col-span-3">
-          {/* Empty spacer to align TOC with article start */}
-          <div className="h-32"></div>
-          {type === 'blog' && parsedContent?.toc !== false && parsedContent?.content && (
-            <TableOfContents content={parsedContent.content} />
-          )}
-        </div>
+        {/* Right column - empty spacer */}
+        <div className="hidden lg:block lg:col-span-3"></div>
       </div>
     </div>
   );
