@@ -303,7 +303,7 @@ const About = () => {
               blogPosts.map((post) => (
                 <Link
                   key={post.slug}
-                  to={`/blog/${post.slug}`}
+                  to={post.links?.link ?? `/blog/${post.slug}`}
                   className="group flex items-start py-6 px-4 border-t border-border first:border-t-0 transition-colors hover:bg-muted/50 no-underline"
                 >
                   <div className="flex-shrink-0 w-20 mr-6">

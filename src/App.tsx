@@ -10,6 +10,7 @@ import About from "./pages/About";
 import ContentPage from "./pages/ContentPage";
 import EventPage from "./pages/EventPage";
 import NotFound from "./pages/NotFound";
+import TransformersVizClaude from "./pages/TransformersVizClaude";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,7 @@ const App = () => (
               {/* Dynamic content routes */}
               <Route path="/blog/:slug" element={<ContentPage />} />
               <Route path="/event/lancement-ultra-intelligence" element={<EventPage />} />
+              <Route path="/transformers_viz_claude" element={<TransformersVizClaude />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
