@@ -124,7 +124,7 @@ const HeadDetail = ({ layer, open, onOpenChange }: HeadDetailProps) => {
               ))}
             </span>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-center">
             <TeX tex="\mathrm{head}(X) = \mathrm{softmax}\!\left(\mathrm{mask}\!\left(\tfrac{Q^\top K}{\sqrt{d_k}}\right)\right)\cdot V" />{" "}
             <span className="text-xs block pt-1">
               this is <b>self</b>-attention: the name given to attention when the same input matrix is the source of the

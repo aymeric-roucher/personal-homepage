@@ -4,5 +4,5 @@ thumbnail: The decoder-only Transformer as an interactive schema, with every mat
 date: 2026-07-11
 type: blog
 url: transformer-interactive
-link: /transformers_viz_claude
+link: /transformers_interactive
 ---

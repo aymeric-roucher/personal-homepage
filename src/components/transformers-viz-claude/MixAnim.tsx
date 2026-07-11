@@ -206,7 +206,7 @@ const MixAnim = ({ head }: { head: Head }) => {
 
       <p className="text-[13px] text-foreground/85 max-w-xl text-center">
         Each vector in the output takes in the values (that is, the meaning) of each of the previous vectors, according
-        to the weights determined by attention.
+        to the weights determined previously by attention.
       </p>
     </div>
   );

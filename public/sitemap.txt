@@ -1,5 +1,5 @@
 https://m-ric.com/
-https://m-ric.com/transformers_viz_claude
+https://m-ric.com/transformers_interactive
 https://m-ric.com/blog
 https://m-ric.com/projects
 https://m-ric.com/projects/wine-price-prediction

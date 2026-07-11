@@ -31,7 +31,7 @@ const close = (a: number, b: number, eps = 1e-9) => Math.abs(a - b) < eps;
 
 // ------------------------------------------------------------------- routing
 const app = readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8");
-assert.match(app, /path="\/transformers_viz_claude"/);
+assert.match(app, /path="\/transformers_interactive"/);
 
 // ---------------------------------------------------------------- dimensions
 // D = 6 and d_k = 4 are deliberately decoupled (the paper's convention is
