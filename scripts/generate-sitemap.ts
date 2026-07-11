@@ -32,7 +32,6 @@ async function generateSitemap() {
     // Add static pages
     entries.push(
         { loc: '/', changefreq: 'weekly', priority: 1.0 },
-        { loc: '/transformers_interactive', changefreq: 'monthly', priority: 0.9 },
         { loc: '/blog', changefreq: 'monthly', priority: 0.9 },
         { loc: '/projects', changefreq: 'monthly', priority: 0.8 }
     );

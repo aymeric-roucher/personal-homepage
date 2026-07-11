@@ -6,11 +6,6 @@
     <priority>1</priority>
   </url>
   <url>
-    <loc>https://m-ric.com/transformers_interactive</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
     <loc>https://m-ric.com/blog</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -63,7 +58,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://m-ric.com/blog/transformer-interactive</loc>
+    <loc>https://m-ric.com/blog/transformers-interactive</loc>
     <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

@@ -75,9 +75,9 @@ const App = () => (
             <Routes>
               <Route path="/" element={<About />} />
               {/* Dynamic content routes */}
+              <Route path="/blog/transformers-interactive" element={<TransformersVizClaude />} />
               <Route path="/blog/:slug" element={<ContentPage />} />
               <Route path="/event/lancement-ultra-intelligence" element={<EventPage />} />
-              <Route path="/transformers_interactive" element={<TransformersVizClaude />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

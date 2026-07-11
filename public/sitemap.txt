@@ -1,5 +1,4 @@
 https://m-ric.com/
-https://m-ric.com/transformers_interactive
 https://m-ric.com/blog
 https://m-ric.com/projects
 https://m-ric.com/projects/wine-price-prediction
@@ -9,7 +8,7 @@ https://m-ric.com/projects/smolagents copy
 https://m-ric.com/projects/screensuite
 https://m-ric.com/projects/open-computer-agent
 https://m-ric.com/blog/ultra-endurance-data-science
-https://m-ric.com/blog/transformer-interactive
+https://m-ric.com/blog/transformers-interactive
 https://m-ric.com/blog/math-of-harmony
 https://m-ric.com/blog/humanitys-role-in-global-warming
 https://m-ric.com/blog/how-to-get-number-1-on-producthunt
