@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Global drone players</title>
+<style>
+  :root {
+    --surface: #ffffff; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --land: #f0efec; --border: #ffffff; --ring: rgba(11,11,11,0.10); --grid: #e1e0d9;
+    --us: #2a78d6; --china: #e34948; --europe: #008300; --israel: #4a3aa7;
+    --turkey: #eb6834; --gulf: #e87ba4; --ukraine: #1baf7a; --supplier: #eda100;
+  }
+  html, body { margin: 0; background: transparent; color: var(--ink-2);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; }
+  .wrap { padding: 6px 8px; position: relative; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 2px 2px 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--ink-2);
+    border: 1px solid var(--ring); border-radius: 999px; padding: 2px 9px; cursor: pointer; user-select: none; background: var(--surface); }
+  .chip .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .chip .dia { width: 9px; height: 9px; transform: rotate(45deg); }
+  .chip.off { opacity: 0.35; }
+  .hint { font-size: 11.5px; color: var(--muted); margin-left: auto; }
+  svg { width: 100%; height: auto; display: block; }
+  .country { fill: var(--land); stroke: var(--border); stroke-width: 0.4; }
+  .bubble, .comp { stroke: #fff; stroke-width: 1; cursor: pointer; transition: opacity .12s; }
+  .bubble.na { fill: none !important; stroke-width: 1.4; }
+  .blabel { font-size: 9.5px; fill: var(--ink-2); paint-order: stroke; stroke: rgba(255,255,255,0.85); stroke-width: 2.2px; pointer-events: none; }
+  .facts { margin: 10px 2px 2px; padding: 9px 11px; border: 1px solid var(--ring); border-radius: 8px; background: #fbfbf9; font-size: 12px; line-height: 1.5; }
+  .facts b { color: var(--ink); }
+  .facts a, .tooltip a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+  .foot { font-size: 11.5px; color: var(--muted); margin-top: 8px; }
+  .tooltip { position: absolute; z-index: 10; width: 310px; max-width: 92vw; background: var(--surface);
+    border: 1px solid var(--ring); border-radius: 8px; box-shadow: 0 6px 24px rgba(11,11,11,0.13);
+    padding: 11px 13px; font-size: 12.5px; line-height: 1.42; display: none; pointer-events: none; }
+  .tooltip.pinned { pointer-events: auto; }
+  .tt-name { color: var(--ink); font-weight: 650; font-size: 14px; }
+  .tt-flag { font-weight: 500; color: var(--muted); font-size: 11px; margin-left: 5px; }
+  .tt-hq { color: var(--muted); font-size: 11.5px; margin: 1px 0 6px; display: flex; align-items: center; gap: 6px; }
+  .tt-hq .m { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .tt-stat { display: grid; grid-template-columns: auto 1fr; gap: 1px 8px; align-items: baseline; margin-bottom: 6px; }
+  .tt-stat .lbl { color: var(--muted); font-size: 11px; }
+  .tt-stat .val b { font-size: 15px; font-weight: 680; color: var(--ink); }
+  .tt-stat .val .q { color: var(--muted); font-weight: 400; font-size: 12px; }
+  .tt-src { grid-column: 2; font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+  .tt-desc { margin-bottom: 5px; }
+  .tt-wins { margin: 0; padding-left: 15px; } .tt-wins li { margin-bottom: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="legend" id="legend"></div>
+  <svg id="map" viewBox="0 0 1180 392" role="img" aria-label="World map of drone makers and component suppliers"></svg>
+  <div class="facts" id="facts"></div>
+  <div class="foot">Circles = drone makers (sized by valuation, or revenue/market weight where private; hollow = undisclosed). ◆ = the components &amp; chips everyone depends on. Hover for details, click to pin &amp; open sources.</div>
+  <div class="tooltip" id="tt"></div>
+</div>
+<script>
+const A = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
+const REGION = {
+  us: { label: "United States", hex: "#2a78d6" },
+  china: { label: "China", hex: "#e34948" },
+  europe: { label: "Europe", hex: "#008300" },
+  israel: { label: "Israel", hex: "#4a3aa7" },
+  turkey: { label: "Türkiye", hex: "#eb6834" },
+  gulf: { label: "Gulf", hex: "#e87ba4" },
+  ukraine: { label: "Ukraine", hex: "#1baf7a" },
+  supplier: { label: "Components & chips ◆", hex: "#eda100" },
+};
+
+// valB = valuation in USD bn (drives circle size). tier (1-3) sizes makers with no public valuation.
+// kind:'supplier' → amber diamond, fixed size.
+const CO = [
+  // United States
+  { name: "Anduril", region: "us", hq: "Costa Mesa, USA", lat: 33.64, lon: -117.92, valB: 61,
+    raised: "$61B", note: "+ $20B Army Lattice deal", val: "~$2.2B revenue",
+    desc: "The autonomy prime every European neo-prime is modeled on. Worth more than all of Europe's defense-drone startups combined.",
+    wins: ["$5B Series H; revenue more than doubled YoY"], src: [["Bloomberg","https://www.bloomberg.com/features/2025-euro-defense-startups/"]] },
+  { name: "Shield AI", region: "us", hq: "San Diego, USA", lat: 32.72, lon: -117.16, valB: 12.7,
+    raised: "$12.7B", note: "+140% in a year", val: "Hivemind autonomy, V-BAT",
+    desc: "Pure-play autonomy software (Hivemind), proven over 200+ Ukraine missions under jamming; picked for the USAF CCA program.",
+    wins: [], src: [["TechCrunch","https://techcrunch.com/2026/03/26/defense-startup-shield-ai-lands-12-7b-valuation-up-140-after-u-s-air-force-deal/"]] },
+  { name: "Saronic", region: "us", hq: "Austin, USA", lat: 30.27, lon: -97.74, valB: 9.25,
+    raised: "$9.25B", note: "raised $1.75B", val: "naval USVs",
+    desc: "Autonomous surface vessels at 9x Kraken's valuation; $392M US Navy Corsair contract, mass yard 'Port Alpha'.", wins: [] },
+  { name: "Zipline", region: "us", hq: "South San Francisco, USA", lat: 37.65, lon: -122.42, valB: 7.6,
+    raised: "$7.6B", note: "2M+ deliveries", val: "delivery leader",
+    desc: "The delivery-drone scale benchmark Europe's Manna measures against.", wins: [] },
+  { name: "Skydio", region: "us", hq: "San Mateo, USA", lat: 37.56, lon: -122.32, valB: 4.4,
+    raised: "$4.4B", note: "60,000+ drones", val: "NDAA-compliant ISR",
+    desc: "Leading US enterprise/ISR autonomy drone; the X10 fuses RGB + FLIR thermal for all-hours vision.", wins: [] },
+  { name: "AeroVironment", region: "us", hq: "Arlington, USA", lat: 38.88, lon: -77.10, tier: 2, flag: "public",
+    raised: "public", note: "NYSE: AVAV", val: "Switchblade munitions",
+    desc: "The US loitering-munition incumbent (Switchblade) that Europe's Stark, Harmattan and EOS chase.", wins: [] },
+  { name: "Red Cat", region: "us", hq: "Salt Lake City, USA", lat: 40.76, lon: -111.89, tier: 1,
+    raised: "~$41M rev", note: "+161%", val: "Teal / Black Widow FPV",
+    desc: "Listed small-cap scaling US FPV and short-range recon for NATO and Indo-Pacific buyers.", wins: [] },
+  { name: "Saildrone", region: "us", hq: "Alameda, USA", lat: 37.77, lon: -122.28, valB: 0.65,
+    raised: "$0.65B", note: "wind/solar USVs", val: "",
+    desc: "Wind- and solar-powered ocean-surveillance drones; now fitting missile launchers with Lockheed Martin.", wins: [] },
+
+  // China
+  { name: "DJI", region: "china", hq: "Shenzhen, China", lat: 22.54, lon: 114.06, tier: 3,
+    raised: "70-80%", note: "of the world drone market", val: "83.5% of 2025 detections",
+    desc: "The company the whole West is defined against: dominant in commercial hardware, NDAA-banned for US federal use.",
+    wins: ["Consumer models stay below China's export thresholds and keep shipping"] },
+  { name: "CASC", region: "china", hq: "Beijing, China", lat: 39.90, lon: 116.40, tier: 2,
+    raised: "state prime", note: "Rainbow / CH series", val: "",
+    desc: "CH-5 (60 h, 16 missiles) pitched as a half-price MQ-9 Reaper; exported across Africa, the Middle East and Pakistan.", wins: [] },
+  { name: "CAIG", region: "china", hq: "Chengdu, China", lat: 30.67, lon: 104.02, tier: 2,
+    raised: "state prime", note: "Wing Loong series", val: "",
+    desc: "Wing Loong II armed MALE (480 kg payload), combat-proven in Libya, Yemen and Ethiopia; mass-produced cheaply.", wins: [] },
+  { name: "Autel", region: "china", hq: "Shenzhen, China", lat: 22.60, lon: 114.12, tier: 1,
+    raised: "#2 maker", note: "DJI's rival", val: "", desc: "China's number-two commercial-drone maker, also under Western import scrutiny.", wins: [] },
+  { name: "XAG", region: "china", hq: "Guangzhou, China", lat: 23.13, lon: 113.26, tier: 1,
+    raised: "agri leader", note: "", val: "", desc: "Agricultural spraying drones, the category Europe's ABZ Innovation is trying to localize.", wins: [] },
+  { name: "EHang", region: "china", hq: "Guangzhou, China", lat: 23.16, lon: 113.32, tier: 1,
+    raised: "eVTOL", note: "", val: "", desc: "Passenger-eVTOL pioneer with early autonomous air-taxi type certification.", wins: [] },
+
+  // Europe (the neo-primes, in global context)
+  { name: "Helsing", region: "europe", hq: "Munich, Germany", lat: 48.14, lon: 11.58, valB: 18,
+    raised: "~$14B", note: "$18B reported", val: "HX-2, Altra, CA-1 Europa",
+    desc: "Europe's most valuable defense startup; AI software plus the HX-2 loitering munition and the Europa combat jet.", wins: [] },
+  { name: "Quantum Systems", region: "europe", hq: "Gilching, Germany", lat: 48.11, lon: 11.29, valB: 8,
+    raised: "$8B", note: "profitable, ~€300M rev", val: "Vector ISR",
+    desc: "Europe's ISR neo-prime; 19,000+ Vector missions over Ukraine in 2025.", wins: [] },
+  { name: "Stark", region: "europe", hq: "Berlin, Germany", lat: 52.52, lon: 13.40, valB: 4,
+    raised: "€3.5B+", note: "founded 2024", val: "Virtus loitering munition",
+    desc: "Zero to a €3.5B valuation in ~2.5 years on attritable-mass loitering munitions.", wins: [] },
+  { name: "Tekever", region: "europe", hq: "Lisbon, Portugal", lat: 38.72, lon: -9.14, valB: 1.3,
+    raised: ">£1B", note: "combat-proven", val: "AR3 / AR5 ISR",
+    desc: "Maritime-ISR neo-prime; 10,000+ hours over Ukraine, RAF StormShroud airframe.", wins: [] },
+  { name: "Harmattan AI", region: "europe", hq: "Paris, France", lat: 48.86, lon: 2.35, valB: 1.4,
+    raised: "$1.4B", note: "Dassault-backed", val: "Sonora, Gobi",
+    desc: "France's first defense unicorn; 5,000-Sonora DGA order.", wins: [] },
+  { name: "Auterion", region: "europe", hq: "Zurich, Switzerland", lat: 47.38, lon: 8.54, valB: 0.6,
+    raised: ">$0.6B", note: "$1.2B sought", val: "Skynode, AuterionOS",
+    desc: "The 'Android of drones'; 33,000 Skynode strike kits to Ukraine under a Pentagon contract.", wins: [] },
+  { name: "Kraken", region: "europe", hq: "Fareham, UK", lat: 50.85, lon: -1.18, valB: 1,
+    raised: "$1B", note: "naval unicorn", val: "K3 Scout USV",
+    desc: "Europe's newest defense unicorn; USVs series-produced with Rheinmetall at Blohm+Voss.", wins: [] },
+
+  // Türkiye / Israel / Gulf
+  { name: "Baykar", region: "turkey", hq: "Istanbul, Türkiye", lat: 41.01, lon: 28.98, tier: 3,
+    raised: "$2.2B exports", note: "2025", val: "Bayraktar TB2, KIZILELMA",
+    desc: "The world's export leader (TB2 in 37 countries); first drone air-to-air kill; developing GPS-denied loitering munitions.", wins: [] },
+  { name: "Elbit Systems", region: "israel", hq: "Haifa, Israel", lat: 32.79, lon: 34.99, tier: 3, flag: "public",
+    raised: "$6.8B rev", note: "public", val: "Hermes, SkyStriker",
+    desc: "Israeli defense-electronics major; the SkyStriker loitering munition strikes precisely in GPS-denied conditions.", wins: [] },
+  { name: "UVision", region: "israel", hq: "Tel Aviv, Israel", lat: 32.08, lon: 34.80, tier: 2,
+    raised: "~$3.5B target", note: "Nasdaq IPO prep", val: "HERO munitions",
+    desc: "HERO loitering-munition family; a ~$982M US Army contract.", wins: [] },
+  { name: "XTEND", region: "israel", hq: "Tel Aviv, Israel", lat: 32.06, lon: 34.78, tier: 1,
+    raised: "FPV attack", note: "", val: "", desc: "Mass-produced FPV attack drones; won an Israeli MoD tender for thousands of units.", wins: [] },
+  { name: "EDGE Group", region: "gulf", hq: "Abu Dhabi, UAE", lat: 24.45, lon: 54.38, tier: 3,
+    raised: "$5B+ orders", note: "state conglomerate", val: "owns Milrem",
+    desc: "Emirati state group; QX loitering munitions, and majority owner of Estonia's Milrem Robotics.", wins: [] },
+
+  // Ukraine
+  { name: "Fire Point", region: "ukraine", hq: "Kyiv region, Ukraine", lat: 50.45, lon: 30.52, tier: 2,
+    raised: "state-funded", note: "FP-1 deep strike", val: "FP-5 Flamingo missile",
+    desc: "FP-1 (~1,600 km) credited with a large share of Ukraine's long-range strikes; figures company-stated.", wins: [] },
+  { name: "The Fourth Law / Vyriy", region: "ukraine", hq: "Kyiv, Ukraine", lat: 50.42, lon: 30.60, tier: 2,
+    raised: "Axon / BRAVE1", note: "TFL-1 module", val: "fire-and-forget vision",
+    desc: "The TFL-1 terminal-guidance module that turns $448 FPVs into jam-proof autonomous strikers.", wins: [] },
+  { name: "Swarmer", region: "ukraine", hq: "Kyiv, Ukraine", lat: 50.48, lon: 30.45, tier: 1,
+    raised: "$18.7M", note: "Series A · Nasdaq IPO", val: "swarm AI",
+    desc: "Styx AI to coordinate heterogeneous drone swarms autonomously; listed on the Nasdaq in 2026 and spiked ~520% on day one to a ~$500M cap on ~$220k revenue.", wins: [] },
+  { name: "TAF Industries", region: "ukraine", hq: "Kyiv, Ukraine", lat: 50.30, lon: 30.30, tier: 2,
+    raised: "~$500M rev", note: "40-80k FPV / month", val: "Kolibri FPV, Babka recon",
+    desc: "Pure mass: the “Manna-style” volume play, 1.5M component kits imported in 2025 at state-capped 15-25% margins; acquired an EW maker (Kvazar) and runs a Wingcopter JV.", wins: [] },
+  { name: "Wild Hornets", region: "ukraine", hq: "Ukraine", lat: 50.62, lon: 30.72, tier: 1,
+    raised: "non-profit", note: "Sting interceptor", val: "80-90% kill rate",
+    desc: "Crowdfunded maker of the Sting interceptor drone (>300 km/h, >3 km ceiling), credited with downing Russian reconnaissance drones at high rates.", wins: [] },
+  { name: "Dark River", region: "ukraine", hq: "Ukraine", lat: 50.34, lon: 30.78, tier: 1,
+    raised: "~$3,300/unit", note: "APUS / VENOM / STRIX", val: "GPS-free interceptors",
+    desc: "A full counter-drone architecture, ground sensors plus autonomous interceptors (APUS-1: 320 km/h, 50 km, no GPS).", wins: [] },
+  { name: "Twist Robotics", region: "ukraine", hq: "Kyiv, Ukraine", lat: 50.56, lon: 30.28, tier: 1,
+    raised: "defense-backed", note: "OSCAR visual nav", val: "20 m accuracy, no GPS",
+    desc: "The OSCAR module matches live video to pre-loaded satellite maps for GPS-denied navigation (refined over ~500,000 km); also builds the Saker Hunter mothership.", wins: [] },
+  { name: "Frontline Robotics", region: "ukraine", hq: "Kyiv, Ukraine", lat: 50.26, lon: 30.62, tier: 1,
+    raised: "JV w/ Quantum", note: "Zoom / Linza", val: "10k units/yr in Bavaria",
+    desc: "Formed Quantum Frontline Industries with Germany's Quantum Systems to build Ukrainian-designed drones inside the EU.", wins: [] },
+  { name: "NextVision", region: "supplier", hq: "Ra'anana, Israel", lat: 32.18, lon: 34.87, kind: "supplier",
+    raised: "the eyes (light)", note: "micro-gimbals", val: "~$168M rev",
+    desc: "Ultra-light stabilized EO/IR camera gimbals on a huge share of tactical drones (Elbit, IAI, UVision); the sensor most FPVs actually see through.", wins: [] },
+  { name: "Persistent Systems", region: "supplier", hq: "New York, USA", lat: 40.71, lon: -74.0, kind: "supplier",
+    raised: "the mesh", note: "MPU5 / Wave Relay", val: "",
+    desc: "The other MANET-radio standard (with Silvus): a networked computer, not just a radio, carried by V-BAT and Anduril systems.", wins: [] },
+  { name: "Ambarella", region: "supplier", hq: "Santa Clara, USA", lat: 37.30, lon: -121.90, kind: "supplier",
+    raised: "the eyes (chip)", note: "CV5 vision SoC", val: "<2 W",
+    desc: "Vision system-on-chip fusing 8K encode with CNN inference under 2 watts, ideal for light optronic gimbals.", wins: [] },
+
+  // Component & chip suppliers (the layer everyone depends on)
+  { name: "TSMC", region: "supplier", hq: "Hsinchu, Taiwan", lat: 24.80, lon: 120.97, kind: "supplier",
+    raised: "the fab", note: "makes most advanced AI chips", val: "",
+    desc: "The deepest chokepoint: the advanced AI silicon here is fabricated at a handful of Asian fabs, TSMC in Taiwan (Hailo, Axelera) and Samsung in Korea (NVIDIA's Jetson). Design it in California or Eindhoven; it's still made a strait away from China.", wins: [] },
+  { name: "NVIDIA", region: "supplier", hq: "Santa Clara, USA", lat: 37.35, lon: -121.96, kind: "supplier",
+    raised: "the brains", note: "Jetson edge AI", val: "",
+    desc: "Default AI compute for Western drones; the reason most autonomy is, at root, American.", wins: [] },
+  { name: "Teledyne FLIR", region: "supplier", hq: "Wilsonville, USA", lat: 45.31, lon: -122.77, kind: "supplier",
+    raised: "the eyes", note: "thermal cores", val: "",
+    desc: "World thermal-imaging leader; the Boson+ core is how Western drones see at night and through thermal crossover.", wins: [] },
+  { name: "Silvus", region: "supplier", hq: "Los Angeles, USA", lat: 34.05, lon: -118.24, kind: "supplier",
+    raised: "the mesh", note: "MANET radios", val: "",
+    desc: "Jam-resistant mesh radios keep swarms linked; bought by Motorola for $4.4B.", wins: [] },
+  { name: "Hailo", region: "supplier", hq: "Tel Aviv, Israel", lat: 32.09, lon: 34.79, kind: "supplier",
+    raised: "efficient AI", note: "16 TOPS/W", val: "",
+    desc: "Israeli dataflow NPU: 40 TOPS at ~2.5 W, the efficiency leader for fanless attritable drones.", wins: [] },
+  { name: "Axelera", region: "supplier", hq: "Eindhoven, Netherlands", lat: 51.44, lon: 5.47, kind: "supplier",
+    raised: "Europe's chip", note: "Metis, 214 TOPS", val: "",
+    desc: "Europe's one serious edge-AI-chip contender, but still fabricated at TSMC.", wins: [] },
+  { name: "Lynred", region: "supplier", hq: "Palaiseau, France", lat: 48.71, lon: 2.24, kind: "supplier",
+    raised: "cooled IR", note: "MWIR detectors", val: "",
+    desc: "European leader in the cooled infrared detectors that defeat thermal crossover.", wins: [] },
+  { name: "CATL", region: "supplier", hq: "Ningde, China", lat: 26.66, lon: 119.55, kind: "supplier",
+    raised: "the cells", note: "China ≈75% of Li-ion", val: "",
+    desc: "A drone is mostly a battery; the cells overwhelmingly come from China.", wins: [] },
+  { name: "T-Motor", region: "supplier", hq: "Nanchang, China", lat: 28.68, lon: 115.86, kind: "supplier",
+    raised: "the motors", note: "BLDC motors", val: "", desc: "Dominant brushless-motor supplier for FPV and commercial drones.", wins: [] },
+  { name: "Caddx / RunCam", region: "supplier", hq: "Shenzhen, China", lat: 22.66, lon: 114.00, kind: "supplier",
+    raised: "FPV cameras", note: "", val: "", desc: "The FPV camera and video-link ecosystem most Western builds still fly.", wins: [] },
+  { name: "Rockchip", region: "supplier", hq: "Fuzhou, China", lat: 26.07, lon: 119.30, kind: "supplier",
+    raised: "the brains (East)", note: "RK3588 SoC", val: "",
+    desc: "Chinese AI SoC giving non-Western drones onboard target recognition without NVIDIA, reportedly inside Russian Lancet-successors.", wins: [] },
+];
+
+const svg = document.getElementById('map'), tt = document.getElementById('tt'), legendEl = document.getElementById('legend');
+const hidden = new Set(); let pinned = null;
+function el(tag, a) { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const k in a) n.setAttribute(k, a[k]); return n; }
+const W = 1180, H = 392;
+
+// equirectangular with cos(midlat) x-correction
+const MIDLAT = 42, KX = Math.cos(MIDLAT * Math.PI / 180);
+const raw = (lat, lon) => [lon * KX, -lat];
+let SC = 1, TX = 0, TY = 0;
+function fit(features) {
+  let a = 1e9, b = -1e9, c = 1e9, d = -1e9;
+  for (const f of features) { const ps = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+    for (const poly of ps) for (const ring of poly) for (const [lon, lat] of ring) { const [x, y] = raw(lat, lon); if (x<a)a=x; if(x>b)b=x; if(y<c)c=y; if(y>d)d=y; } }
+  SC = Math.min((W - 16) / (b - a), (H - 16) / (d - c)); TX = 8 - a * SC; TY = 8 - c * SC;
+}
+const px = (lat, lon) => { const [x, y] = raw(lat, lon); return [x * SC + TX, y * SC + TY]; };
+const radius = (co) => co.kind === 'supplier' ? 6.5 : (co.valB != null ? Math.max(5.5, 3.6 * Math.sqrt(co.valB)) : ({1:6,2:9,3:14}[co.tier || 2]));
+
+fetch('world.geo.json').then(r => r.json()).then(geo => {
+  fit(geo.features);
+  const gL = el('g', {}); svg.appendChild(gL);
+  for (const f of geo.features) { const ps = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates; let d = '';
+    for (const poly of ps) for (const ring of poly) { ring.forEach(([lon, lat], i) => { const [x, y] = px(lat, lon); d += (i ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1); }); d += 'Z'; }
+    gL.appendChild(el('path', { d, class: 'country' })); }
+
+  const nodes = CO.map((co, i) => { const [x, y] = px(co.lat, co.lon); const j = i * 2.4;
+    return { co, x: x + Math.cos(j) * 1.5, y: y + Math.sin(j) * 1.5, ax: x, ay: y, r: radius(co) }; });
+  for (let it = 0; it < 240; it++) {
+    for (const n of nodes) { const k = n.r >= 20 ? 0.12 : 0.05; n.x += (n.ax - n.x) * k; n.y += (n.ay - n.y) * k; }
+    for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) { const A2 = nodes[i], B = nodes[j];
+      let dx = B.x - A2.x, dy = B.y - A2.y, dist = Math.hypot(dx, dy); if (dist < 0.01) { dx = 1; dy = 0; dist = 0.01; }
+      const gap = A2.r + B.r + 1.5; if (dist < gap) { const p = gap - dist, ma = A2.r*A2.r, mb = B.r*B.r; dx/=dist; dy/=dist;
+        A2.x -= dx*p*(mb/(ma+mb)); A2.y -= dy*p*(mb/(ma+mb)); B.x += dx*p*(ma/(ma+mb)); B.y += dy*p*(ma/(ma+mb)); } }
+    for (const n of nodes) { n.x = Math.max(n.r+1, Math.min(W-n.r-1, n.x)); n.y = Math.max(n.r+1, Math.min(H-n.r-1, n.y)); }
+  }
+
+  const gB = el('g', {}); svg.appendChild(gB); const gT = el('g', {}); svg.appendChild(gT);
+  nodes.sort((a, b) => b.r - a.r);
+  for (const n of nodes) { const co = n.co, isSup = co.kind === 'supplier'; const color = isSup ? 'var(--supplier)' : `var(--${co.region})`;
+    let m; if (isSup) { const s = n.r; m = el('rect', { x: (n.x-s).toFixed(1), y: (n.y-s).toFixed(1), width: (2*s).toFixed(1), height: (2*s).toFixed(1), transform: `rotate(45 ${n.x.toFixed(1)} ${n.y.toFixed(1)})`, class: 'comp' }); }
+    else m = el('circle', { cx: n.x.toFixed(1), cy: n.y.toFixed(1), r: n.r.toFixed(1), class: 'bubble' + (co.flag === 'public' && co.valB == null ? ' na' : '') });
+    m.style.fill = color; m.style.fillOpacity = isSup ? 0.85 : 0.8;
+    m.addEventListener('mouseenter', (e) => { if (!pinned) show(co, e); });
+    m.addEventListener('mousemove', (e) => { if (!pinned) place(e); });
+    m.addEventListener('mouseleave', () => { if (!pinned) hide(); });
+    m.addEventListener('click', (e) => { e.stopPropagation(); if (pinned === co) { pinned = null; hide(); } else { pinned = null; show(co, e); pinned = co; tt.classList.add('pinned'); } });
+    n.m = m; gB.appendChild(m);
+    if ((co.valB || 0) >= 4 || co.tier === 3 || co.name === 'TSMC') { const right = n.x > W - 120;
+      const t = el('text', { x: (right ? n.x - n.r - 3 : n.x + n.r + 3).toFixed(1), y: (n.y + 3).toFixed(1), class: 'blabel', 'text-anchor': right ? 'end' : 'start' });
+      t.textContent = co.name; gT.appendChild(t); } }
+
+  document.body.addEventListener('click', () => { pinned = null; hide(); });
+  tt.addEventListener('click', (e) => e.stopPropagation());
+
+  for (const key in REGION) { const rg = REGION[key]; const chip = document.createElement('span'); chip.className = 'chip';
+    const mk = key === 'supplier' ? `<span class="dia" style="background:${rg.hex}"></span>` : `<span class="dot" style="background:${rg.hex}"></span>`;
+    chip.innerHTML = mk + rg.label;
+    chip.addEventListener('click', () => { hidden.has(key) ? hidden.delete(key) : hidden.add(key); chip.classList.toggle('off', hidden.has(key));
+      for (const n of nodes) { const off = hidden.has(n.co.kind === 'supplier' ? 'supplier' : n.co.region); n.m.style.opacity = off ? 0.06 : 1; n.m.style.pointerEvents = off ? 'none' : 'auto'; } });
+    legendEl.appendChild(chip); }
+  const h = document.createElement('span'); h.className = 'hint'; h.textContent = 'Europe detailed in the first map; shown here for scale'; legendEl.appendChild(h);
+});
+
+function show(co, e) { const isSup = co.kind === 'supplier'; const color = isSup ? 'var(--supplier)' : `var(--${co.region})`;
+  const srcLine = (co.src || []).map(([t, u]) => A(u, t)).join(' · ');
+  tt.innerHTML = `<div class="tt-name">${co.name}${co.flag ? `<span class="tt-flag">${co.flag}</span>` : ''}</div>
+    <div class="tt-hq"><span class="m" style="background:${color}"></span>${REGION[co.region].label} · ${co.hq}</div>
+    <div class="tt-stat"><span class="lbl">${isSup ? 'Role' : 'Valued'}</span><span class="val"><b>${co.raised || '—'}</b>${co.note ? ` <span class="q">${co.note}</span>` : ''}</span>
+      ${co.val ? `<span class="lbl"></span><span class="val"><span class="q">${co.val}</span></span>` : ''}
+      ${srcLine ? `<span class="tt-src">${srcLine}</span>` : ''}</div>
+    <div class="tt-desc">${co.desc}</div>
+    ${co.wins && co.wins.length ? `<ul class="tt-wins">${co.wins.map(w => `<li>${w}</li>`).join('')}</ul>` : ''}`;
+  tt.style.display = 'block'; tt.classList.remove('pinned'); place(e); }
+function place(e) { const w = document.querySelector('.wrap').getBoundingClientRect(); const x = e.clientX - w.left, y = e.clientY - w.top;
+  const ww = tt.offsetWidth, hh = tt.offsetHeight; let l = x + 14, t = y + 10; if (l + ww > w.width - 4) l = x - ww - 14; if (l < 4) l = 4; if (t + hh > w.height - 4) t = Math.max(4, y - hh - 10);
+  tt.style.left = l + 'px'; tt.style.top = t + 'px'; }
+function hide() { tt.style.display = 'none'; tt.classList.remove('pinned'); }
+
+document.getElementById('facts').innerHTML = `<b>The two dependencies under the whole board.</b> Nearly every AI chip here, American (NVIDIA), Israeli (Hailo) or European (Axelera), is physically fabricated by <b>TSMC in Taiwan</b>; and the cheap parts, batteries (China makes ~75% of the world's lithium-ion cells), motors, propellers and FPV cameras, are overwhelmingly Chinese. From <b>September 2024</b> China began restricting exports of drones and dual-use parts to Western buyers while supply to Russia continued; the US mirror is the Pentagon's Blue UAS list and the FCC's move against DJI. A European-built FPV can cost <b>€20,000</b> against roughly <b>€200</b> for the Chinese equivalent. ${A('https://dronelife.com/2024/12/10/chinas-export-restrictions-on-drone-parts-could-reshape-global-supply-chains/','(DroneLife)')} ${A('https://www.easterncircles.com/newsletter-27-how-china-has-become-world-leader-of-fpv-drones-and-what-it-means-for-european-strategic-autonomy/','(supply-chain analysis)')}`;
+</script>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>European drone startups map</title>
+<style>
+  :root {
+    --surface: #ffffff; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --land: #f0efec; --border: #ffffff; --ring: rgba(11,11,11,0.10);
+    --c-isr: #2a78d6; --c-naval: #1baf7a; --c-soft: #eda100; --c-indus: #008300;
+    --c-cuas: #4a3aa7; --c-strike: #e34948; --c-logi: #eb6834;
+  }
+  html, body { margin: 0; background: transparent; color: var(--ink-2);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; }
+  .wrap { padding: 6px 8px; position: relative; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 2px 2px 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-2);
+    border: 1px solid var(--ring); border-radius: 999px; padding: 2px 9px; cursor: pointer; user-select: none; background: var(--surface); }
+  .chip .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .chip.off { opacity: 0.35; }
+  .hint { font-size: 12px; color: var(--muted); margin-left: auto; }
+  svg { width: 100%; height: auto; display: block; }
+  .country { fill: var(--land); stroke: var(--border); stroke-width: 0.7; }
+  .bubble { stroke: #fff; stroke-width: 1.2; cursor: pointer; transition: opacity .12s; }
+  .bubble.na { fill: none !important; stroke-width: 1.6; }
+  .blabel { font-size: 10.5px; fill: var(--ink-2); paint-order: stroke; stroke: rgba(255,255,255,0.85); stroke-width: 2.5px; pointer-events: none; }
+  .tooltip { position: absolute; z-index: 10; width: 320px; max-width: 92vw; background: var(--surface);
+    border: 1px solid var(--ring); border-radius: 8px; box-shadow: 0 6px 24px rgba(11,11,11,0.13);
+    padding: 11px 13px; font-size: 12.5px; line-height: 1.42; display: none; pointer-events: none; }
+  .tooltip.pinned { pointer-events: auto; }
+  .tooltip a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+  .tt-name { color: var(--ink); font-weight: 650; font-size: 14px; }
+  .tt-flag { font-weight: 500; color: var(--muted); font-size: 11px; margin-left: 5px; }
+  .tt-hq { color: var(--muted); font-size: 11.5px; margin: 1px 0 6px; display: flex; align-items: center; gap: 6px; }
+  .tt-hq .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  /* the stat block: label dim, number big+bold, qualifier dim */
+  .tt-stat { display: grid; grid-template-columns: auto 1fr; gap: 1px 8px; align-items: baseline; margin-bottom: 6px; }
+  .tt-stat .lbl { color: var(--muted); font-size: 11px; }
+  .tt-stat .val { color: var(--ink); }
+  .tt-stat .val b { font-size: 15px; font-weight: 680; letter-spacing: -0.01em; }
+  .tt-stat .val .q { color: var(--muted); font-weight: 400; font-size: 12px; }
+  .tt-src { grid-column: 2; font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+  .tt-desc { margin-bottom: 6px; }
+  .tt-wins { margin: 0 0 2px; padding-left: 15px; }
+  .tt-wins li { margin-bottom: 3px; }
+  .tt-caveat { margin-top: 6px; color: var(--muted); font-style: italic; }
+  .tt-detail { margin-top: 6px; font-size: 11.5px; }
+  .tt-detail summary { color: var(--muted); cursor: pointer; font-size: 11px; }
+  .tt-detail p { margin: 4px 0 0; color: var(--ink-2); }
+  .foot { display: flex; flex-wrap: wrap; gap: 4px 16px; justify-content: space-between; font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+  .sizekey { display: flex; align-items: flex-end; gap: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="legend" id="legend"></div>
+  <svg id="map" viewBox="0 0 960 760" role="img" aria-label="Map of Europe with drone startups as bubbles sized by money raised"></svg>
+  <div class="foot">
+    <span>Bubble area &prop; money raised (hollow ring = undisclosed). Hover for details, click to pin &amp; open sources.</span>
+    <span class="sizekey" id="sizekey"></span>
+  </div>
+  <div class="tooltip" id="tt"></div>
+</div>
+
+<script>
+// ---------------------------------------------------------------------------
+// DATA. Card schema, tuned for glanceability:
+//   sz     bubble size = total raised, EUR millions (null → hollow ring)
+//   raised bold headline number (what you read at a glance)
+//   note   dim qualifier after the number (round/date, or "+ X potentially")
+//   val    dim valuation line (optional)
+//   src    [[label,url]] minimal per-figure source links under the number
+//   desc   one-line thesis · wins[] traction bullets · caveat · detail (folded)
+// ---------------------------------------------------------------------------
+const SEGMENTS = {
+  strike: { label: "Strike & loitering munitions", hex: "#e34948" },
+  isr:    { label: "ISR & tactical",               hex: "#2a78d6" },
+  cuas:   { label: "Counter-drone",                hex: "#4a3aa7" },
+  soft:   { label: "Autonomy software & components", hex: "#eda100" },
+  naval:  { label: "Naval & ground robots",        hex: "#1baf7a" },
+  logi:   { label: "Delivery & logistics",         hex: "#eb6834" },
+  indus:  { label: "Industrial, mapping & agri",   hex: "#008300" },
+};
+const A = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
+
+const COMPANIES = [
+  // --- Germany ---
+  { name: "Helsing", hq: "Munich, Germany", lat: 48.137, lon: 11.575, seg: "strike", founded: 2021, sz: 1370,
+    raised: "€1.37B", note: "+ $1.2B round reported", val: "€12B (2025), ~$18B if new round closes",
+    src: [["1.37B","https://en.wikipedia.org/wiki/Helsing_(company)"],["$1.2B/$18B","https://techcrunch.com/2026/05/11/daniel-ek-backed-defense-tech-helsing-to-raise-1-2b-at-18b-valuation/"]],
+    desc: "The AI-defence “neo-prime”: battlefield AI (Altra, Centaur, Cirra) now paired with mass-produced hardware.",
+    wins: [
+      `€268M Bundeswehr HX-2 contract, framework to ~€1.46B ${A('https://www.defensenews.com/global/europe/2026/02/26/once-reluctant-germany-goes-big-on-one-way-attack-drones/','(Defense News)')}`,
+      `6,000 HX-2 ordered by Ukraine ${A('https://breakingdefense.com/2025/02/ukraine-orders-6000-loitering-munitions-from-germanys-helsing/','(Breaking Defense)')}`,
+      "Centaur AI flew a Saab Gripen E; bought Grob Aircraft + Blue Ocean"],
+    caveat: `Bloomberg (Jan 2026): Russian electronic warfare reportedly compromised HX-2 in Ukraine; Helsing disputed it, contract approved a month later ${A('https://www.bloomberg.com/features/2025-euro-defense-startups/','(Bloomberg)')}.`,
+    detail: "Products span the HX-2 loitering munition, SG-1 Fathom underwater glider, CA-1 Europa combat jet (first flight targeted 2027), plus a “resilience factory” claiming ~1,000 HX-2/month capacity (company-stated). Series A €100M (Prima Materia, 2021) → €209M B → €450M C (~€4.9B) → €600M D at €12B (June 2025)." },
+  { name: "Quantum Systems", hq: "Gilching (Munich), Germany", lat: 48.108, lon: 11.294, seg: "isr", founded: 2015, sz: 1600,
+    raised: "$1.73B", note: "Series D, Jul 2026", val: "~$8B",
+    src: [["$8B round","https://www.cnbc.com/2026/07/02/autonomous-defense-startup-quantum-systems.html"],["total","https://sacra.com/c/quantum-systems/"]],
+    desc: "Electric-VTOL ISR drones (Vector, Trinity, Scorpion); the closest European analog to Anduril’s bundled-systems play.",
+    wins: [
+      `$1.2B Series D co-led by Blackstone, Airbus, Advent ${A('https://thenextweb.com/news/quantum-systems-1-2bn-series-d-8bn-valuation','(TNW)')}`,
+      "Romania €18.4M + 34 via EU SAFE; Australia AUD 90M; Spain €27M/91 Vectors",
+      "19,000+ Vector missions over Ukraine in 2025 (company-stated)"],
+    detail: "Reports ~€300M 2025 revenue, profitable. Vertically integrating via acquisitions: AirRobot (copters), Spleenlab (autonomy AI), Hacker Motor (propulsion). Production in Germany, a JV in Ukraine, plus the US and Australia." },
+  { name: "Stark", hq: "Berlin, Germany", lat: 52.520, lon: 13.405, seg: "strike", founded: 2024, sz: 640,
+    raised: "€640M", note: "Series C, Jun 2026", val: ">€3.5B",
+    src: [["round","https://thenextweb.com/news/stark-defence-500-million-sequoia-founders-fund-3-5-billion-valuation"]],
+    desc: "Loitering munitions at industrial scale: OWE-V Virtus (>130 km strike drone), Minerva software, Vanta surface vessels.",
+    wins: [
+      `€268M Bundeswehr Virtus contract for the Lithuania brigade ${A('https://www.defensenews.com/global/europe/2026/02/26/once-reluctant-germany-goes-big-on-one-way-attack-drones/','(Defense News)')}`,
+      "Zero to >€3.5B valuation in ~2.5 years; Swindon UK factory"],
+    caveat: "FT: Virtus missed all four targets in Nov 2025 live-fire trials; the contract came anyway. The purest “fund the factory, not the demo” case.",
+    detail: "Legal entity SKD SE, founded by Florian Seibel (also Quantum Systems), Johannes Schaback and Uwe Horstmann; ~300 staff. Round co-led by Sequoia + Founders Fund with the NATO Innovation Fund." },
+  { name: "ARX Robotics", hq: "Oberding (Munich), Germany", lat: 48.316, lon: 11.851, seg: "naval", founded: 2022, sz: 42,
+    raised: "€42M", note: "Series A, 2025",
+    src: [["round","https://www.eu-startups.com/2025/07/german-defensetech-arx-robotics-reinforces-europes-battlefield-edge-with-e42-million-for-tactical-ugvs/"]],
+    desc: "Modular Gereon unmanned ground vehicles + Mithra OS to retrofit legacy vehicles; fully European supply chain.",
+    wins: ["Deployed by six European armies (2025)", "30 Gereon RCS to Ukraine; NATO missions in Slovakia", "Daimler Truck & Renk partnerships"] },
+  { name: "Alpine Eagle", hq: "Munich, Germany", lat: 48.137, lon: 11.575, seg: "cuas", founded: 2023, sz: 10,
+    raised: "€10.25M", note: "seed, Mar 2025",
+    src: [["round","https://techcrunch.com/2025/03/05/alpine-eagle-secures-funding-from-european-backers-for-counter-drone-tech-amid-rising-threats/"]],
+    desc: "Air-to-air counter-drone: a Sentinel mothership carries expendable interceptors that net or ram hostile drones.",
+    wins: ["Bundeswehr launch customer; 7-figure revenue in year one", "Testing with Ukrainian brigades", "Integrating Origin Robotics’ BLAZE interceptor (Jun 2026)"] },
+  { name: "TYTAN Technologies", hq: "Munich, Germany", lat: 48.137, lon: 11.575, seg: "cuas", founded: 2020, sz: 46,
+    raised: "€46M", note: "incl. €30M Series A, Feb 2026",
+    src: [["round","https://www.nif.fund/news/the-nato-innovation-fund-co-leads-e30m-series-a-for-tytan-to-build-europes-next-generation-air-defence/"]],
+    desc: "Autonomous interceptor drones against hostile UAVs, scaling across Germany, Ukraine and allied markets.",
+    wins: ["Series A co-led by the NATO Innovation Fund"] },
+  { name: "Twentyfour Industries", hq: "Munich, Germany", lat: 48.137, lon: 11.575, seg: "isr", founded: 2024, sz: 11,
+    raised: "$11.8M", note: "seed, Jan 2026",
+    src: [["round","https://tech.eu/2026/01/19/lakestar-backed-german-drone-maker-twentyfour-industries-emerges-from-stealth/"]],
+    desc: "Q-X: an EW-hardened 10-inch carbon quadcopter, built in Europe by the thousands to displace Chinese imports.",
+    wins: ["Hundreds deployed with allied special forces (reported)"] },
+  { name: "Donaustahl", hq: "Hutthurm (Bavaria), Germany", lat: 48.673, lon: 13.472, seg: "strike", founded: null, sz: null,
+    raised: "—", note: "funding undisclosed",
+    src: [["site","https://www.donaustahl.com/en"]],
+    desc: "Rural-Bavarian loitering munitions (ALMP MAUS/Ratte/Stryga) + solder-free FPV “Combat Stack”; 100% German value chain.",
+    wins: ["German export licence for ALMP MAUS to Ukraine’s KRAKEN unit (Feb 2025)"],
+    caveat: "Product list is manufacturer catalog; shipping status not independently proven." },
+  { name: "SWARM Biotactics", hq: "Kassel, Germany", lat: 51.312, lon: 9.479, seg: "isr", founded: 2024, sz: 13,
+    raised: "€13M", note: "seed, Jun 2025",
+    src: [["round","https://www.businesswire.com/news/home/20250623790761/en/SWARM-Biotactics-Raised-%E2%82%AC13M-to-Advance-Bio-Robotics-From-Lab-to-Field"]],
+    desc: "Cyborg-insect ISR: live cockroaches with sensor backpacks + SWARM OS, for rubble and interiors drones can’t enter.",
+    wins: ["Paying NATO customers incl. the Bundeswehr (Feb 2026)"] },
+  { name: "Wingcopter", hq: "Weiterstadt, Germany", lat: 49.903, lon: 8.593, seg: "logi", founded: 2017, sz: 100,
+    raised: "≈$110M", note: "incl. €40M EIB facility",
+    src: [["EIB","https://techcrunch.com/2023/05/10/wingcopter-drone-delivery-startup-eib/"]],
+    desc: "Tilt-rotor Wingcopter 198 delivery drone; medical logistics in Africa, now also LiDAR survey. Refuses combat use.",
+    wins: ["ITOCHU alliance; UPS & DHL pilots", "Partnership with Ukraine’s TAF Industries for civilian cargo (2026)"] },
+  { name: "Spleenlab", hq: "Saalburg-Ebersdorf, Germany", lat: 50.505, lon: 11.717, seg: "soft", founded: 2016, sz: null, flag: "acquired",
+    raised: "—", note: "acquired by Quantum Systems (2025)",
+    src: [["ref","https://sacra.com/c/quantum-systems/"]],
+    desc: "Safety-certified perception AI (VISIONRY): GPS-denied nav, precision landing, deterministic edge inference.",
+    wins: ["Bought by Quantum Systems to internalize its autonomy layer"] },
+  { name: "Argus Interception", hq: "Rotenburg (Wümme), Germany", lat: 53.111, lon: 9.411, seg: "cuas", founded: 2021, sz: null,
+    raised: "—", note: "funding undisclosed",
+    src: [["site","https://argus-interception.com/en/about-us/"]],
+    desc: "Autonomous net-capture interceptors (FALCON): catches hostile drones physically, no jamming, no stray rounds.",
+    wins: ["Bundeswehr received its first net-capture systems (2025-26)"] },
+
+  // --- France ---
+  { name: "Harmattan AI", hq: "Paris, France", lat: 48.857, lon: 2.352, seg: "strike", founded: 2024, sz: 220,
+    raised: "$242M", note: "incl. $200M Series B, Jan 2026", val: "$1.4B",
+    src: [["round","https://sifted.eu/articles/harmattan-ai-200m-series-b-unicorn"]],
+    desc: "France’s first defence unicorn: AI-native, vertically integrated. Sonora micro-quad, Gobi interceptor, Barkhan strike family.",
+    wins: [
+      "DGA: 1,000 combat drones (2025), then 5,000 Sonora (2026) — France’s largest single-type order",
+      "Series B anchored by Dassault Aviation; Rafale / future-combat-drone path"] },
+  { name: "Comand AI", hq: "Paris, France", lat: 48.857, lon: 2.352, seg: "soft", founded: 2023, sz: 40,
+    raised: "€40.5M", note: "incl. €32M Series A, Jun 2026",
+    src: [["round","https://sifted.eu/articles/comand-ai-fundraise-blossom-capital-saab"]],
+    desc: "Prevail: AI command-and-control to compress decision cycles and orchestrate autonomous systems and sensors.",
+    wins: ["Field-tested with units in Ukraine, France, Germany", "Saab integration path into GlobalEye"] },
+  { name: "Alta Ares", hq: "Paris, France", lat: 48.857, lon: 2.352, seg: "cuas", founded: 2024, sz: 52,
+    raised: "€52M", note: "incl. €50M Series A, Jun 2026",
+    src: [["round","https://www.aerotime.aero/articles/alta-ares-50-million-drone-interceptors"]],
+    desc: "AI-vision interceptors: X-Lock vs Shahed-class drones, Black Bird vs cruise missiles; Toulouse line live since 2026.",
+    wins: ["Interceptors deployed in combat on the Ukrainian front", "~70 staff, doubling after the round"] },
+  { name: "EOS Technologie", hq: "Varces (Grenoble), France", lat: 45.09, lon: 5.68, seg: "strike", founded: 2018, sz: null,
+    raised: "—", note: "funding undisclosed",
+    src: [["ref","https://www.opex360.com/2025/06/17/eos-technologies-va-livrer-aux-armees-17-munitions-teleoperees-veloce-330-a-des-fins-dexperimentations/"]],
+    desc: "Veloce 330: jet-powered loitering munition (400 km/h, 3 h) with a KNDS BONUS-derived penetrator warhead.",
+    wins: ["17 delivered to French forces for tri-service trials (2025)"] },
+  { name: "Delair", hq: "Toulouse, France", lat: 43.605, lon: 1.444, seg: "isr", founded: 2011, sz: 25,
+    raised: "≈€25M", note: "equity (incl. Intel Capital)", val: "rev. €50M→€100M target",
+    src: [["ref","https://www.safecluster.com/actualites/delair-drone-volt-et-tethys-parmi-les-champions-francais-de-la-croissance/"]],
+    desc: "Fixed-wing workhorses (UX11, DT26/46, 100 kg DT61); 3,000+ delivered; builds KNDS loitering-munition airframes.",
+    wins: ["Hundreds of drones to Ukraine", "Hybrid-electric DT46 with Ascendance (2025)", "TotalEnergies & Enel inspection"] },
+  { name: "Parrot", hq: "Paris, France", lat: 48.857, lon: 2.352, seg: "isr", founded: 1994, sz: null, flag: "public",
+    raised: "€80M", note: "FY2025 revenue · €335M market cap",
+    src: [["ref","https://www.marketscreener.com/news/parrot-reports-record-2025-revenue-ce7e51d8d980f424"]],
+    desc: "Europe’s veteran micro-drone OEM, pivoted to defence: NDAA-compliant ANAFI USA / ANAFI UKR; owns Pix4D.",
+    wins: ["French DGA 5-year micro-drone contract", "US Blue UAS listed"] },
+  { name: "Turgis & Gaillard", hq: "Paris, France", lat: 48.857, lon: 2.352, seg: "isr", founded: 2011, sz: null,
+    raised: "self-funded", note: "revenue €75M (2024), 400 staff",
+    src: [["ref","https://www.usinenouvelle.com/article/defense-le-drone-aarok-du-francais-turgis-gaillard-debute-sa-campagne-d-essais-en-vol-avec-2027-dans-le-viseur.N2237724"]],
+    desc: "AAROK: a 5.5-tonne French MALE drone built outside the usual procurement circuit; first flight Sept 2025.",
+    wins: [
+      `Renault JV for the Chorus munition, €35M initial DGA contract ${A('https://www.opex360.com/2026/01/20/renault-noue-un-partenariat-avec-turgis-gaillard-pour-produire-des-drones-sous-legide-de-la-dga/','(Opex360)')}`,
+      "Safran, MBDA, Thales as subsystem suppliers"] },
+  { name: "Azur Drones", hq: "Mérignac (Bordeaux), France", lat: 44.842, lon: -0.645, seg: "indus", founded: 2012, sz: 38,
+    raised: "≈€38M", note: "since 2016",
+    src: [["ref","https://dronelife.com/2022/02/02/azur-drones-investment-another-e8-million-to-speed-development/"]],
+    desc: "Skeyetech drone-in-a-box for site security; among the first EASA-approved BVLOS docked ops with no pilot on site.",
+    wins: ["200+ industrial sites monitored (nuclear, ports, chemical)"] },
+  { name: "Elistair", hq: "Lyon, France", lat: 45.806, lon: 4.756, seg: "indus", founded: 2014, sz: 7,
+    raised: "≈€7M", note: "Series B, 2021",
+    src: [["ref","https://www.businesswire.com/news/home/20210330005817/en/Elistair-The-Pioneer-in-Tethered-UAVs-Announces-a-%E2%82%AC5M-Series-B-Round-to-Accelerate-Its-International-Expansion"]],
+    desc: "Tethered drones (Orion 2.2 TE): 50-hour persistent surveillance, data over the power line, jam-immune, ITAR-free.",
+    wins: ["Used in 70+ countries; European border surveillance"] },
+  { name: "Dronavia", hq: "Remiremont, France", lat: 48.017, lon: 6.593, seg: "soft", founded: 2017, sz: null,
+    raised: "—", note: "funding undisclosed",
+    desc: "Parachutes and flight-termination systems that let drones legally overfly people under EASA SORA — a business created by regulation.",
+    wins: ["10,000+ drones equipped; geocaging work with Thales"] },
+  { name: "Dronisos", hq: "Bordeaux, France", lat: 44.838, lon: -0.579, seg: "soft", founded: 2016, sz: 13,
+    raised: "≈€13M", note: "reported",
+    desc: "Symphonie swarm-orchestration software flying thousands of synchronized micro-drones — swarm know-how regardless.",
+    wins: ["Official drone-show provider for Disneyland Paris and Dollywood"] },
+  { name: "CerbAir", hq: "Paris, France", lat: 48.82, lon: 2.32, seg: "cuas", founded: 2015, sz: null,
+    raised: "—", note: "funding undisclosed",
+    desc: "Passive RF counter-drone detection and classification (Hydra/Medusa): listens for and locates drones rather than jamming them.",
+    wins: ["Deployed at French prisons, airports and sensitive sites"] },
+  { name: "Donecle", hq: "Toulouse, France", lat: 43.55, lon: 1.51, seg: "indus", founded: 2015, sz: null,
+    raised: "—", note: "funding undisclosed",
+    desc: "Laser-guided drones that auto-inspect aircraft fuselages for lightning strikes and defects, cutting inspections from hours to minutes.",
+    wins: ["Used by airlines and MRO providers; Airbus partnership"] },
+
+  // --- Portugal ---
+  { name: "Tekever", hq: "Lisbon, Portugal", lat: 38.722, lon: -9.139, seg: "isr", founded: 2001, sz: 100,
+    raised: "≈$97M", note: "disclosed + undisclosed unicorn round", val: ">£1B",
+    src: [["rounds","https://tracxn.com/d/companies/tekever/__LGBxNmfL5pkscmFXbg1FugqS-ZaIU0QqmK290ZkwOIE/funding-and-investors"],["unicorn","https://tech.eu/2025/05/06/tekever-becomes-the-latest-unicorn-in-europes-defencetech-industry/"]],
+    desc: "“Intelligence-as-a-service” ISR: AR3 (combat-proven over Ukraine), AR5, ATLAS AI fusion. Leonardo payloads on a startup airframe.",
+    wins: [
+      "RAF StormShroud (AR3 + Leonardo jammer), ~£19M initial buy",
+      "10,000+ flight hours over Ukraine; EMSA €30M; UK Channel surveillance"],
+    caveat: "“Profitable” and “~$4B of Russian assets destroyed” are company-stated.",
+    detail: "£70M round Nov 2024 (Baillie Gifford + NATO Innovation Fund) then an undisclosed May 2025 round (Ventura Capital) at unicorn valuation. Launched £400M “OVERMATCH” UK program, 1,000+ jobs." },
+
+  // --- Switzerland / Netherlands ---
+  { name: "Auterion", hq: "Zurich (+ Munich, Arlington)", lat: 47.377, lon: 8.541, seg: "soft", founded: 2017, sz: 155,
+    raised: "≈$167M", note: "+ $200M reported", val: ">$600M, $1.2B sought",
+    src: [["Series B","https://resiliencemedia.co/auterion-raises-130m-on-a-valuation-north-of-600m-to-swarm-the-drone-market/"],["$200M talk","https://resiliencemedia.co/auterion-the-drone-software-startup-plans-to-raise-200m-at-a-1-2b-valuation/"]],
+    desc: "The “Android of drones”: AuterionOS fleet OS, Skynode autopilot+AI “strike kits”, Nemyx swarm engine. PX4 heritage.",
+    wins: [
+      `$50M Pentagon contract: 33,000 AI strike kits for Ukraine, >10x prior volumes ${A('https://dronelife.com/2025/07/29/auterion-wins-50m-pentagon-contract-to-deliver-33000-ai%E2%80%91driven-drone-strike-kits-to-ukraine/','(DroneLife)')}`,
+      "Rheinmetall & Lockheed Martin partners; ~$100M revenue run-rate (reported)"] },
+  { name: "Destinus", hq: "Hengelo, Netherlands (ex-CH)", lat: 52.266, lon: 6.793, seg: "strike", founded: 2021, sz: 300,
+    raised: "€200-400M", note: "equity + debt (reported)", val: "€5B+ pre-IPO talk",
+    src: [["ref","https://www.bloomberg.com/features/2025-euro-defense-startups/"]],
+    desc: "Jet-powered strike drones and interceptors (Lord, Ruta, Hornet) with hypersonic ambitions; bought Daedalean for GPS-denied vision.",
+    wins: ["~100+ UAVs/month to Ukraine (reported)", "Rheinmetall JV for a 700-km cruise missile (2026)"],
+    caveat: "Valuations are round-talk, not settled prices; founder Kokorich was forced to divest from US Momentus on national-security grounds." },
+  { name: "Wingtra", hq: "Zurich, Switzerland", lat: 47.377, lon: 8.541, seg: "indus", founded: 2016, sz: 60,
+    raised: "≈$66M", note: "incl. $25M round, 2024",
+    src: [["ref","https://techcrunch.com/2023/03/21/wingtra/"]],
+    desc: "WingtraOne tail-sitter VTOL mapping drones with centimetre PPK photogrammetry — the survey industry standard.",
+    wins: ["80+ dealers, 50+ countries; NASA & Rio Tinto", "Expanding from survey into defence"] },
+  { name: "Flyability", hq: "Lausanne, Switzerland", lat: 46.520, lon: 6.633, seg: "indus", founded: 2014, sz: 37,
+    raised: "≈$40M", note: "incl. CHF 22M Series C, 2022",
+    src: [["ref","https://dronelife.com/2022/09/08/flyability-funding-more-than-22-million-for-makers-of-elios-indoor-inspection-platform/"]],
+    desc: "Elios collision-tolerant caged drones for confined spaces — boilers, sewers, mines, nuclear vaults; Elios 3 adds LiDAR SLAM.",
+    wins: ["1,000+ heavy-industry clients incl. EDF & Engie; 50+ countries"] },
+  { name: "Voliro", hq: "Zurich, Switzerland", lat: 47.377, lon: 8.541, seg: "indus", founded: 2019, sz: 25,
+    raised: "$27.7M", note: "incl. $23M Series A",
+    src: [["ref","https://dronelife.com/2025/06/18/voliro-funding-23m-to-expand-aerial-robotics-for-infrastructure-inspection/"]],
+    desc: "Omnidirectional drone that presses probes against structures: contact ultrasonic testing at height, replacing rope crews.",
+    wins: ["Adoption across oil & gas and wind energy"] },
+  { name: "Verity", hq: "Zurich, Switzerland", lat: 47.377, lon: 8.541, seg: "indus", founded: 2014, sz: 72,
+    raised: "≈$80M", note: "incl. $43M Series B, 2023",
+    src: [["ref","https://tech.eu/2023/07/11/swiss-autonomous-inventory-drone-system-maker-verity-extends-new-funding-to-43-million/"]],
+    desc: "Autonomous indoor inventory drones: full SLAM, zero GPS, flying between dark warehouse racks. Civilian proof GPS-free autonomy ships.",
+    wins: ["Deployed with IKEA, Maersk and Samsung SDS"] },
+  { name: "RigiTech", hq: "Prilly (Lausanne), Switzerland", lat: 46.533, lon: 6.601, seg: "logi", founded: 2018, sz: null,
+    raised: "—", note: "funding undisclosed",
+    src: [["ref","https://dronelife.com/2025/11/26/rigitech-targets-logistics-firms-with-scalable-drone-delivery/"]],
+    desc: "Eiger VTOL quadplane + RigiCloud, sold OEM-style so logistics firms run their own networks — the anti-Zipline model.",
+    wins: ["Live medical routes in Uruguay, upstate NY (BVLOS), daily lab route in France"] },
+  { name: "Dufour Aerospace", hq: "Visp, Switzerland", lat: 46.294, lon: 7.881, seg: "logi", founded: 2017, sz: null,
+    raised: "—", note: "Series B (Vista Global), undisclosed",
+    src: [["ref","https://www.dufour.aero/news"]],
+    desc: "Aero-200 tilt-wing cargo aircraft: helicopter take-off with fixed-wing range, built for turbulent alpine corridors.",
+    wins: ["Demonstrated 20 kg over 200 km (2026); Air Zermatt collaboration"] },
+  { name: "Daedalean", hq: "Zurich, Switzerland", lat: 47.377, lon: 8.541, seg: "soft", founded: 2016, sz: 90, flag: "acquired",
+    raised: "≈CHF 90M", note: "acquired by Destinus for CHF 180M (2025)",
+    src: [["ref","https://www.bloomberg.com/features/2025-euro-defense-startups/"]],
+    desc: "Machine-learning visual navigation with certified-avionics pedigree — bought to give strike drones GPS-independent eyes.",
+    wins: ["One of Europe’s largest autonomy-software exits"] },
+
+  // --- Ireland / UK / Monaco ---
+  { name: "Manna", hq: "Dublin, Ireland", lat: 53.350, lon: -6.260, seg: "logi", founded: 2018, sz: 100,
+    raised: "$110M", note: "incl. $50M Series B (ARK Invest), 2026",
+    src: [["round","https://www.businesswire.com/news/home/20260310714366/en/Manna-Air-Delivery-Raises-$50Million-Series-B-as-It-Announces-Plans-to-Expand-in-the-United-States"]],
+    desc: "Suburban delivery-as-a-service: own airframe, ~3-min deliveries, one operator per ~20 aircraft; claims per-flight profit.",
+    wins: [
+      `250,000+ deliveries; Uber Eats, DoorDash, Deliveroo partners ${A('https://fortune.com/2026/04/09/ark-invest-betting-on-underdog-drone-delivery-company-manna-to-beat-out-alphabet-zipline/','(Fortune)')}`],
+    caveat: "Paused all Irish ops (Jun 2026) after local planning refusals; pivoting to Texas and the UK — the constraint is now municipal, not aeronautical." },
+  { name: "Kraken Technology Group", hq: "Fareham, UK", lat: 50.852, lon: -1.178, seg: "naval", founded: 2020, sz: 170,
+    raised: "≈$190M", note: "incl. $175M Series B, Jul 2026", val: "$1B",
+    src: [["round","https://defence-blog.com/british-drone-boat-firm-raises-175m-at-1b-valuation/"]],
+    desc: "High-speed uncrewed surface vessels: K3 Scout (up to ~55 kn) in series production; K5/K7 built by Anduril for the US Navy.",
+    wins: ["$49M USSOCOM award (2025)", "Rheinmetall Kraken GmbH: series production at Blohm+Voss, Hamburg", "Royal Navy Project Beehive"] },
+  { name: "Malloy Aeronautics", hq: "Maidenhead, UK", lat: 51.522, lon: -0.719, seg: "logi", founded: 2013, sz: null, flag: "acquired",
+    raised: "—", note: "acquired by BAE Systems (2024)",
+    desc: "Heavy-lift quadcopters (T150: 68 kg; T400: 180 kg) replacing helicopters for resupply and casualty evacuation.",
+    wins: ["T150s in Ukraine logistics; Royal Navy ship-to-ship resupply trials"] },
+  { name: "Uforce", hq: "London, UK", lat: 51.507, lon: -0.128, seg: "isr", founded: 2022, sz: 45,
+    raised: "$50M", note: "seed, Mar 2026", val: "“$1B+” (self-claimed)",
+    src: [["round","https://resiliencemedia.co/uforce-raises-50m-at-a-1b-valuation-to-build-defence-tech-for-ukraine/"]],
+    desc: "Nine combat-proven Ukrainian drone developers merged under a London holding: air, ground and naval platforms.",
+    wins: [
+      `Ukraine credited its ground robots with the first robot-only capture of enemy positions ${A('https://thenextweb.com/news/ukraine-says-robots-seized-enemy-territory-for-the-first-time-the-company-behind-them-is-now-worth-a-billion-dollars','(TNW)')}`],
+    caveat: "The $1B valuation comes from the company’s own announcement; no independent verification." },
+  { name: "Skyports", hq: "London, UK", lat: 51.507, lon: -0.128, seg: "logi", founded: 2018, sz: 136,
+    raised: "≈$150M", note: "incl. £88.6M Series C, 2024",
+    src: [["round","https://www.finsmes.com/2024/04/skyports-raises-88-6m-in-series-c-funding.html"]],
+    desc: "Vertiport designer/operator plus its own drone-services fleet — the physical-infrastructure bet.",
+    wins: ["Building Dubai’s eVTOL terminal network; Cergy-Pontoise test site near Paris"] },
+  { name: "Evolve Dynamics", hq: "Guildford, UK", lat: 51.236, lon: -0.570, seg: "isr", founded: 2016, sz: null,
+    raised: "—", note: "Innovate UK-backed, undisclosed",
+    desc: "Sky Mantis: ruggedized tactical multicopter for extreme weather, supplied to the British Army.",
+    wins: ["Ukraine deployments (reported)"] },
+  { name: "MARSS", hq: "Monaco", lat: 43.738, lon: 7.424, seg: "cuas", founded: 2006, sz: null, flag: "acquired",
+    raised: "—", note: "acquired by EOS: $36M + €100M earnout (2026)",
+    src: [["deal","https://eos-aus.com/news/acquisition-of-marss-counter-drone-c2-system-provider/"]],
+    desc: "NiDAR: AI sensor-fusion C2 for counter-drone (claimed ~98% detection, 25 km+) + the Interceptor-MR ramming drone.",
+    wins: ["~$200M cumulative contracts (reported); Gulf naval bases", "A prime buying European counter-drone software rather than building it"] },
+
+  // --- Nordics ---
+  { name: "Nordic Air Defence", hq: "Stockholm, Sweden", lat: 59.329, lon: 18.069, seg: "cuas", founded: 2023, sz: 4,
+    raised: "$4.4M", note: "pre-seed, Jul 2025",
+    src: [["round","https://tech.eu/2025/07/03/inflection-leads-3m-investment-in-nordic-air-defences-anti-drone-platform/"]],
+    desc: "Kreuger 100: a software-defined interceptor claimed ~10x cheaper per unit than conventional counter-drone kit.",
+    wins: ["Team ex-Palantir, Kratos, Quantum Systems, FOI"],
+    caveat: "Still pre-launch with no disclosed customers as of mid-2025." },
+  { name: "Everdrone", hq: "Gothenburg, Sweden", lat: 57.709, lon: 11.975, seg: "logi", founded: 2016, sz: 4,
+    raised: "≈€3.3M", note: "Mar 2026",
+    src: [["round","https://dronelife.com/2026/03/19/everdrone-funding-sek-36-million/"]],
+    desc: "Autonomous defibrillator delivery wired into Sweden’s 112 dispatch; visual navigation over dense cities.",
+    wins: ["Beats ambulances to cardiac arrests in ~94% of calls", "NHS pilots in the UK (reported)"] },
+  { name: "MyDefence", hq: "Nørresundby, Denmark", lat: 57.059, lon: 9.922, seg: "cuas", founded: 2013, sz: null, flag: "PE-owned",
+    raised: "—", note: "majority sold to Bridgepoint (2024)", val: "~$1B sale explored",
+    src: [["ref","https://dronexl.co/2026/06/14/bridgepoint-sale-mydefence-counter-drone/"]],
+    desc: "Wearable and modular RF counter-drone detection for soldiers and infrastructure — sensing, not effectors.",
+    wins: [
+      `$26M US Army counter-UAS contract (2025) ${A('https://defence-industry.eu/european-counter-drone-solutions-provider-mydefence-lands-major-contract-with-u-s-army/','(defence-industry.eu)')}`]},
+  { name: "Sky-Watch", hq: "Støvring, Denmark", lat: 56.885, lon: 9.837, seg: "isr", founded: 2009, sz: null,
+    raised: "—", note: "funding undisclosed",
+    src: [["ref","https://en.wikipedia.org/wiki/Sky-Watch"]],
+    desc: "RQ-35 Heidrun hand-launched ISR mini-drone: company-level reconnaissance, widely used in Ukraine.",
+    wins: ["Won the Dutch MoD battalion ISR tender (2026, reported)"] },
+  { name: "Copenhagen Subsea", hq: "Hellerup, Denmark", lat: 55.732, lon: 12.572, seg: "naval", founded: 2014, sz: null,
+    raised: "—", note: "funding undisclosed",
+    src: [["ref","https://copenhagensubsea.com/about/"]],
+    desc: "Silent rim-driven subsea thrusters (no shaft, no oil, 3,000 m) + ROVs — the quiet-propulsion layer under underwater autonomy.",
+    wins: ["4,000+ breakdown-free hours on one offshore campaign (2020)"] },
+  { name: "Sensofusion", hq: "Vantaa, Finland", lat: 60.294, lon: 25.040, seg: "cuas", founded: 2012, sz: 45,
+    raised: "€45M", note: "Series B, 2026",
+    src: [["round","https://www.roschier.com/newsroom/lifeline-ventures-backs-sensofusion-in-a-eur-45-million-series-b-financing-round"]],
+    desc: "AIRFENCE: fully passive RF detection that triangulates both the drone and its pilot, then jams surgically.",
+    wins: ["Deployed with the Finnish Border Guard; Bittium partnership"] },
+  { name: "Kelluu", hq: "Joensuu, Finland", lat: 62.601, lon: 29.763, seg: "isr", founded: 2016, sz: 15,
+    raised: "€15M", note: "Series A, Apr 2026",
+    src: [["round","https://tech.eu/2026/04/14/kelluu-raises-eur15m-to-scale-autonomous-airship-intelligence-platform/"]],
+    desc: "Autonomous surveillance airships: persistent ISR, 60 km from the Russian border.",
+    wins: ["NATO Innovation Fund’s first Finnish investment"] },
+  { name: "Nordic Unmanned", hq: "Sandnes, Norway", lat: 58.852, lon: 5.735, seg: "isr", founded: 2014, sz: null, flag: "public",
+    raised: "€14M", note: "9-month 2024 revenue · Euronext Oslo",
+    src: [["ref","https://live.euronext.com/en/products/equities/company-news/2024-11-19-nordic-unmanned-asa-higher-activity-and-strong-ebitda"]],
+    desc: "Drone-services operator: maritime surveillance and emissions monitoring flown as a service for EU agencies.",
+    wins: ["EMSA contracts; 10,000+ flight hours across Europe", "Its UK arm was acquired by Quantum Systems"] },
+
+  // --- Baltics ---
+  { name: "Origin Robotics", hq: "Riga, Latvia", lat: 56.950, lon: 24.105, seg: "cuas", founded: 2022, sz: 8,
+    raised: "≈€8.5M", note: "incl. EU grants",
+    src: [["ref","https://arcticstartup.com/origin-raises-e4-5m/"]],
+    desc: "BLAZE man-portable autonomous interceptor + BEAK drone-launched weapon. Thesis: iterate yearly, keep procurement “obsolescence-proof”.",
+    wins: [
+      "Belgium €50M urgent BLAZE buy (Nov 2025)",
+      `Fielded by Latvia and Estonia; multi-year SAFE-financed framework ${A('https://dronelife.com/2025/03/07/latvia-awards-rd-contract-to-origin-robotics-for-counter-drone-technology/','(DroneLife)')}`] },
+  { name: "Atlas Aerospace", hq: "Riga, Latvia", lat: 56.950, lon: 24.105, seg: "isr", founded: 2015, sz: 8,
+    raised: "≈$8M", note: "lifetime total unverified",
+    src: [["ref","https://tech.eu/2017/07/31/atlas-dynamics-funding/"]],
+    desc: "AtlasPRO tactical tricopter (50-min endurance, hot-swap batteries, 15 m/s wind) + AtlasULTRA ground station.",
+    wins: ["New 1,500 m² Riga factory; NATO border-surveillance exports"] },
+  { name: "Fixar", hq: "Riga, Latvia", lat: 56.950, lon: 24.105, seg: "indus", founded: 2018, sz: 3,
+    raised: "≈$2.6M", note: "company-reported",
+    desc: "Fixed-angle-rotor VTOL — no tilt mechanisms, no extra lift motors: mechanically minimal survey drones.",
+    wins: ["Distribution network across 45 countries"] },
+  { name: "Milrem Robotics", hq: "Tallinn, Estonia", lat: 59.437, lon: 24.754, seg: "naval", founded: 2013, sz: null, flag: "EDGE-owned",
+    raised: "—", note: "majority-owned by UAE’s EDGE Group (2023)",
+    src: [["ref","https://breakingdefense.com/2023/02/emirati-conglomerate-edge-grabs-majority-stake-in-estonian-robotics-firm/"]],
+    desc: "THeMIS — the most fielded European unmanned ground vehicle — plus the Type-X robotic combat vehicle; leads EU iMUGS.",
+    wins: ["THeMIS deployed in 16 countries, 8 of them NATO members"] },
+  { name: "KrattWorks", hq: "Tallinn, Estonia", lat: 59.437, lon: 24.754, seg: "isr", founded: 2016, sz: 8,
+    raised: "≈€8M", note: "equity + EU grants",
+    src: [["ref","https://sacra.com/c/krattworks/"]],
+    desc: "Ghost Dragon ISR quadcopter with onboard vision AI: navigates and tracks under jamming, falls back to LTE/5G.",
+    wins: ["Estonian defence procurement contracts; Ukraine deployments"] },
+  { name: "Threod Systems", hq: "Viimsi (Tallinn), Estonia", lat: 59.505, lon: 24.840, seg: "isr", founded: 2012, sz: null,
+    raised: "—", note: "undisclosed; 1,100% 5-yr sales growth (reported)",
+    src: [["ref","https://www.threod.com/about/"]],
+    desc: "Eos C VTOL ISR drone and gyro-stabilized gimbals, exported to 27 countries.",
+    wins: ["200+ units for Ukrainian artillery targeting (reported)", "Export agreements toward Japan"] },
+  { name: "Frankenburg Technologies", hq: "Tallinn, Estonia", lat: 59.437, lon: 24.754, seg: "cuas", founded: 2024, sz: 40,
+    raised: "€40M", note: "incl. €30M Series A, Feb 2026",
+    src: [["round","https://tech.eu/2026/02/24/estonian-missile-defence-startup-frankenburg-technologies-raises-eur30m/"]],
+    desc: "Mass-producible low-cost interceptor missiles for drone swarms, attacking the cost-exchange problem. Founded by Milrem alumni.",
+    wins: ["Trials with Ukraine and on Baltic ranges (reported)"] },
+  { name: "Granta Autonomy", hq: "Vilnius, Lithuania", lat: 54.687, lon: 25.280, seg: "isr", founded: 2015, sz: 1,
+    raised: "≈€1M", note: "seed 2024 · >$2M ARR (reported)",
+    src: [["round","https://en.ain.ua/2024/07/12/lithuanian-granta-autonomy-raises-1m-in-funding/"]],
+    desc: "Hornet XR: silent sub-3 kg hand-launched ISR micro-drone designed GNSS-denied-first; in-house micro-gimbals.",
+    wins: ["Lithuanian MoD and Ukrainian contracts; 30 km range under EW"] },
+
+  // --- Poland / Central & SE Europe ---
+  { name: "Dronehub", hq: "Rzeszów, Poland", lat: 50.041, lon: 21.999, seg: "indus", founded: 2015, sz: null,
+    raised: "—", note: "US C-corp; ~$7.5M production line",
+    src: [["ref","https://dronehub.ai/blog/top-european-drone-companies"]],
+    desc: "Drone-in-a-box with 2-minute robotic battery swap; AUDROS net-capture counter-drone; zero-Chinese-component chain.",
+    wins: ["AI rail inspection across Deutsche Bahn’s 33,000 km (company-stated)", "AUDROS scored 98/100 by the European Defence Agency (company-stated)"] },
+  { name: "WB Group", hq: "Ożarów Mazowiecki, Poland", lat: 52.211, lon: 20.797, seg: "strike", founded: 1997, sz: null, flag: "established prime",
+    raised: "€690M", note: "FY2024 revenue, +107% YoY",
+    src: [["ref","https://evertiq.pl/news/2025-06-04-rekordowy-rok-dla-polskiej-spolki-miliardowe-przychody-i-zyski"]],
+    desc: "Poland’s established drone prime: FlyEye ISR drone and Warmate loitering munition, combat-proven at scale and jam-resistant.",
+    wins: ["Industrial-volume production for NATO markets", "The benchmark the startups measure against"] },
+  { name: "Dronamics", hq: "Sofia, Bulgaria", lat: 42.698, lon: 23.322, seg: "logi", founded: 2014, sz: 84,
+    raised: "≈$93M", note: "+ up to €30M EIC STEP (pending)",
+    src: [["ref","https://www.flyeye.io/dronamics-raises-92-5m-to-power-cargo-drone-logistics/"]],
+    desc: "Black Swan cargo drone: 350 kg over 2,500 km at ~80% lower cost than air freight. Middle-mile, not last-mile.",
+    wins: [
+      `First licensed cargo-drone airline in the EU (Malta LUC, 2022) ${A('https://www.businesstoday.com.mt/business/business/1896/malta_licences_firstever_cargo_drone_for_european_market','(BusinessToday MT)')}`,
+      "DHL and Hellenic Post Mediterranean routes"] },
+  { name: "Delian Alliance Industries", hq: "Athens, Greece", lat: 37.984, lon: 23.727, seg: "naval", founded: 2021, sz: 20,
+    raised: "$22M", note: "incl. $14M Series A, Jul 2025",
+    src: [["round","https://techcrunch.com/2025/07/29/this-founder-left-silicon-valley-to-challenge-u-s-defense-supremacy-from-athens-and-investors-are-paying-attention/"]],
+    desc: "Founded by an ex-Apple engineer: solar border-surveillance towers, Interceptigon drones, and a seabed-prepositioned suicide vessel.",
+    wins: ["Operational border towers in Greece", "Bidding into German tenders — the pan-European procurement test"] },
+  { name: "Orqa", hq: "Osijek, Croatia", lat: 45.554, lon: 18.696, seg: "soft", founded: 2018, sz: 20,
+    raised: "≈€20M", note: "incl. €12.7M Series A, 2026",
+    src: [["round","https://defence-industry.eu/orqa-secures-e12-7-million-series-a-funding-to-expand-global-drone-production-and-scale-global-manufacturing-partnership-program/"]],
+    desc: "FPV goggles, video links and control ecosystems — one of Europe’s only FPV component makers with real share against China.",
+    wins: ["Global manufacturing-partnership program to de-Sinicize the FPV chain"] },
+  { name: "ABZ Innovation", hq: "Szentendre, Hungary", lat: 47.668, lon: 19.076, seg: "indus", founded: 2019, sz: 7,
+    raised: "€7M", note: "Jan 2026",
+    src: [["round","https://www.eu-startups.com/2026/01/with-china-leading-global-drone-manufacturing-hungarys-abz-innovation-raises-e7-million-to-expand-heavy-duty-drones"]],
+    desc: "L10/L30 crop-spraying drones, CE-certified — a European answer to DJI Agras and XAG in precision agriculture.",
+    wins: ["New factory targeting 2,000 units/year for Europe and Africa"] },
+
+  // --- Benelux ---
+  { name: "Avy", hq: "Amsterdam, Netherlands", lat: 52.370, lon: 4.895, seg: "logi", founded: 2016, sz: null,
+    raised: "—", note: "grants + convertibles",
+    src: [["ref","https://en.wikipedia.org/wiki/Avy_B.V."]],
+    desc: "Aera VTOL + docking stations for medical and emergency missions; early holder of the EU-wide LUC self-authorization certificate.",
+    wins: ["Rotterdam port emergency response; Dutch fire-service missions"] },
+  { name: "DeltaQuad", hq: "Vijfhuizen, Netherlands", lat: 52.351, lon: 4.678, seg: "isr", founded: 2016, sz: null,
+    raised: "—", note: "Parcom investment (2026), undisclosed",
+    desc: "DeltaQuad Pro/Evo VTOL ISR aircraft, scaling toward sovereign military production.",
+    wins: ["Letter of intent with the Dutch Ministry of Defence"] },
+  { name: "Onodrim Industries", hq: "Amsterdam, Netherlands", lat: 52.370, lon: 4.895, seg: "isr", founded: 2025, sz: 40,
+    raised: "€40M", note: "seed, early 2026",
+    src: [["ref","https://www.vestbee.com/insights/articles/europ-s-defence-top-deals-in-early-2026"]],
+    desc: "Defence manufacturing, multi-domain sensing and networked border-security — one of Europe’s largest defence seed rounds.",
+    wins: ["€40M seed round (reported)"] },
+  { name: "Acecore Technologies", hq: "Uden, Netherlands", lat: 51.66, lon: 5.62, seg: "indus", founded: 2016, sz: null,
+    raised: "—", note: "funding undisclosed",
+    desc: "Hand-built carbon-fibre heavy-lift multirotors (Zoe, Noa, Zetona) for cinematography, aerial LiDAR and offshore inspection in extreme wind.",
+    wins: ["High-end cinematography and offshore energy inspection"] },
+  { name: "Uplift360", hq: "Luxembourg", lat: 49.61, lon: 6.13, seg: "soft", founded: 2023, sz: 7,
+    raised: "€7.4M", note: "seed, Feb 2026",
+    desc: "Chemical recycling that regenerates carbon fibre and aramid (Kevlar) from old airframes and armour — a sovereign raw-material play under the whole drone supply chain.",
+    wins: ["Multi-year framework with Luxembourg’s Defence Directorate; NATO Innovation Fund-backed"] },
+
+  // --- Ukraine (the reference ecosystem) ---
+  { name: "Fire Point", hq: "Kyiv region, Ukraine", lat: 50.450, lon: 30.523, seg: "strike", founded: 2022, sz: null,
+    raised: "—", note: "financed via allied “Danish model”",
+    src: [["ref","https://techukraine.org/2026/02/16/sky-high-ambitions-10-ukrainian-drone-factories-to-scale-across-europe-by-2026/"]],
+    desc: "FP-1 deep-strike drone (~1,600 km, ~$55k) credited with ~60% of Ukraine’s long-range strikes; FP-5 “Flamingo” cruise missile (3,000 km).",
+    wins: ["100+ units/day by mid-2025 (company-stated)", "Building a production site in Denmark"],
+    caveat: "Figures company-stated under wartime secrecy; subject of an Aug 2025 NABU probe (company denies wrongdoing)." },
+  { name: "Ukrspecsystems", hq: "Kyiv, Ukraine", lat: 50.450, lon: 30.523, seg: "isr", founded: 2014, sz: null,
+    raised: "—", note: "privately funded from revenue",
+    src: [["ref","https://techukraine.org/2026/02/16/sky-high-ambitions-10-ukrainian-drone-factories-to-scale-across-europe-by-2026/"]],
+    desc: "PD-2 and Shark ISR drones guiding artillery and HIMARS fire; vertically integrated to gimbals, catapults and batteries.",
+    wins: ["Opened a UK production plant (2026) for Shark ISR + Octopus interceptors", "Sharks guide ~80% of HIMARS strikes (company-stated)"] },
+  { name: "Skyeton", hq: "Kyiv, Ukraine", lat: 50.450, lon: 30.523, seg: "isr", founded: 2006, sz: null,
+    raised: "—", note: "privately funded",
+    src: [["ref","https://thedefender.media/en/2025/06/skyeton-production-in-eu/"]],
+    desc: "Raybird / ACS-3: 21 kg fixed-wing ISR drone; endurance record of 24 h 31 min covering 2,000+ km per flight.",
+    wins: ["EU production live in Slovakia (2025)", "UK JV — candidate to replace the British Army’s Watchkeeper"] },
+  { name: "Buntar Aerospace", hq: "Kyiv, Ukraine", lat: 50.450, lon: 30.523, seg: "isr", founded: 2023, sz: 13,
+    raised: "≈$14M", note: "incl. $10.4M led by Axon, 2026",
+    src: [["round","https://resiliencemedia.co/buntar-aerospace-raises-10-4-million-from-axon-others/"]],
+    desc: "ISR drones and mission software built from frontline feedback loops.",
+    wins: ["Axon Enterprise led its 2026 round — US public money into Kyiv drone tech"] },
+];
+
+// ---------------------------------------------------------------------------
+// Rendering
+// ---------------------------------------------------------------------------
+const W = 960, H = 760;
+const svg = document.getElementById('map');
+const tt = document.getElementById('tt');
+const legendEl = document.getElementById('legend');
+const hidden = new Set();
+let pinned = null;
+
+const DEG = Math.PI / 180, LAT0 = 52 * DEG, LON0 = 10 * DEG;
+function project(lat, lon) {
+  const phi = lat * DEG, lam = lon * DEG - LON0;
+  const k = Math.sqrt(2 / (1 + Math.sin(LAT0) * Math.sin(phi) + Math.cos(LAT0) * Math.cos(phi) * Math.cos(lam)));
+  return [k * Math.cos(phi) * Math.sin(lam), -k * (Math.cos(LAT0) * Math.sin(phi) - Math.sin(LAT0) * Math.cos(phi) * Math.cos(lam))];
+}
+let SCALE = 1, TX = 0, TY = 0;
+function fit(features) {
+  let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+  for (const f of features) {
+    const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+    for (const poly of polys) for (const ring of poly) for (const [lon, lat] of ring) {
+      const [x, y] = project(lat, lon);
+      if (x < minX) minX = x; if (x > maxX) maxX = x;
+      if (y < minY) minY = y; if (y > maxY) maxY = y;
+    }
+  }
+  SCALE = Math.min((W - 20) / (maxX - minX), (H - 20) / (maxY - minY));
+  TX = 10 - minX * SCALE; TY = 10 - minY * SCALE;
+}
+const px = (lat, lon) => { const [x, y] = project(lat, lon); return [x * SCALE + TX, y * SCALE + TY]; };
+const R_NA = 4;
+const radius = (sz) => sz == null ? R_NA : Math.max(3.2, 0.62 * Math.sqrt(sz));
+function el(tag, attrs) {
+  const n = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  return n;
+}
+
+fetch('europe.geo.json').then(r => r.json()).then(geo => {
+  fit(geo.features);
+  const gLand = el('g', {}); svg.appendChild(gLand);
+  for (const f of geo.features) {
+    const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+    let d = '';
+    for (const poly of polys) for (const ring of poly) {
+      ring.forEach(([lon, lat], i) => { const [x, y] = px(lat, lon); d += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1); });
+      d += 'Z';
+    }
+    gLand.appendChild(el('path', { d, class: 'country' }));
+  }
+
+  const nodes = COMPANIES.map((c, i) => {
+    const [x, y] = px(c.lat, c.lon);
+    const jx = Math.cos(i * 2.3999) * 1.5, jy = Math.sin(i * 2.3999) * 1.5;
+    return { c, x: x + jx, y: y + jy, ax: x, ay: y, r: radius(c.sz) };
+  });
+  for (let it = 0; it < 260; it++) {
+    for (const n of nodes) { const k = n.r >= 14 ? 0.14 : 0.04; n.x += (n.ax - n.x) * k; n.y += (n.ay - n.y) * k; }
+    for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+      const a = nodes[i], b = nodes[j];
+      let dx = b.x - a.x, dy = b.y - a.y, dist = Math.hypot(dx, dy);
+      if (dist < 0.01) { dx = 1; dy = 0; dist = 0.01; }
+      const gap = a.r + b.r + 1.5;
+      if (dist < gap) {
+        const push = gap - dist, ma = a.r * a.r, mb = b.r * b.r;
+        dx /= dist; dy /= dist;
+        a.x -= dx * push * (mb / (ma + mb)); a.y -= dy * push * (mb / (ma + mb));
+        b.x += dx * push * (ma / (ma + mb)); b.y += dy * push * (ma / (ma + mb));
+      }
+    }
+  }
+
+  const gB = el('g', {}); svg.appendChild(gB);
+  const gL = el('g', {}); svg.appendChild(gL);
+  nodes.sort((a, b) => b.r - a.r);
+  for (const n of nodes) {
+    const seg = SEGMENTS[n.c.seg];
+    const b = el('circle', { cx: n.x.toFixed(1), cy: n.y.toFixed(1), r: n.r.toFixed(1),
+      class: 'bubble' + (n.c.sz == null ? ' na' : ''), 'data-seg': n.c.seg });
+    b.style.fill = seg.hex; b.style.fillOpacity = 0.8;
+    if (n.c.sz == null) b.style.stroke = seg.hex;
+    b.addEventListener('mouseenter', (e) => { if (!pinned) showTT(n, e); });
+    b.addEventListener('mousemove', (e) => { if (!pinned) placeTT(e); });
+    b.addEventListener('mouseleave', () => { if (!pinned) hideTT(); });
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (pinned === n) { pinned = null; hideTT(); }
+      else { pinned = null; showTT(n, e); pinned = n; tt.classList.add('pinned'); }
+    });
+    n.elt = b; gB.appendChild(b);
+  }
+
+  const labeled = nodes.filter(n => (n.c.sz || 0) >= 90);
+  const placed = [];
+  for (const n of labeled) {
+    const wEst = n.c.name.length * 5.6, hEst = 11;
+    const candidates = [
+      { x: n.x + n.r + 3, y: n.y + 3, anchor: 'start' },
+      { x: n.x - n.r - 3, y: n.y + 3, anchor: 'end' },
+      { x: n.x, y: n.y - n.r - 4, anchor: 'middle' },
+      { x: n.x, y: n.y + n.r + 11, anchor: 'middle' },
+    ];
+    let best = candidates[0];
+    for (const cand of candidates) {
+      const x0 = cand.anchor === 'start' ? cand.x : cand.anchor === 'end' ? cand.x - wEst : cand.x - wEst / 2;
+      const box = { x0, x1: x0 + wEst, y0: cand.y - hEst, y1: cand.y };
+      const hitsLabel = placed.some(p => box.x0 < p.x1 && box.x1 > p.x0 && box.y0 < p.y1 && box.y1 > p.y0);
+      if (!hitsLabel) { best = cand; break; }
+    }
+    const bx0 = best.anchor === 'start' ? best.x : best.anchor === 'end' ? best.x - wEst : best.x - wEst / 2;
+    placed.push({ x0: bx0, x1: bx0 + wEst, y0: best.y - hEst, y1: best.y });
+    const t = el('text', { x: best.x.toFixed(1), y: best.y.toFixed(1), class: 'blabel', 'text-anchor': best.anchor });
+    t.textContent = n.c.name; gL.appendChild(t);
+  }
+
+  document.body.addEventListener('click', () => { pinned = null; hideTT(); });
+  tt.addEventListener('click', (e) => e.stopPropagation());
+
+  for (const key in SEGMENTS) {
+    const seg = SEGMENTS[key];
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.innerHTML = `<span class="dot" style="background:${seg.hex}"></span>${seg.label}`;
+    chip.addEventListener('click', () => {
+      if (hidden.has(key)) hidden.delete(key); else hidden.add(key);
+      chip.classList.toggle('off', hidden.has(key));
+      for (const n of nodes) { const off = hidden.has(n.c.seg); n.elt.style.opacity = off ? 0.06 : 1; n.elt.style.pointerEvents = off ? 'none' : 'auto'; }
+    });
+    legendEl.appendChild(chip);
+  }
+  const hint = document.createElement('span');
+  hint.className = 'hint';
+  hint.textContent = 'startups & scaleups only; legacy primes appear as buyers inside the cards';
+  legendEl.appendChild(hint);
+
+  const sk = document.getElementById('sizekey');
+  const lab = document.createElement('span'); lab.textContent = 'raised:'; sk.appendChild(lab);
+  const key = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  const KH = 54, baseCx = 28, baseY = KH - 2;
+  key.setAttribute('viewBox', `0 0 110 ${KH}`); key.setAttribute('width', '110'); key.setAttribute('height', KH);
+  [[1500, '€1.5B'], [500, '€500M'], [100, '€100M']].forEach(([v, txt]) => {
+    const r = radius(v), cy = baseY - r;
+    key.appendChild(el('circle', { cx: baseCx, cy: cy.toFixed(1), r: r.toFixed(1), fill: 'none', stroke: '#898781', 'stroke-width': 1 }));
+    key.appendChild(el('line', { x1: baseCx, y1: (cy - r).toFixed(1), x2: baseCx + 32, y2: (cy - r).toFixed(1), stroke: '#c3c2b7', 'stroke-width': 0.6, 'stroke-dasharray': '2,2' }));
+    const t = el('text', { x: baseCx + 34, y: (cy - r + 3).toFixed(1), 'font-size': 8.5, fill: '#898781' }); t.textContent = txt; key.appendChild(t);
+  });
+  sk.appendChild(key);
+
+  if (location.hash === '#demo') {
+    const n = nodes[0];
+    showTT(n, { clientX: n.x + 60, clientY: n.y + 120 }); pinned = n; tt.classList.add('pinned');
+  }
+});
+
+function showTT(n, e) {
+  const c = n.c, seg = SEGMENTS[c.seg];
+  const srcLine = (c.src || []).map(([t, u]) => A(u, t)).join(' · ');
+  tt.innerHTML = `
+    <div class="tt-name">${c.name}${c.flag ? `<span class="tt-flag">${c.flag}</span>` : ''}</div>
+    <div class="tt-hq"><span class="dot" style="background:${seg.hex}"></span>${seg.label} · ${c.hq}${c.founded ? ` · ${c.founded}` : ''}</div>
+    <div class="tt-stat">
+      <span class="lbl">Raised</span>
+      <span class="val"><b>${c.raised || '—'}</b>${c.note ? ` <span class="q">${c.note}</span>` : ''}</span>
+      ${c.val ? `<span class="lbl">Valued</span><span class="val"><span class="q">${c.val}</span></span>` : ''}
+      ${srcLine ? `<span class="tt-src">${srcLine}</span>` : ''}
+    </div>
+    <div class="tt-desc">${c.desc}</div>
+    ${c.wins && c.wins.length ? `<ul class="tt-wins">${c.wins.map(w => `<li>${w}</li>`).join('')}</ul>` : ''}
+    ${c.caveat ? `<div class="tt-caveat">⚠ ${c.caveat}</div>` : ''}
+    ${c.detail ? `<details class="tt-detail"><summary>detail</summary><p>${c.detail}</p></details>` : ''}`;
+  tt.style.display = 'block';
+  tt.classList.remove('pinned');
+  placeTT(e);
+}
+function placeTT(e) {
+  const wrap = document.querySelector('.wrap').getBoundingClientRect();
+  const x = e.clientX - wrap.left, y = e.clientY - wrap.top;
+  const w = tt.offsetWidth, h = tt.offsetHeight;
+  let left = x + 14, top = y + 10;
+  if (left + w > wrap.width - 4) left = x - w - 14;
+  if (left < 4) left = 4;
+  if (top + h > wrap.height - 4) top = Math.max(4, y - h - 10);
+  tt.style.left = left + 'px'; tt.style.top = top + 'px';
+}
+function hideTT() { tt.style.display = 'none'; tt.classList.remove('pinned'); }
+</script>
+</body>
+</html>
