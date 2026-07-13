@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What kills on the Ukraine front (reported)</title>
+<style>
+  :root {
+    --ink: #0b0b0b; --muted: #52514e; --grid: #e1e0d9;
+    --surface: #ffffff; --ring: rgba(11,11,11,0.12);
+    --c-arty: #e34948; --c-fpv: #eb6834; --c-other: #2a78d6;
+  }
+  html.dark {
+    --ink: #ffffff; --muted: #c3c2b7; --grid: rgba(255,255,255,0.14);
+    --surface: #1b1b1a; --ring: rgba(255,255,255,0.18);
+    --c-arty: #e66767; --c-fpv: #d95926; --c-other: #3987e5;
+  }
+  html, body { margin: 0; background: transparent; color: var(--muted);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; }
+  .wrap { padding: 8px 10px 6px; position: relative; }
+  .title { color: var(--ink); font-size: 15px; font-weight: 700; letter-spacing: -0.01em; margin: 2px 2px 2px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 8px 2px 2px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .chip .sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .sub { font-size: 12px; color: var(--muted); line-height: 1.45; margin: 8px 2px 4px; }
+  svg { width: 100%; height: auto; display: block; }
+  .col-lbl { font-size: 12.5px; fill: var(--muted); }
+  .seg-lbl { font-size: 12.5px; font-weight: 700; }
+  .seg-lbl-sm { font-size: 10px; font-weight: 700; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .tick-lbl { font-size: 10.5px; fill: var(--muted); }
+  .seg { cursor: pointer; transition: opacity .12s; }
+  .seg:hover { opacity: 0.85; }
+  .tooltip { position: absolute; z-index: 10; background: var(--surface);
+    border: 1px solid var(--ring); border-radius: 8px; box-shadow: 0 6px 24px rgba(11,11,11,0.15);
+    padding: 8px 11px; font-size: 12px; line-height: 1.4; display: none; pointer-events: none; max-width: 240px; }
+  .tt-name { color: var(--ink); font-weight: 650; }
+  .tt-val { color: var(--muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">What kills on the Ukraine front (reported)</div>
+  <div class="legend">
+    <span class="chip"><span class="sw" style="background:var(--c-fpv)"></span>FPV &amp; loitering drones</span>
+    <span class="chip"><span class="sw" style="background:var(--c-arty)"></span>Artillery</span>
+    <span class="chip"><span class="sw" style="background:var(--c-other)"></span>Other (mines, small arms, air)</span>
+  </div>
+  <svg id="chart" viewBox="0 0 720 460" role="img" aria-label="100 percent stacked bar chart comparing share of battlefield losses by cause before drones and in 2026"></svg>
+  <div class="sub">Share of battlefield losses by cause. Artillery historically caused about 80%; by a Ukrainian corps commander's mid-2026 estimate, FPV and loitering drones now cause 70 to 80% and artillery under 30%. The split and the "other" slice are approximate, reported figures. Source: Euromaidan Press (2026).</div>
+  <div class="tooltip" id="tt"></div>
+</div>
+<script>
+(function () {
+  var svgNS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("chart");
+  var tt = document.getElementById("tt");
+
+  var TOP = 24, BOT = 388;        // plot vertical extent (100% at TOP, 0% at BOT)
+  var GAP = 2;                    // transparent gap between segments (px)
+
+  function yOf(v) { return BOT - v / 100 * (BOT - TOP); }
+
+  var columns = [
+    { label: "Before drones", x: 200, segs: [
+      { cause: "Artillery", val: 80, color: "var(--c-arty)", light: false },
+      { cause: "Other", full: "Other (mines, small arms, air)", val: 20, color: "var(--c-other)", light: false }
+    ]},
+    { label: "2026", x: 460, segs: [
+      { cause: "FPV & loitering drones", val: 75, color: "var(--c-fpv)", light: false },
+      { cause: "Artillery", val: 20, color: "var(--c-arty)", light: false },
+      { cause: "Other", full: "Other (mines, small arms, air)", val: 5, color: "var(--c-other)", light: false, small: true }
+    ]}
+  ];
+  var BW = 130;                   // bar width
+
+  function el(name, attrs) {
+    var e = document.createElementNS(svgNS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  // gridlines + ticks (0 to 100 by 25)
+  [0, 25, 50, 75, 100].forEach(function (d) {
+    var y = yOf(d);
+    svg.appendChild(el("line", { class: "grid-line", x1: 120, y1: y, x2: 600, y2: y }));
+    var t = el("text", { class: "tick-lbl", x: 112, y: y + 3.5, "text-anchor": "end" });
+    t.textContent = d + "%";
+    svg.appendChild(t);
+  });
+
+  columns.forEach(function (col) {
+    var acc = 0; // running percent from bottom
+    col.segs.forEach(function (s) {
+      var yTop = yOf(acc + s.val);
+      var yBottom = yOf(acc);
+      var y = yTop + GAP / 2;
+      var h = (yBottom - yTop) - GAP;
+      if (h < 1) h = 1;
+
+      var rect = el("rect", { class: "seg", x: col.x, y: y, width: BW, height: h, fill: s.color, rx: 2 });
+      svg.appendChild(rect);
+
+      // percentage label centred on segment
+      var t = el("text", {
+        class: s.small ? "seg-lbl-sm" : "seg-lbl",
+        x: col.x + BW / 2, y: y + h / 2 + (s.small ? 3 : 4.5),
+        "text-anchor": "middle",
+        fill: s.cause === "Other" ? "#ffffff" : "#ffffff"
+      });
+      t.textContent = s.val + "%";
+      svg.appendChild(t);
+
+      (function (seg, column) {
+        rect.addEventListener("mousemove", function (ev) {
+          tt.innerHTML = '<div class="tt-name">' + (seg.full || seg.cause) + '</div>' +
+            '<div class="tt-val">' + column.label + ': ' + seg.val + '% of losses</div>';
+          tt.style.display = "block";
+          var wrap = svg.parentNode.getBoundingClientRect();
+          tt.style.left = (ev.clientX - wrap.left + 12) + "px";
+          tt.style.top = (ev.clientY - wrap.top + 12) + "px";
+        });
+        rect.addEventListener("mouseleave", function () { tt.style.display = "none"; });
+      })(s, col);
+
+      acc += s.val;
+    });
+
+    // column label below
+    var cl = el("text", { class: "col-lbl", x: col.x + BW / 2, y: BOT + 22, "text-anchor": "middle" });
+    cl.textContent = col.label;
+    svg.appendChild(cl);
+  });
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>

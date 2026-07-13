@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --grid: #e1e0d9;
+    --us: #2a78d6;
+    --eu: #1baf7a;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --grid: rgba(255,255,255,0.14);
+    --us: #3987e5;
+    --eu: #199e70;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+  }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--ink);
+  }
+  .wrap {
+    padding: 4px 2px 8px;
+  }
+  .title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 8px;
+    line-height: 1.3;
+  }
+  .legend {
+    display: flex;
+    gap: 18px;
+    margin: 0 2px 4px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .legend .item { display: flex; align-items: center; gap: 6px; }
+  .legend .chip { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .chip.us { background: var(--us); }
+  .chip.eu { background: var(--eu); }
+  .caption {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 8px 2px 0;
+    line-height: 1.45;
+  }
+  svg { width: 100%; height: auto; display: block; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .axis-label { fill: var(--muted); font-size: 12px; }
+  .year-label { fill: var(--muted); font-size: 13px; font-weight: 600; }
+  .value-label { fill: var(--ink); font-size: 13px; font-weight: 700; }
+  .bar { transition: opacity .15s ease; cursor: default; }
+  .bar:hover { opacity: 0.85; }
+  .tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: var(--ink);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 6px 9px;
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity .12s ease;
+    white-space: nowrap;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+  html.dark .tooltip { background: #1b1b1b; color: #fff; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">Defence-tech VC funding: the US dwarfs Europe</p>
+  <div class="legend">
+    <span class="item"><span class="chip us"></span>United States</span>
+    <span class="item"><span class="chip eu"></span>Europe</span>
+  </div>
+  <svg viewBox="0 0 720 440" role="img" aria-label="Grouped bar chart comparing United States and Europe defence-tech VC funding in 2024 and 2025">
+    <g id="gridlines"></g>
+    <g id="bars"></g>
+    <g id="labels"></g>
+  </svg>
+  <p class="caption">Defence-tech equity funding (CB Insights). The global 2025 total was about $49.9B (PitchBook, a broader definition). Europe's wider "defence, security and resilience" tally is $8.7B (Dealroom). China's drone and defence buildout is overwhelmingly state-financed, so it barely registers in venture-capital data.</p>
+</div>
+<div class="tooltip" id="tt"></div>
+<script>
+(function(){
+  var groups = [
+    {year: "2024", bars: [
+      {region: "United States", cls: "us", value: 5.0, label: "$5.0B"},
+      {region: "Europe", cls: "eu", value: 1.8, label: "$1.8B"}
+    ]},
+    {year: "2025", bars: [
+      {region: "United States", cls: "us", value: 14.2, label: "$14.2B"},
+      {region: "Europe", cls: "eu", value: 2.48, label: "$2.48B"}
+    ]}
+  ];
+
+  var W = 720, H = 440;
+  var margin = {top: 40, right: 24, bottom: 52, left: 56};
+  var plotW = W - margin.left - margin.right;
+  var plotH = H - margin.top - margin.bottom;
+  var yMax = 15; // billions
+  var ticks = [0, 3, 6, 9, 12, 15];
+
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function el(name, attrs){
+    var e = document.createElementNS(SVGNS, name);
+    for (var k in attrs){ e.setAttribute(k, attrs[k]); }
+    return e;
+  }
+  function y(v){ return margin.top + plotH - (v / yMax) * plotH; }
+
+  var gridG = document.getElementById("gridlines");
+  ticks.forEach(function(t){
+    var yy = y(t);
+    gridG.appendChild(el("line", {"class":"grid-line", x1: margin.left, y1: yy, x2: margin.left + plotW, y2: yy}));
+    var lbl = el("text", {"class":"axis-label", x: margin.left - 10, y: yy + 4, "text-anchor":"end"});
+    lbl.textContent = "$" + t + "B";
+    gridG.appendChild(lbl);
+  });
+
+  var barsG = document.getElementById("bars");
+  var labelsG = document.getElementById("labels");
+  var n = groups.length;
+  var slot = plotW / n;
+  var gap = 2;
+  var barW = Math.min(90, (slot * 0.55 - gap) / 2);
+  var tt = document.getElementById("tt");
+
+  groups.forEach(function(g, i){
+    var cx = margin.left + slot * (i + 0.5);
+    var groupW = barW * 2 + gap;
+    var startX = cx - groupW / 2;
+
+    g.bars.forEach(function(d, j){
+      var bx = startX + j * (barW + gap);
+      var by = y(d.value);
+      var bh = margin.top + plotH - by;
+      var r = 4;
+
+      var path = "M" + bx + "," + (by + bh) +
+                 " L" + bx + "," + (by + r) +
+                 " Q" + bx + "," + by + " " + (bx + r) + "," + by +
+                 " L" + (bx + barW - r) + "," + by +
+                 " Q" + (bx + barW) + "," + by + " " + (bx + barW) + "," + (by + r) +
+                 " L" + (bx + barW) + "," + (by + bh) + " Z";
+
+      var rect = el("path", {"class":"bar", d: path, fill: "var(--" + d.cls + ")"});
+      barsG.appendChild(rect);
+
+      var vlab = el("text", {"class":"value-label", x: bx + barW / 2, y: by - 10, "text-anchor":"middle"});
+      vlab.textContent = d.label;
+      labelsG.appendChild(vlab);
+
+      var tipText = d.region + ", " + g.year + ": $" + d.value + "B";
+      function show(evt){ tt.textContent = tipText; tt.style.opacity = "1"; move(evt); }
+      function move(evt){
+        var px = (evt.touches ? evt.touches[0].clientX : evt.clientX);
+        var py = (evt.touches ? evt.touches[0].clientY : evt.clientY);
+        tt.style.left = (px + 12) + "px";
+        tt.style.top = (py - 34) + "px";
+      }
+      function hide(){ tt.style.opacity = "0"; }
+      rect.addEventListener("mouseenter", show);
+      rect.addEventListener("mousemove", move);
+      rect.addEventListener("mouseleave", hide);
+    });
+
+    var xlab = el("text", {"class":"year-label", x: cx, y: margin.top + plotH + 26, "text-anchor":"middle"});
+    xlab.textContent = g.year;
+    labelsG.appendChild(xlab);
+  });
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>

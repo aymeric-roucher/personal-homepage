@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --grid: #e1e0d9;
+    --bar: #2a78d6;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --grid: rgba(255,255,255,0.14);
+    --bar: #3987e5;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+  }
+  .wrap {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 12px 8px 6px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .title {
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 4px;
+  }
+  .caption {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 0 0 8px;
+  }
+  svg { width: 100%; height: auto; display: block; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .axis-label { fill: var(--muted); font-size: 12px; }
+  .value-label { fill: var(--ink); font-size: 14px; font-weight: 700; }
+  .bar { fill: var(--bar); cursor: pointer; transition: opacity .12s ease; }
+  .bar:hover { opacity: .85; }
+  .bar-target { fill: var(--bar); opacity: 0.55; cursor: pointer; transition: opacity .12s ease; }
+  .bar-target:hover { opacity: 0.72; }
+  .note-label { fill: var(--muted); font-size: 11px; }
+  .tip {
+    position: fixed;
+    pointer-events: none;
+    background: var(--ink);
+    color: #fcfcfb;
+    font-size: 12px;
+    line-height: 1.35;
+    padding: 6px 9px;
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity .1s ease;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  html.dark .tip { color: #0b0b0b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">The drone kill zone keeps getting deeper (km from the front)</p>
+  <p class="caption">Depth of the belt where any daytime movement is seen and struck by drones (distinct from the artillery and air danger that always reached deeper). "Medium" strike campaigns reach logistics and command targets 50 to 100 km back. Source: Ukrainian commanders via Euromaidan Press and Ukrainska Pravda (2025 to 2026).</p>
+  <svg id="chart" viewBox="0 0 720 420" role="img" aria-label="Depth of the drone kill zone in km from the front"></svg>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function () {
+  const data = [
+    { period: "Oct 2025", value: 10, label: "10 km",          tip: "10 km deep", target: false },
+    { period: "Mid 2026", value: 25, label: "25 km",          tip: "25 km deep", target: false },
+    { period: "End 2026", value: 30, label: "30 km (target)", tip: "30 km deep", target: true }
+  ];
+
+  const W = 720, H = 420;
+  const plotLeft = 52, plotRight = W - 24, plotTop = 32, plotBottom = H - 40;
+  const plotWidth = plotRight - plotLeft;
+  const plotHeight = plotBottom - plotTop;
+  const maxY = 35; // km
+  const ticks = [0, 10, 20, 30];
+
+  const yOf = v => plotBottom - (v / maxY) * plotHeight;
+
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("chart");
+  const tip = document.getElementById("tip");
+
+  function el(name, attrs) {
+    const e = document.createElementNS(NS, name);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  // Gridlines + y-axis labels
+  ticks.forEach(t => {
+    const y = yOf(t);
+    svg.appendChild(el("line", {
+      class: "grid-line", x1: plotLeft, x2: plotRight, y1: y, y2: y
+    }));
+    const lab = el("text", {
+      class: "axis-label", x: plotLeft - 10, y: y + 4, "text-anchor": "end"
+    });
+    lab.textContent = t + " km";
+    svg.appendChild(lab);
+  });
+
+  // Bars
+  const band = plotWidth / data.length;
+  const barW = Math.min(120, band * 0.5);
+  const r = 4;
+
+  data.forEach((d, i) => {
+    const cx = plotLeft + band * i + band / 2;
+    const x = cx - barW / 2;
+    const y = yOf(d.value);
+
+    // rounded top corners only
+    const path =
+      "M" + x + "," + plotBottom +
+      " L" + x + "," + (y + r) +
+      " Q" + x + "," + y + " " + (x + r) + "," + y +
+      " L" + (x + barW - r) + "," + y +
+      " Q" + (x + barW) + "," + y + " " + (x + barW) + "," + (y + r) +
+      " L" + (x + barW) + "," + plotBottom + " Z";
+
+    const bar = el("path", { class: d.target ? "bar-target" : "bar", d: path });
+    svg.appendChild(bar);
+
+    // direct value label above the bar
+    const vlab = el("text", {
+      class: "value-label", x: cx, y: y - 8, "text-anchor": "middle"
+    });
+    vlab.textContent = d.label;
+    svg.appendChild(vlab);
+
+    // x-axis period label
+    const xlab = el("text", {
+      class: "axis-label", x: cx, y: plotBottom + 22, "text-anchor": "middle"
+    });
+    xlab.textContent = d.period;
+    svg.appendChild(xlab);
+
+    // tooltip
+    const showTip = evt => {
+      tip.textContent = d.period + ": " + d.tip + (d.target ? " (target)" : "");
+      tip.style.opacity = "1";
+      moveTip(evt);
+    };
+    const moveTip = evt => {
+      tip.style.left = (evt.clientX + 12) + "px";
+      tip.style.top = (evt.clientY - 10) + "px";
+    };
+    const hideTip = () => { tip.style.opacity = "0"; };
+    bar.addEventListener("mouseenter", showTip);
+    bar.addEventListener("mousemove", moveTip);
+    bar.addEventListener("mouseleave", hideTip);
+  });
+
+  // faded = target note
+  const note = el("text", {
+    class: "note-label", x: plotRight, y: plotTop - 14, "text-anchor": "end"
+  });
+  note.textContent = "faded = target";
+  svg.appendChild(note);
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>

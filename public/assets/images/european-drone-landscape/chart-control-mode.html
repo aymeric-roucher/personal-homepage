@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Ukraine and Russia fly their FPVs (2026, estimated)</title>
+<style>
+  :root {
+    --ink: #0b0b0b; --muted: #52514e; --grid: #e1e0d9;
+    --surface: #ffffff; --ring: rgba(11,11,11,0.12);
+    --radio: #2a78d6; --fibre: #1baf7a; --lastmile: #eda100; --full: #4a3aa7;
+  }
+  html.dark {
+    --ink: #ffffff; --muted: #c3c2b7; --grid: rgba(255,255,255,0.14);
+    --surface: #1b1b1a; --ring: rgba(255,255,255,0.18);
+    --radio: #3987e5; --fibre: #199e70; --lastmile: #c98500; --full: #9085e9;
+  }
+  html, body { margin: 0; background: transparent; color: var(--muted);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; }
+  .wrap { padding: 8px 10px 6px; position: relative; }
+  .title { color: var(--ink); font-size: 15px; font-weight: 700; letter-spacing: -0.01em; margin: 2px 2px 2px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 8px 2px 2px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .chip .sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .sub { font-size: 12px; color: var(--muted); line-height: 1.45; margin: 8px 2px 4px; }
+  svg { width: 100%; height: auto; display: block; }
+  .grp-lbl { font-size: 13px; font-weight: 600; fill: var(--ink); }
+  .val-lbl { font-size: 12px; font-weight: 700; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .tick-lbl { font-size: 10.5px; fill: var(--muted); }
+  .seg { cursor: pointer; transition: opacity .12s; }
+  .seg:hover { opacity: 0.85; }
+  .tooltip { position: absolute; z-index: 10; background: var(--surface);
+    border: 1px solid var(--ring); border-radius: 8px; box-shadow: 0 6px 24px rgba(11,11,11,0.15);
+    padding: 8px 11px; font-size: 12px; line-height: 1.4; display: none; pointer-events: none; max-width: 240px; }
+  .tt-name { color: var(--ink); font-weight: 650; }
+  .tt-val { color: var(--muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">How Ukraine and Russia fly their FPVs (2026, estimated)</div>
+  <div class="legend">
+    <span class="chip"><span class="sw" style="background:var(--radio)"></span>Radio FPV</span>
+    <span class="chip"><span class="sw" style="background:var(--fibre)"></span>Fibre-optic FPV</span>
+    <span class="chip"><span class="sw" style="background:var(--lastmile)"></span>Last-mile AI autonomy</span>
+    <span class="chip"><span class="sw" style="background:var(--full)"></span>Full autonomy</span>
+  </div>
+  <svg id="chart" viewBox="0 0 720 470" role="img" aria-label="100% stacked bar chart comparing Ukraine and Russia operational FPV control-mode mix"></svg>
+  <div class="sub">Estimated share of each side's operational FPV mix (each column sums to 100%). Russia leans on fibre-optic (state-subsidised and jam-proof); Ukraine on cheap last-mile AI after the global fibre price surge priced it out of tethers. Estimates from procurement, strike footage and commander statements, not audited. Source: FPV control-architecture analysis (2026).</div>
+  <div class="tooltip" id="tt"></div>
+</div>
+<script>
+(function () {
+  var svgNS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("chart");
+  var tt = document.getElementById("tt");
+
+  var TOP = 30, BOT = 410;          // plot vertical extent (100% at TOP, 0% at BOT)
+  var LEFT = 56, RIGHT = 690;       // plot horizontal extent
+  var GAP = 2;                      // gap between stacked segments
+  var BW = 150;                     // column width
+
+  function yOf(v) { return BOT - v / 100 * (BOT - TOP); }
+
+  // segments bottom to top: Radio, Fibre, Last-mile, Full
+  var modes = [
+    { key: "Radio FPV", color: "var(--radio)", light: "#2a78d6", dark: "#3987e5" },
+    { key: "Fibre-optic FPV", color: "var(--fibre)", light: "#1baf7a", dark: "#199e70" },
+    { key: "Last-mile AI autonomy", color: "var(--lastmile)", light: "#eda100", dark: "#c98500" },
+    { key: "Full autonomy", color: "var(--full)", light: "#4a3aa7", dark: "#9085e9" }
+  ];
+
+  var columns = [
+    { label: "Ukraine", vals: [45, 15, 35, 5] },
+    { label: "Russia", vals: [40, 30, 25, 5] }
+  ];
+
+  function el(name, attrs) {
+    var e = document.createElementNS(svgNS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  // gridlines + ticks (0 to 100 by 25)
+  [0, 25, 50, 75, 100].forEach(function (d) {
+    var y = yOf(d);
+    svg.appendChild(el("line", { class: "grid-line", x1: LEFT, y1: y, x2: RIGHT, y2: y }));
+    var t = el("text", { class: "tick-lbl", x: LEFT - 8, y: y + 3.5, "text-anchor": "end" });
+    t.textContent = d + "%";
+    svg.appendChild(t);
+  });
+
+  var n = columns.length;
+  var slot = (RIGHT - LEFT) / n;              // horizontal slot per column
+
+  columns.forEach(function (col, ci) {
+    var cx = LEFT + slot * (ci + 0.5);        // column centre
+    var x0 = cx - BW / 2;
+
+    var cumulative = 0;                        // running total from bottom
+    col.vals.forEach(function (val, mi) {
+      var mode = modes[mi];
+      var yBottom = yOf(cumulative);
+      var yTop = yOf(cumulative + val);
+      cumulative += val;
+
+      var h = yBottom - yTop - GAP;
+      if (h < 0) h = 0;
+
+      var rect = el("rect", { class: "seg", x: x0, y: yTop, width: BW, height: h, fill: mode.color });
+      svg.appendChild(rect);
+
+      // segment percentage label, centred; readable contrast (white on all four modes)
+      var t = el("text", {
+        class: "val-lbl",
+        x: cx,
+        y: yTop + h / 2 + 4,
+        "text-anchor": "middle",
+        fill: "#ffffff",
+        "font-size": val < 8 ? "10.5" : "12"
+      });
+      t.textContent = val + "%";
+      svg.appendChild(t);
+
+      (function (m, c, v) {
+        rect.addEventListener("mousemove", function (ev) {
+          tt.innerHTML = '<div class="tt-name">' + m.key + ' - ' + c.label + '</div>' +
+            '<div class="tt-val">' + v + '% of operational FPV mix</div>';
+          tt.style.display = "block";
+          var wrap = svg.parentNode.getBoundingClientRect();
+          tt.style.left = (ev.clientX - wrap.left + 12) + "px";
+          tt.style.top = (ev.clientY - wrap.top + 12) + "px";
+        });
+        rect.addEventListener("mouseleave", function () { tt.style.display = "none"; });
+      })(mode, col, val);
+    });
+
+    // column label below
+    var cl = el("text", { class: "grp-lbl", x: cx, y: BOT + 26, "text-anchor": "middle" });
+    cl.textContent = col.label;
+    svg.appendChild(cl);
+  });
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>

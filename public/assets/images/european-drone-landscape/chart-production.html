@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --grid: #e1e0d9;
+    --bar: #2a78d6;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --grid: rgba(255,255,255,0.12);
+    --bar: #3987e5;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+  }
+  .wrap {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 12px 8px 6px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .title {
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 4px;
+  }
+  .caption {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 0 0 8px;
+  }
+  svg { width: 100%; height: auto; display: block; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .axis-label { fill: var(--muted); font-size: 12px; }
+  .value-label { fill: var(--ink); font-size: 14px; font-weight: 700; }
+  .bar { fill: var(--bar); cursor: pointer; transition: opacity .12s ease; }
+  .bar:hover { opacity: .85; }
+  .tip {
+    position: fixed;
+    pointer-events: none;
+    background: var(--ink);
+    color: #fcfcfb;
+    font-size: 12px;
+    line-height: 1.35;
+    padding: 6px 9px;
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity .1s ease;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  html.dark .tip { color: #0b0b0b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">Ukraine's drone production, units per year</p>
+  <p class="caption">Source: Dealroom x NATO Innovation Fund (2026). 2026 is a stated target; Ukraine produced roughly 200,000 units/month in 2025.</p>
+  <svg id="chart" viewBox="0 0 720 420" role="img" aria-label="Ukraine drone production per year"></svg>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function () {
+  const data = [
+    { year: "2024", value: 2.2, label: "2.2M" },
+    { year: "2025", value: 4.5, label: "4.5M" },
+    { year: "2026", value: 7,   label: "7M (target)" }
+  ];
+
+  const W = 720, H = 420;
+  const plotLeft = 52, plotRight = W - 24, plotTop = 32, plotBottom = H - 40;
+  const plotWidth = plotRight - plotLeft;
+  const plotHeight = plotBottom - plotTop;
+  const maxY = 8; // million
+  const ticks = [0, 2, 4, 6, 8];
+
+  const yOf = v => plotBottom - (v / maxY) * plotHeight;
+
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("chart");
+  const tip = document.getElementById("tip");
+
+  function el(name, attrs) {
+    const e = document.createElementNS(NS, name);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  // Gridlines + y-axis labels
+  ticks.forEach(t => {
+    const y = yOf(t);
+    svg.appendChild(el("line", {
+      class: "grid-line", x1: plotLeft, x2: plotRight, y1: y, y2: y
+    }));
+    const lab = el("text", {
+      class: "axis-label", x: plotLeft - 10, y: y + 4, "text-anchor": "end"
+    });
+    lab.textContent = t + "M";
+    svg.appendChild(lab);
+  });
+
+  // Bars
+  const band = plotWidth / data.length;
+  const barW = Math.min(120, band * 0.56);
+  const r = 4;
+
+  data.forEach((d, i) => {
+    const cx = plotLeft + band * i + band / 2;
+    const x = cx - barW / 2;
+    const y = yOf(d.value);
+    const h = plotBottom - y;
+
+    // rounded top corners only
+    const path =
+      "M" + x + "," + plotBottom +
+      " L" + x + "," + (y + r) +
+      " Q" + x + "," + y + " " + (x + r) + "," + y +
+      " L" + (x + barW - r) + "," + y +
+      " Q" + (x + barW) + "," + y + " " + (x + barW) + "," + (y + r) +
+      " L" + (x + barW) + "," + plotBottom + " Z";
+
+    const bar = el("path", { class: "bar", d: path });
+    svg.appendChild(bar);
+
+    // direct value label above the bar
+    const vlab = el("text", {
+      class: "value-label", x: cx, y: y - 8, "text-anchor": "middle"
+    });
+    vlab.textContent = d.label;
+    svg.appendChild(vlab);
+
+    // x-axis year label
+    const xlab = el("text", {
+      class: "axis-label", x: cx, y: plotBottom + 22, "text-anchor": "middle"
+    });
+    xlab.textContent = d.year;
+    svg.appendChild(xlab);
+
+    // tooltip
+    const exact = (d.value * 1000000).toLocaleString("en-US");
+    const suffix = d.year === "2026" ? " (target)" : "";
+    const showTip = evt => {
+      tip.textContent = d.year + ": " + exact + " units" + suffix;
+      tip.style.opacity = "1";
+      moveTip(evt);
+    };
+    const moveTip = evt => {
+      tip.style.left = (evt.clientX + 12) + "px";
+      tip.style.top = (evt.clientY - 10) + "px";
+    };
+    const hideTip = () => { tip.style.opacity = "0"; };
+    bar.addEventListener("mouseenter", showTip);
+    bar.addEventListener("mousemove", moveTip);
+    bar.addEventListener("mouseleave", hideTip);
+  });
+})();
+</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+</body>
+</html>

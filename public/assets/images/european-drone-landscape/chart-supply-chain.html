@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --grid: #e1e0d9;
+    --aerial: #e34948;
+    --energy: #eb6834;
+    --perception: #eda100;
+    --naval: #1baf7a;
+    --terrestrial: #2a78d6;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --grid: rgba(255,255,255,0.14);
+    --aerial: #e66767;
+    --energy: #d95926;
+    --perception: #c98500;
+    --naval: #199e70;
+    --terrestrial: #3987e5;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+  }
+  .wrap {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 12px 8px 6px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .title {
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 8px;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin: 0 0 8px;
+  }
+  .legend .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1;
+  }
+  .legend .swatch {
+    width: 11px;
+    height: 11px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .sw-aerial { background: var(--aerial); }
+  .sw-energy { background: var(--energy); }
+  .sw-perception { background: var(--perception); }
+  .sw-naval { background: var(--naval); }
+  .sw-terrestrial { background: var(--terrestrial); }
+  svg { width: 100%; height: auto; display: block; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .axis-label { fill: var(--muted); font-size: 12px; }
+  .row-label { fill: var(--muted); font-size: 12px; }
+  .value-label { fill: var(--ink); font-size: 13px; font-weight: 700; }
+  .bar { cursor: pointer; transition: opacity .12s ease; }
+  .bar:hover { opacity: .85; }
+  .bar-aerial { fill: var(--aerial); }
+  .bar-energy { fill: var(--energy); }
+  .bar-perception { fill: var(--perception); }
+  .bar-naval { fill: var(--naval); }
+  .bar-terrestrial { fill: var(--terrestrial); }
+  .caption {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 8px 0 0;
+  }
+  .tip {
+    position: fixed;
+    pointer-events: none;
+    background: var(--ink);
+    color: #fcfcfb;
+    font-size: 12px;
+    line-height: 1.35;
+    padding: 6px 9px;
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity .1s ease;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  html.dark .tip { color: #0b0b0b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">China's share of the drone supply chain, by subsystem</p>
+  <div class="legend">
+    <span class="chip"><span class="swatch sw-aerial"></span>Aerial</span>
+    <span class="chip"><span class="swatch sw-energy"></span>Energy</span>
+    <span class="chip"><span class="swatch sw-perception"></span>Perception</span>
+    <span class="chip"><span class="swatch sw-naval"></span>Naval</span>
+    <span class="chip"><span class="swatch sw-terrestrial"></span>Terrestrial</span>
+  </div>
+  <svg id="chart" viewBox="0 0 760 680" role="img" aria-label="China's share of the drone supply chain by subsystem"></svg>
+  <p class="caption">Share of each subsystem sourced from or dependent on China. The grip is domain-specific: aerial and energy are China's, while naval and terrestrial subsystems invert to Western strength. Sources: RUSI (Nov 2025) and market-structure reports. Compute is a separate case: only ~5-10% China, but fabricated almost entirely in Taiwan and South Korea.</p>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function () {
+  const data = [
+    { label: "LiPo pouch cells", value: 95, domain: "Energy" },
+    { label: "NdFeB permanent magnets", value: 90, domain: "Energy" },
+    { label: "Aerial BLDC motors", value: 85, domain: "Aerial" },
+    { label: "Aerial speed controllers (ESC)", value: 80, domain: "Aerial" },
+    { label: "Propellers", value: 75, domain: "Aerial" },
+    { label: "Flight-controller boards", value: 75, domain: "Aerial" },
+    { label: "Germanium IR optics", value: 70, domain: "Perception" },
+    { label: "RF datalink modules", value: 60, domain: "Aerial" },
+    { label: "Thermal / IR cores", value: 45, domain: "Perception" },
+    { label: "Aquatic thrusters", value: 40, domain: "Naval" },
+    { label: "LiDAR", value: 40, domain: "Perception" },
+    { label: "Terrestrial drive motors", value: 35, domain: "Terrestrial" },
+    { label: "Flight-control software", value: 30, domain: "Terrestrial" },
+    { label: "Terrestrial actuators / hydraulics", value: 30, domain: "Terrestrial" },
+    { label: "GNSS receivers", value: 25, domain: "Terrestrial" },
+    { label: "Pressure-tolerant hulls", value: 25, domain: "Naval" },
+    { label: "CMOS image sensors", value: 15, domain: "Perception" },
+    { label: "Sonar and acoustic modems", value: 15, domain: "Naval" },
+    { label: "Next-gen (Li-S) batteries", value: 15, domain: "Energy" }
+  ];
+
+  const domainClass = {
+    Aerial: "bar-aerial",
+    Energy: "bar-energy",
+    Perception: "bar-perception",
+    Naval: "bar-naval",
+    Terrestrial: "bar-terrestrial"
+  };
+
+  const W = 760, H = 680;
+  const plotLeft = 208, plotRight = W - 48, plotTop = 16, plotBottom = H - 34;
+  const plotWidth = plotRight - plotLeft;
+  const plotHeight = plotBottom - plotTop;
+  const maxX = 100;
+  const ticks = [0, 20, 40, 60, 80, 100];
+
+  const xOf = v => plotLeft + (v / maxX) * plotWidth;
+
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("chart");
+  const tip = document.getElementById("tip");
+
+  function el(name, attrs) {
+    const e = document.createElementNS(NS, name);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  // Vertical gridlines + x-axis labels
+  ticks.forEach(t => {
+    const x = xOf(t);
+    svg.appendChild(el("line", {
+      class: "grid-line", x1: x, x2: x, y1: plotTop, y2: plotBottom
+    }));
+    const lab = el("text", {
+      class: "axis-label", x: x, y: plotBottom + 20, "text-anchor": "middle"
+    });
+    lab.textContent = t + "%";
+    svg.appendChild(lab);
+  });
+
+  // Bars
+  const band = plotHeight / data.length;
+  const barH = Math.min(20, band * 0.62);
+  const r = 4;
+
+  data.forEach((d, i) => {
+    const cy = plotTop + band * i + band / 2;
+    const y = cy - barH / 2;
+    const x0 = plotLeft;
+    const x1 = xOf(d.value);
+    const rr = Math.min(r, Math.max(0, x1 - x0));
+
+    // rounded right corners only
+    const path =
+      "M" + x0 + "," + y +
+      " L" + (x1 - rr) + "," + y +
+      " Q" + x1 + "," + y + " " + x1 + "," + (y + rr) +
+      " L" + x1 + "," + (y + barH - rr) +
+      " Q" + x1 + "," + (y + barH) + " " + (x1 - rr) + "," + (y + barH) +
+      " L" + x0 + "," + (y + barH) + " Z";
+
+    const bar = el("path", { class: "bar " + domainClass[d.domain], d: path });
+    svg.appendChild(bar);
+
+    // subsystem label to the left
+    const rlab = el("text", {
+      class: "row-label", x: plotLeft - 10, y: cy + 4, "text-anchor": "end"
+    });
+    rlab.textContent = d.label;
+    svg.appendChild(rlab);
+
+    // bold value label at bar end
+    const vlab = el("text", {
+      class: "value-label", x: x1 + 7, y: cy + 4, "text-anchor": "start"
+    });
+    vlab.textContent = d.value + "%";
+    svg.appendChild(vlab);
+
+    // tooltip
+    const showTip = evt => {
+      tip.textContent = d.label + ": " + d.value + "% China (" + d.domain + ")";
+      tip.style.opacity = "1";
+      moveTip(evt);
+    };
+    const moveTip = evt => {
+      tip.style.left = (evt.clientX + 12) + "px";
+      tip.style.top = (evt.clientY - 10) + "px";
+    };
+    const hideTip = () => { tip.style.opacity = "0"; };
+    bar.addEventListener("mouseenter", showTip);
+    bar.addEventListener("mousemove", moveTip);
+    bar.addEventListener("mouseleave", hideTip);
+  });
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>

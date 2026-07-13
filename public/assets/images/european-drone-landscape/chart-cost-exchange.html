@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The cost-exchange gap</title>
+<style>
+  :root {
+    --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781; --grid: #e1e0d9;
+    --surface: #ffffff; --ring: rgba(11,11,11,0.12);
+    --c-red: #e34948; --c-grey: #898781; --c-aqua: #1baf7a;
+  }
+  html.dark {
+    --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781; --grid: rgba(255,255,255,0.12);
+    --surface: #1b1b1a; --ring: rgba(255,255,255,0.18);
+    --c-red: #e66767; --c-grey: #898781; --c-aqua: #199e70;
+  }
+  html, body { margin: 0; background: transparent; color: var(--ink-2);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; }
+  .wrap { padding: 8px 10px 6px; position: relative; }
+  .title { color: var(--ink); font-size: 15px; font-weight: 700; letter-spacing: -0.01em; margin: 2px 2px 2px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; margin: 8px 2px 2px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); }
+  .chip .dot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  svg { width: 100%; height: auto; display: block; }
+  .cat { font-size: 12px; fill: var(--ink-2); }
+  .val { font-size: 13px; font-weight: 700; fill: var(--ink); }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .axis-line { stroke: var(--grid); stroke-width: 1; }
+  .tick-lbl { font-size: 10.5px; fill: var(--muted); }
+  .scale-note { font-size: 10.5px; fill: var(--muted); font-style: italic; }
+  .bar { cursor: pointer; transition: opacity .12s; }
+  .bar:hover { opacity: 0.85; }
+  .caption { font-size: 12px; color: var(--muted); line-height: 1.45; margin: 6px 2px 2px; }
+  .tooltip { position: absolute; z-index: 10; background: var(--surface);
+    border: 1px solid var(--ring); border-radius: 8px; box-shadow: 0 6px 24px rgba(11,11,11,0.15);
+    padding: 8px 11px; font-size: 12px; line-height: 1.4; display: none; pointer-events: none; max-width: 240px; }
+  .tt-name { color: var(--ink); font-weight: 650; }
+  .tt-val { color: var(--ink-2); margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">The cost-exchange gap: what it costs to stop one Shahed</div>
+  <div class="legend">
+    <span class="chip"><span class="dot" style="background:var(--c-red)"></span>unaffordable trade</span>
+    <span class="chip"><span class="dot" style="background:var(--c-grey)"></span>the target</span>
+    <span class="chip"><span class="dot" style="background:var(--c-aqua)"></span>affordable trade</span>
+  </div>
+  <svg id="chart" viewBox="0 0 720 360" role="img" aria-label="Horizontal bar chart on a logarithmic dollar scale comparing the cost to stop one Shahed"></svg>
+  <div class="caption">Sources: CSIS cost-exchange analysis; counter-drone research synthesis. Russia launches 5,000+ Shaheds a month (about $175M) to force adversaries to burn billions in interceptors.</div>
+  <div class="tooltip" id="tt"></div>
+</div>
+<script>
+(function () {
+  var svgNS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("chart");
+  var tt = document.getElementById("tt");
+
+  var X0 = 232, X1 = 622;          // plot horizontal extent
+  var DMIN = 1000, DMAX = 10000000; // log domain: $1k to $10M
+  var lmin = Math.log10(DMIN), lmax = Math.log10(DMAX);
+
+  function xOf(v) { return X0 + (Math.log10(v) - lmin) / (lmax - lmin) * (X1 - X0); }
+
+  var data = [
+    { cat: "Patriot PAC-3 interceptor", plot: 4500000, label: "$3.7 to 5.2M", exact: "$3.7 to 5.2M per interceptor", color: "var(--c-red)" },
+    { cat: "The Shahed / Geran target", plot: 35000, label: "$35k", exact: "about $35,000 per drone", color: "var(--c-grey)" },
+    { cat: "Interceptor drone (e.g. ZIRKA)", plot: 2000, label: "~$2,000", exact: "roughly $2,000 per unit", color: "var(--c-aqua)" }
+  ];
+
+  var TOP = 78, BH = 40, GAP = 30, AXIS_Y;
+  AXIS_Y = TOP + data.length * BH + (data.length - 1) * GAP + 14;
+
+  function el(name, attrs) {
+    var e = document.createElementNS(svgNS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  // gridlines + ticks (decades)
+  var decades = [1000, 10000, 100000, 1000000, 10000000];
+  var tickText = ["$1k", "$10k", "$100k", "$1M", "$10M"];
+  decades.forEach(function (d, i) {
+    var x = xOf(d);
+    svg.appendChild(el("line", { class: "grid-line", x1: x, y1: TOP - 12, x2: x, y2: AXIS_Y }));
+    var t = el("text", { class: "tick-lbl", x: x, y: AXIS_Y + 15, "text-anchor": "middle" });
+    t.textContent = tickText[i];
+    svg.appendChild(t);
+  });
+  svg.appendChild(el("line", { class: "axis-line", x1: X0, y1: AXIS_Y, x2: X1, y2: AXIS_Y }));
+
+  var note = el("text", { class: "scale-note", x: X1, y: AXIS_Y + 30, "text-anchor": "end" });
+  note.textContent = "log scale";
+  svg.appendChild(note);
+
+  function barPath(x1, y, h, r) {
+    r = Math.min(r, h / 2);
+    return "M" + X0 + "," + y +
+      " L" + (x1 - r) + "," + y +
+      " Q" + x1 + "," + y + " " + x1 + "," + (y + r) +
+      " L" + x1 + "," + (y + h - r) +
+      " Q" + x1 + "," + (y + h) + " " + (x1 - r) + "," + (y + h) +
+      " L" + X0 + "," + (y + h) + " Z";
+  }
+
+  data.forEach(function (d, i) {
+    var y = TOP + i * (BH + GAP);
+    var x1 = xOf(d.plot);
+
+    var p = el("path", { class: "bar", d: barPath(x1, y, BH, 4), fill: d.color });
+    svg.appendChild(p);
+
+    // category label to the left
+    var c = el("text", { class: "cat", x: X0 - 12, y: y + BH / 2 + 4, "text-anchor": "end" });
+    c.textContent = d.cat;
+    svg.appendChild(c);
+
+    // value label at the end of the bar
+    var v = el("text", { class: "val", x: x1 + 8, y: y + BH / 2 + 4, "text-anchor": "start" });
+    v.textContent = d.label;
+    svg.appendChild(v);
+
+    p.addEventListener("mousemove", function (ev) {
+      tt.innerHTML = '<div class="tt-name">' + d.cat + '</div><div class="tt-val">' + d.exact + '</div>';
+      tt.style.display = "block";
+      var wrap = svg.parentNode.getBoundingClientRect();
+      tt.style.left = (ev.clientX - wrap.left + 12) + "px";
+      tt.style.top = (ev.clientY - wrap.top + 12) + "px";
+    });
+    p.addEventListener("mouseleave", function () { tt.style.display = "none"; });
+  });
+})();
+</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+</body>
+</html>

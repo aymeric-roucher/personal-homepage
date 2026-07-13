@@ -332,11 +332,16 @@ const ContentPage = () => {
                 </video>
               ),
               iframe: ({ src, height, ...props }) => (
+                // Height goes on the HTML attribute, not a React-managed style, so a
+                // child auto-resize script (frameElement.style.height) is not clobbered
+                // on re-render. scrolling="no" guarantees no internal scrollbar.
                 <iframe
                   {...props}
                   src={src}
+                  height={height ? parseInt(String(height), 10) : 570}
+                  scrolling="no"
                   className="w-full my-6 rounded-lg"
-                  style={{ border: 'none', height: height ? `${height}px` : '570px' }}
+                  style={{ border: 'none' }}
                 />
               ),
               div: ({ className, children, ...props }) => {
