@@ -6,6 +6,8 @@ type: blog
 url: european-drone-landscape
 ---
 
+> **Warning: this is AI-generated.** The value in the article below is not concision and density of ideas, but the exhaustiveness of the result, which is an aggregation of over 20 deep researches, and the human guidance given to the aggregator agent toward concision and signal.
+
 In 2025, European defense, security and resilience startups raised a record \$8.7B in venture capital, up 55% year over year, with drones the single sector winning the most public procurement.[^dsr] That \$8.7B is a broad "defence, security and resilience" figure; on a narrower defence-tech measure Europe raised \$2.48B in 2025 against the United States' \$14.2B, part of a global total near \$50B.[^globalvc] A handful of companies that barely existed in 2021 are now worth more than the incumbents they were built to feed. This maps that landscape and then digs into the three technical problems that decide who wins: seeing in the dark, flying without GPS, and doing both on a chip small enough to fit on an attritable airframe. Figures are third-party where I could find them; self-reported ones are flagged.
 
 <iframe src="/assets/images/european-drone-landscape/chart-funding.html" height="480" title="Defence-tech VC funding, US versus Europe, 2024 to 2025"></iframe>
