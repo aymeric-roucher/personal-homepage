@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anatomy of an FPV drone</title>
+<style>
+  :root{
+    --ink:#0b0b0b;
+    --muted:#52514e;
+    --ring:rgba(11,11,11,0.35);
+    --card-bg:#fcfcfb;
+    --card-border:rgba(11,11,11,0.12);
+  }
+  html.dark{
+    --ink:#ffffff;
+    --muted:#c3c2b7;
+    --ring:rgba(255,255,255,0.4);
+    --card-bg:#1b1b1a;
+    --card-border:rgba(255,255,255,0.16);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:transparent;}
+  body{
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--ink);
+  }
+  #root{
+    max-width:1080px;
+    margin:0 auto;
+    padding:8px 12px 4px;
+  }
+  .head{margin:0 0 6px;}
+  .title{font-size:15px;font-weight:700;line-height:1.3;margin:0;color:var(--ink);}
+  .caption{font-size:12px;color:var(--muted);margin:3px 0 0;line-height:1.4;}
+  .controls{
+    display:flex;
+    gap:14px;
+    align-items:center;
+    flex-wrap:wrap;
+    margin:8px 0 4px;
+    font-size:12px;
+    color:var(--muted);
+  }
+  .controls label{display:flex;align-items:center;gap:6px;}
+  select{
+    font-family:inherit;
+    font-size:12px;
+    color:var(--ink);
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:6px;
+    padding:4px 8px;
+  }
+  input[type=range]{width:150px;accent-color:#c8622a;}
+  /* fixed-height stage so document scrollHeight never shifts */
+  #stage{
+    position:relative;
+    width:100%;
+    height:720px;
+  }
+  #canvas-wrap{
+    position:absolute;
+    left:0;top:0;right:0;
+    height:640px;
+  }
+  canvas{display:block;width:100%;height:100%;}
+  /* callouts overlay */
+  #overlay{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .ring{
+    position:absolute;
+    width:12px;height:12px;
+    margin:-6px 0 0 -6px;
+    border-radius:50%;
+    border:1.5px solid var(--ring);
+    background:transparent;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .ring.active{
+    border-color:#c8622a;
+    box-shadow:0 0 0 3px rgba(200,98,42,0.18);
+  }
+  #leaders{
+    position:absolute;
+    inset:0;
+    width:100%;height:100%;
+    pointer-events:none;
+  }
+  #leaders line{
+    stroke:var(--ring);
+    stroke-width:1;
+    transition:stroke .15s;
+  }
+  #leaders line.active{stroke:#c8622a;stroke-width:1.5;}
+  .card{
+    position:absolute;
+    width:200px;
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:8px;
+    padding:7px 9px;
+    font-size:11px;
+    line-height:1.4;
+    color:var(--muted);
+    pointer-events:auto;
+    cursor:default;
+    transition:border-color .15s, box-shadow .15s, transform .15s;
+    box-shadow:0 1px 3px rgba(0,0,0,0.05);
+  }
+  .card b{color:var(--ink);display:block;margin-bottom:2px;font-size:12px;}
+  .card.active{
+    border-color:#c8622a;
+    box-shadow:0 2px 10px rgba(200,98,42,0.22);
+  }
+  .card.hidden{display:none;}
+  /* narrow screens: stack cards below the canvas */
+  #stack{
+    display:none;
+    margin-top:8px;
+  }
+  @media (max-width:760px){
+    #stage{height:auto;}
+    #canvas-wrap{position:relative;height:360px;}
+    #overlay .card{display:none;}
+    #leaders{display:none;}
+    #stack{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    #stack .card{position:relative;width:auto;left:auto;top:auto;}
+  }
+  @media (max-width:480px){
+    #stack{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="head">
+    <p class="title">Anatomy of an FPV drone: where each part comes from</p>
+    <p class="caption">Stylized exploded view. Shares from the supply-chain matrix above; switch the control mode to see how the drone's link changes its dependencies.</p>
+  </div>
+  <div class="controls">
+    <label>Control mode
+      <select id="variant">
+        <option value="radio">Radio FPV</option>
+        <option value="fibre">Fibre-optic FPV</option>
+        <option value="ai">Last-mile AI FPV</option>
+      </select>
+    </label>
+    <label>Explode
+      <input id="explode" type="range" min="0" max="1" step="0.01" value="0.65">
+    </label>
+  </div>
+  <div id="stage">
+    <div id="canvas-wrap"></div>
+    <div id="overlay">
+      <svg id="leaders"></svg>
+    </div>
+  </div>
+  <div id="stack"></div>
+</div>
+
+<script src="vendor/three.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var wrap = document.getElementById('canvas-wrap');
+  var overlay = document.getElementById('overlay');
+  var leaders = document.getElementById('leaders');
+  var stack = document.getElementById('stack');
+  var variantSel = document.getElementById('variant');
+  var explodeSlider = document.getElementById('explode');
+
+  // ---------- data: callout blurbs ----------
+  var BLURBS = {
+    props:   ['Propellers', 'China ~75%. Carbon-fibre props are Asia-moulded.'],
+    motors:  ['Motors', 'China ~85% (Shenzhen). Inherits the NdFeB magnet chokehold, ~90% China.'],
+    battery: ['Battery', 'LiPo pouch cells: China >90%. Beijing cut cells to Skydio in 2024.'],
+    fc:      ['Flight controller', 'Designed in EU/US/Japan (STM32); ~75% assembled in China.'],
+    camera:  ['Camera', 'Daylight CMOS: Sony + Samsung ~63%, allied-secure. Thermal is the bleed: China ~45%.'],
+    frame:   ['Frame', 'Carbon fibre: Toray holds >50% of the PAN precursor. Near parity for the West.'],
+    radio:   ['Radio link', 'RF modules ~60% China hardware; open-source ExpressLRS firmware on top.'],
+    fibre:   ['Fibre spool', 'Chinese G.657.A2 glass; price up ~560% in the AI-datacentre squeeze. 10-20 km typical.'],
+    ai:      ['AI module', '$50-100 module (Rockchip ~$60-100, China; or Jetson, US design). Advanced chips all fabbed at TSMC/Samsung.']
+  };
+
+  // which callouts show per variant
+  var VARIANT_CALLOUTS = {
+    radio: ['props','motors','battery','fc','camera','frame','radio'],
+    fibre: ['props','motors','battery','fc','camera','frame','fibre'],
+    ai:    ['props','motors','battery','fc','camera','frame','radio','ai']
+  };
+
+  // ---------- three.js scene ----------
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  var renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+  wrap.appendChild(renderer.domElement);
+
+  var ambient = new THREE.AmbientLight(0xffffff, 0.55);
+  scene.add(ambient);
+  var dir = new THREE.DirectionalLight(0xffffff, 0.95);
+  dir.position.set(4, 8, 6);
+  scene.add(dir);
+
+  // materials
+  function mat(color, opts){
+    opts = opts || {};
+    return new THREE.MeshStandardMaterial({
+      color: color,
+      metalness: opts.metalness!=null?opts.metalness:0.35,
+      roughness: opts.roughness!=null?opts.roughness:0.55,
+      emissive: new THREE.Color(0x000000)
+    });
+  }
+  var M = {
+    carbon:  mat(0x1a1a1c, {metalness:0.5, roughness:0.5}),
+    motor:   mat(0xbfc3c8, {metalness:0.85, roughness:0.3}),
+    motorBell: mat(0x8a8f96, {metalness:0.9, roughness:0.35}),
+    prop:    mat(0x3a3d42, {metalness:0.2, roughness:0.7}),
+    battery: mat(0x5b6b7a, {metalness:0.3, roughness:0.6}),
+    pcb:     mat(0x1f7a3d, {metalness:0.2, roughness:0.6}),
+    pcbDark: mat(0x145c2c, {metalness:0.2, roughness:0.6}),
+    cam:     mat(0x2a2c30, {metalness:0.4, roughness:0.5}),
+    lens:    mat(0x0a0a0c, {metalness:0.6, roughness:0.2}),
+    vtx:     mat(0x2c2e33, {metalness:0.4, roughness:0.55}),
+    antenna: mat(0x111214, {metalness:0.3, roughness:0.6}),
+    spool:   mat(0xd8d3c6, {metalness:0.15, roughness:0.75}),
+    spoolCore: mat(0x3a3d42, {metalness:0.4, roughness:0.5}),
+    aimod:   mat(0xe8792a, {metalness:0.25, roughness:0.55})
+  };
+
+  // assembly root (auto-rotates + manual orbit is applied to camera, so keep root simple)
+  var root = new THREE.Group();
+  scene.add(root);
+
+  // registry of exploding parts: {group, base:Vector3, dir:Vector3, dist:Number, anchor:Vector3(local), key:String, meshes:[]}
+  var parts = [];
+
+  function register(group, baseX, baseY, baseZ, dirX, dirY, dirZ, dist, key){
+    group.position.set(baseX, baseY, baseZ);
+    var p = {
+      group: group,
+      base: new THREE.Vector3(baseX, baseY, baseZ),
+      dir: new THREE.Vector3(dirX, dirY, dirZ),
+      dist: dist,
+      key: key,
+      meshes: []
+    };
+    group.traverse(function(o){ if(o.isMesh) p.meshes.push(o); });
+    parts.push(p);
+    root.add(group);
+    return p;
+  }
+
+  function box(w,h,d,material){
+    return new THREE.Mesh(new THREE.BoxGeometry(w,h,d), material);
+  }
+  function cyl(rt,rb,h,material,seg){
+    return new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||24), material);
+  }
+
+  // ---- Frame (flat X carbon plates) ----
+  var frameG = new THREE.Group();
+  var plateTop = box(2.6, 0.06, 0.5, M.carbon); plateTop.position.y = 0.06;
+  var plateBot = box(2.6, 0.06, 0.5, M.carbon); plateBot.position.y = -0.06;
+  frameG.add(plateTop, plateBot);
+  // four arms in X layout
+  var armPos = [[1.15,0.65],[1.15,-0.65],[-1.15,0.65],[-1.15,-0.65]];
+  armPos.forEach(function(a){
+    var arm = box(1.5, 0.05, 0.16, M.carbon);
+    arm.position.set(a[0]*0.55, 0, a[1]*0.55);
+    arm.rotation.y = Math.atan2(a[1], a[0]);
+    frameG.add(arm);
+  });
+  register(frameG, 0,0,0, 0,-1,0, 0.0, 'frame'); // frame stays put as reference; small explode via camera perception
+
+  // ---- Motors + props (one group each, but callout only on one representative) ----
+  var motorGroups = [];
+  var propGroups = [];
+  armPos.forEach(function(a, i){
+    var mx = a[0], mz = a[1];
+    // motor
+    var mg = new THREE.Group();
+    var canB = cyl(0.16,0.16,0.14,M.motor); canB.position.y = 0.14;
+    var bell = cyl(0.18,0.16,0.08,M.motorBell); bell.position.y = 0.23;
+    var shaft = cyl(0.02,0.02,0.12,M.motorBell); shaft.position.y = 0.31;
+    mg.add(canB, bell, shaft);
+    // outward-and-up explode along arm direction
+    var len = Math.sqrt(mx*mx+mz*mz);
+    register(mg, mx, 0.03, mz, mx/len*0.55, 0.6, mz/len*0.55, 1.0, i===0?'motors':null);
+    motorGroups.push(parts[parts.length-1]);
+
+    // prop (two crossed thin blades)
+    var pg = new THREE.Group();
+    var b1 = box(0.9, 0.012, 0.09, M.prop);
+    var b2 = box(0.9, 0.012, 0.09, M.prop); b2.rotation.y = Math.PI/2;
+    var hub = cyl(0.04,0.04,0.03,M.motorBell);
+    pg.add(b1,b2,hub);
+    pg.userData.spin = 0.12 + i*0.01;
+    register(pg, mx, 0.36, mz, 0, 1, 0, 1.4, i===0?'props':null);
+    propGroups.push(parts[parts.length-1]);
+  });
+
+  // ---- Battery (under frame) ----
+  var battG = new THREE.Group();
+  var batt = box(1.1, 0.34, 0.42, M.battery);
+  // rounded feel: bevel strips
+  var strap1 = box(1.12,0.02,0.1,M.carbon); strap1.position.set(0,0.18,0.13);
+  var strap2 = box(1.12,0.02,0.1,M.carbon); strap2.position.set(0,0.18,-0.13);
+  battG.add(batt, strap1, strap2);
+  register(battG, 0, -0.35, 0, 0,-1,0, 0.9, 'battery');
+
+  // ---- Flight-controller stack (two PCBs) ----
+  var fcG = new THREE.Group();
+  var pcb1 = box(0.42,0.03,0.42,M.pcb); pcb1.position.y = 0;
+  var pcb2 = box(0.42,0.03,0.42,M.pcbDark); pcb2.position.y = 0.13;
+  var standoffs = [[0.16,0.16],[0.16,-0.16],[-0.16,0.16],[-0.16,-0.16]];
+  standoffs.forEach(function(s){
+    var st = cyl(0.012,0.012,0.13,M.motorBell,10);
+    st.position.set(s[0],0.065,s[1]);
+    fcG.add(st);
+  });
+  var cap = box(0.06,0.05,0.06,M.antenna); cap.position.set(0.1,0.05,0.1);
+  fcG.add(pcb1,pcb2,cap);
+  register(fcG, 0, 0.2, 0, 0,1,0, 0.75, 'fc');
+
+  // ---- Camera (front) ----
+  var camG = new THREE.Group();
+  var camBody = box(0.24,0.24,0.18,M.cam);
+  var lens = cyl(0.09,0.09,0.1,M.lens); lens.rotation.x = Math.PI/2; lens.position.z = 0.12;
+  var glass = cyl(0.06,0.06,0.02,mat(0x203040,{metalness:0.7,roughness:0.15})); glass.rotation.x=Math.PI/2; glass.position.z=0.17;
+  camG.add(camBody, lens, glass);
+  register(camG, 1.15, 0.13, 0, 1,0.15,0, 0.9, 'camera');
+
+  // ---- Rear control payload (swappable) ----
+  var payloadG = new THREE.Group();
+  register(payloadG, -1.1, 0.2, 0, -1, 0.6, 0, 1.0, null);
+  var payloadPart = parts[parts.length-1];
+
+  // sub-part anchors for radio / fibre / ai callouts live inside payload or camera area
+  var dynamicAnchors = {}; // key -> {part, local:Vector3}
+
+  function clearGroup(g){
+    for(var i=g.children.length-1;i>=0;i--){ g.remove(g.children[i]); }
+  }
+
+  var aiModuleGroup = null; // sits near camera, separate exploding part
+  var aiPart = null;
+
+  function buildPayload(variant){
+    clearGroup(payloadG);
+    dynamicAnchors = {};
+
+    if(variant === 'radio' || variant === 'ai'){
+      // VTX box + two whip antennas
+      var vtx = box(0.28,0.1,0.22,M.vtx); vtx.position.y = 0;
+      payloadG.add(vtx);
+      var an1 = cyl(0.012,0.012,0.6,M.antenna); an1.position.set(-0.1,0.34,0.08); an1.rotation.z=0.12;
+      var an2 = cyl(0.012,0.012,0.6,M.antenna); an2.position.set(-0.1,0.34,-0.08); an2.rotation.z=0.12;
+      var tip1 = cyl(0.02,0.02,0.06,M.aimod); tip1.position.set(-0.14,0.66,0.08);
+      var tip2 = cyl(0.02,0.02,0.06,M.aimod); tip2.position.set(-0.14,0.66,-0.08);
+      payloadG.add(an1,an2,tip1,tip2);
+      dynamicAnchors.radio = {part:payloadPart, local:new THREE.Vector3(-0.1,0.34,0.08)};
+    } else if(variant === 'fibre'){
+      // fat fibre spool: cylinder core + torus wrap
+      var core = cyl(0.16,0.16,0.26,M.spoolCore); core.rotation.x = Math.PI/2;
+      var wrap1 = new THREE.Mesh(new THREE.CylinderGeometry(0.26,0.26,0.22,28), M.spool); wrap1.rotation.x=Math.PI/2;
+      var flange1 = cyl(0.3,0.3,0.02,M.spoolCore); flange1.rotation.x=Math.PI/2; flange1.position.z=0.12;
+      var flange2 = cyl(0.3,0.3,0.02,M.spoolCore); flange2.rotation.x=Math.PI/2; flange2.position.z=-0.12;
+      payloadG.add(core, wrap1, flange1, flange2);
+      // thin trailing line down
+      var line = cyl(0.006,0.006,0.9,M.spool); line.position.set(0.0,-0.45,0.0);
+      payloadG.add(line);
+      dynamicAnchors.fibre = {part:payloadPart, local:new THREE.Vector3(0,0,0)};
+    }
+
+    // AI module near the camera (separate exploding part, remove/create)
+    if(aiPart){
+      root.remove(aiPart.group);
+      var idx = parts.indexOf(aiPart);
+      if(idx>=0) parts.splice(idx,1);
+      aiPart = null; aiModuleGroup = null;
+    }
+    if(variant === 'ai'){
+      aiModuleGroup = new THREE.Group();
+      var aib = box(0.22,0.06,0.18,M.aimod);
+      var chip = box(0.08,0.03,0.08,M.antenna); chip.position.y=0.045;
+      var heat = box(0.1,0.05,0.1,M.motorBell); heat.position.y=0.06;
+      aiModuleGroup.add(aib, heat, chip);
+      register(aiModuleGroup, 0.75, 0.34, 0, 0.7,0.9,0, 0.85, 'ai');
+      aiPart = parts[parts.length-1];
+    }
+  }
+
+  // ---------- callout DOM ----------
+  var callouts = {}; // key -> {ring, line, card, stackCard, part, local}
+
+  function makeCard(key){
+    var c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = '<b></b><span></span>';
+    c.querySelector('b').textContent = BLURBS[key][0];
+    c.querySelector('span').textContent = BLURBS[key][1];
+    return c;
+  }
+
+  function buildCallouts(variant){
+    // clear
+    Object.keys(callouts).forEach(function(k){
+      var co = callouts[k];
+      if(co.ring && co.ring.parentNode) co.ring.parentNode.removeChild(co.ring);
+      if(co.line && co.line.parentNode) co.line.parentNode.removeChild(co.line);
+      if(co.card && co.card.parentNode) co.card.parentNode.removeChild(co.card);
+      if(co.stackCard && co.stackCard.parentNode) co.stackCard.parentNode.removeChild(co.stackCard);
+    });
+    callouts = {};
+
+    var keys = VARIANT_CALLOUTS[variant];
+
+    // map static keys to their part + local anchor
+    var partByKey = {};
+    parts.forEach(function(p){ if(p.key) partByKey[p.key] = p; });
+
+    // side layout: split keys left / right, ordered top->bottom
+    var leftKeys = [], rightKeys = [];
+    keys.forEach(function(k,i){ (i%2===0?leftKeys:rightKeys).push(k); });
+
+    function place(list, side){
+      var n = list.length;
+      var top = 40, gap = (560 - top) / Math.max(n,1);
+      list.forEach(function(k, i){
+        var co = { key:k };
+        // resolve part + local anchor
+        var dyn = dynamicAnchors[k];
+        if(dyn){ co.part = dyn.part; co.local = dyn.local.clone(); }
+        else if(partByKey[k]){ co.part = partByKey[k]; co.local = new THREE.Vector3(0,0,0); }
+        else { co.part = parts[0]; co.local = new THREE.Vector3(0,0,0); }
+
+        co.ring = document.createElement('div');
+        co.ring.className = 'ring';
+        overlay.appendChild(co.ring);
+
+        co.line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        leaders.appendChild(co.line);
+
+        co.card = makeCard(k);
+        co.card.style.top = (top + i*gap) + 'px';
+        if(side==='left') co.card.style.left = '4px';
+        else co.card.style.right = '4px';
+        overlay.appendChild(co.card);
+        co.side = side;
+
+        // stacked (narrow) copy
+        co.stackCard = makeCard(k);
+        stack.appendChild(co.stackCard);
+
+        // hover wiring
+        function on(){ setActive(k, true); }
+        function off(){ setActive(k, false); }
+        co.card.addEventListener('mouseenter', on);
+        co.card.addEventListener('mouseleave', off);
+        co.stackCard.addEventListener('mouseenter', on);
+        co.stackCard.addEventListener('mouseleave', off);
+
+        callouts[k] = co;
+      });
+    }
+    place(leftKeys, 'left');
+    place(rightKeys, 'right');
+  }
+
+  function setActive(key, on){
+    var co = callouts[key];
+    if(!co) return;
+    co.ring.classList.toggle('active', on);
+    co.line.classList.toggle('active', on);
+    co.card.classList.toggle('active', on);
+    co.stackCard.classList.toggle('active', on);
+    // emissive boost on part meshes
+    if(co.part){
+      co.part.meshes.forEach(function(m){
+        m.material.emissive.setHex(on ? 0x5a2a10 : 0x000000);
+      });
+    }
+  }
+
+  // ---------- raycaster hover ----------
+  var raycaster = new THREE.Raycaster();
+  var pointer = new THREE.Vector2();
+  var hoverKey = null;
+  renderer.domElement.addEventListener('pointermove', function(e){
+    var r = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((e.clientX - r.left)/r.width)*2 - 1;
+    pointer.y = -((e.clientY - r.top)/r.height)*2 + 1;
+    pointerMoved = true;
+  });
+
+  function updateHover(){
+    raycaster.setFromCamera(pointer, camera);
+    var meshes = [];
+    var meshToKey = new Map();
+    parts.forEach(function(p){
+      if(!p.key) return;
+      p.meshes.forEach(function(m){ meshes.push(m); meshToKey.set(m, p.key); });
+    });
+    var hits = raycaster.intersectObjects(meshes, false);
+    var key = hits.length ? meshToKey.get(hits[0].object) : null;
+    // only keys with a callout in the current variant
+    if(key && !callouts[key]) key = null;
+    if(key !== hoverKey){
+      if(hoverKey) setActive(hoverKey, false);
+      hoverKey = key;
+      if(hoverKey) setActive(hoverKey, true);
+    }
+  }
+
+  // ---------- manual orbit ----------
+  var orbit = { theta: 0.6, phi: 1.05, radius: 6.4, targetTheta:0.6, autoRot:true };
+  var dragging = false, lastX=0, lastY=0;
+  var pointerMoved = false;
+
+  renderer.domElement.addEventListener('pointerdown', function(e){
+    dragging = true; lastX=e.clientX; lastY=e.clientY;
+    orbit.autoRot = false;
+    renderer.domElement.setPointerCapture(e.pointerId);
+  });
+  window.addEventListener('pointerup', function(){ dragging=false; });
+  renderer.domElement.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    var dx = e.clientX-lastX, dy = e.clientY-lastY;
+    lastX=e.clientX; lastY=e.clientY;
+    orbit.theta -= dx*0.008;
+    orbit.phi -= dy*0.008;
+    orbit.phi = Math.max(0.25, Math.min(Math.PI-0.25, orbit.phi));
+  });
+
+  function updateCamera(){
+    if(orbit.autoRot) orbit.theta += 0.0022;
+    var r = orbit.radius, ph = orbit.phi, th = orbit.theta;
+    camera.position.x = r*Math.sin(ph)*Math.sin(th);
+    camera.position.y = r*Math.cos(ph);
+    camera.position.z = r*Math.sin(ph)*Math.cos(th);
+    camera.lookAt(0,0,0);
+  }
+
+  // ---------- explode + animate ----------
+  var explodeTarget = parseFloat(explodeSlider.value);
+  var explodeCur = explodeTarget;
+  explodeSlider.addEventListener('input', function(){
+    explodeTarget = parseFloat(explodeSlider.value);
+  });
+
+  var tmpV = new THREE.Vector3();
+  var projV = new THREE.Vector3();
+
+  function updateExplode(){
+    explodeCur += (explodeTarget - explodeCur)*0.12;
+    parts.forEach(function(p){
+      p.group.position.x = p.base.x + p.dir.x*p.dist*explodeCur;
+      p.group.position.y = p.base.y + p.dir.y*p.dist*explodeCur;
+      p.group.position.z = p.base.z + p.dir.z*p.dist*explodeCur;
+    });
+  }
+
+  function updateCallouts(){
+    var rect = renderer.domElement.getBoundingClientRect();
+    var wrapRect = overlay.getBoundingClientRect();
+    var W = renderer.domElement.clientWidth, H = renderer.domElement.clientHeight;
+    Object.keys(callouts).forEach(function(k){
+      var co = callouts[k];
+      if(!co.part){ return; }
+      // world position of anchor
+      tmpV.copy(co.local);
+      co.part.group.updateMatrixWorld();
+      tmpV.applyMatrix4(co.part.group.matrixWorld);
+      projV.copy(tmpV).project(camera);
+      var sx = (projV.x*0.5+0.5)*W;
+      var sy = (-projV.y*0.5+0.5)*H;
+      var behind = projV.z > 1;
+      if(behind){
+        co.ring.style.display='none';
+        co.line.style.display='none';
+        return;
+      }
+      co.ring.style.display='block';
+      co.line.style.display='block';
+      co.ring.style.left = sx + 'px';
+      co.ring.style.top = sy + 'px';
+      // card anchor point (inner edge center)
+      var cardRect = co.card.getBoundingClientRect();
+      var cx, cy;
+      cy = cardRect.top - wrapRect.top + cardRect.height/2;
+      if(co.side === 'left'){
+        cx = cardRect.right - wrapRect.left;
+      } else {
+        cx = cardRect.left - wrapRect.left;
+      }
+      co.line.setAttribute('x1', cx);
+      co.line.setAttribute('y1', cy);
+      co.line.setAttribute('x2', sx);
+      co.line.setAttribute('y2', sy);
+    });
+  }
+
+  // ---------- resize ----------
+  function resize(){
+    var w = wrap.clientWidth, h = wrap.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+    leaders.setAttribute('width', w);
+    leaders.setAttribute('height', h);
+    leaders.setAttribute('viewBox', '0 0 '+w+' '+h);
+  }
+  window.addEventListener('resize', resize);
+
+  // ---------- variant switching ----------
+  function applyVariant(v){
+    buildPayload(v);
+    buildCallouts(v);
+  }
+  variantSel.addEventListener('change', function(){ applyVariant(variantSel.value); });
+
+  // ---------- main loop ----------
+  function tick(){
+    requestAnimationFrame(tick);
+    if(orbit.autoRot === false && !dragging){
+      // resume gentle auto-rotate after inactivity handled by timer below
+    }
+    updateExplode();
+    updateCamera();
+    // spin props subtly
+    propGroups.forEach(function(pg){
+      pg.group.rotation.y += pg.group.userData.spin || 0.5;
+    });
+    if(pointerMoved){ updateHover(); pointerMoved=false; }
+    updateCallouts();
+    renderer.render(scene, camera);
+  }
+
+  // resume auto-rotate a few seconds after last drag
+  var idleTimer = null;
+  renderer.domElement.addEventListener('pointerup', function(){
+    if(idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(function(){ orbit.autoRot = true; }, 3500);
+  });
+
+  // init
+  resize();
+  applyVariant('radio');
+  tick();
+
+})();
+</script>
+
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>

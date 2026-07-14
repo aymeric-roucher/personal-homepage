@@ -25,6 +25,10 @@
   .bubble { stroke: #fff; stroke-width: 1.2; cursor: pointer; transition: opacity .12s; }
   .bubble.na { fill: none !important; stroke-width: 1.6; }
   .blabel { font-size: 10.5px; fill: var(--ink-2); paint-order: stroke; stroke: rgba(255,255,255,0.85); stroke-width: 2.5px; pointer-events: none; }
+  .hub { fill: rgba(82,81,78,0.05); stroke: #52514e; stroke-width: 1.1; stroke-dasharray: 4 3; cursor: pointer; }
+  .hub:hover { fill: rgba(82,81,78,0.12); }
+  .hub-label { font-size: 9.5px; fill: #898781; text-transform: uppercase; letter-spacing: .06em;
+    paint-order: stroke; stroke: rgba(255,255,255,0.85); stroke-width: 2.5px; pointer-events: none; }
   .tooltip { position: absolute; z-index: 10; width: 320px; max-width: 92vw; background: var(--surface);
     border: 1px solid var(--ring); border-radius: 8px; box-shadow: 0 6px 24px rgba(11,11,11,0.13);
     padding: 11px 13px; font-size: 12.5px; line-height: 1.42; display: none; pointer-events: none; }
@@ -503,6 +507,18 @@ const COMPANIES = [
 const W = 960, H = 760;
 const svg = document.getElementById('map');
 const tt = document.getElementById('tt');
+const HUBS = [
+  { name: 'Munich', lat: 48.14, lon: 11.58, desc: "Europe's number-one defense-tech hub: $1.7B of VC in 2025 (43% into Helsing alone). Helsing, Quantum Systems, ARX, Alpine Eagle, Tytan, plus Stark's first plant." },
+  { name: 'Rzeszow', lat: 50.04, lon: 22.00, desc: "Poland's 'Aviation Valley' aerospace cluster and the Jasionka logistics gateway for aid into Ukraine. Dronehub's home turf, in WB Group's orbit." },
+  { name: 'Kyiv', lat: 50.45, lon: 30.52, desc: "The battle-lab: the Brave1 cluster, DOT-Chain e-Points procurement, and 500+ makers from Vyriy to The Fourth Law." },
+  { name: 'Toulouse', lat: 43.60, lon: 1.44, desc: "France's 'Aerospace Valley': Delair, Alta Ares and EOS Technologie growing in Airbus's shadow." },
+  { name: 'Paris', lat: 48.86, lon: 2.35, desc: "The DGA's orbit: Harmattan, Comand AI, Parrot and Dronavia." },
+  { name: 'Zurich', lat: 47.38, lon: 8.54, desc: "The Swiss commercial cluster: Auterion, Wingtra, Verity, Voliro and Daedalean, with Flyability and RigiTech on Lake Geneva." },
+  { name: 'Odense', lat: 55.40, lon: 10.39, desc: "UAS Denmark Test Center: 1,900 km2 of dedicated beyond-visual-line-of-sight test airspace." },
+  { name: 'Tallinn', lat: 59.44, lon: 24.75, desc: "The Baltic edge, closest to the threat: Milrem, Frankenburg, KrattWorks and Threod, with ANRA's EASA-certified traffic services in Tartu." },
+  { name: 'Swindon', lat: 51.56, lon: -1.78, desc: "The UK build-out: Europe's biggest drone test centre plus Stark's and Tekever's new factories; London-Cambridge raised $2.4B in 2025." },
+];
+
 const legendEl = document.getElementById('legend');
 const hidden = new Set();
 let pinned = null;
@@ -554,6 +570,18 @@ fetch('europe.geo.json').then(r => r.json()).then(geo => {
       d += 'Z';
     }
     gLand.appendChild(el('path', { d, class: 'country' }));
+  }
+
+  const gHubs = el('g', {}); svg.appendChild(gHubs);
+  for (const h of HUBS) {
+    const [hx, hy] = px(h.lat, h.lon);
+    const ring = el('circle', { class: 'hub', cx: hx.toFixed(1), cy: hy.toFixed(1), r: 16 });
+    gHubs.appendChild(ring);
+    const lbl = el('text', { class: 'hub-label', x: hx.toFixed(1), y: (hy + 27).toFixed(1), 'text-anchor': 'middle' });
+    lbl.textContent = h.name; gHubs.appendChild(lbl);
+    ring.addEventListener('mouseenter', (e) => { if (!pinned) showHub(h, e); });
+    ring.addEventListener('mousemove', (e) => { if (!pinned) placeTT(e); });
+    ring.addEventListener('mouseleave', () => { if (!pinned) hideTT(); });
   }
 
   const nodes = COMPANIES.map((c, i) => {
@@ -635,6 +663,10 @@ fetch('europe.geo.json').then(r => r.json()).then(geo => {
     });
     legendEl.appendChild(chip);
   }
+  const hubChip = document.createElement('span');
+  hubChip.className = 'chip';
+  hubChip.innerHTML = `<svg viewBox="0 0 12 12" style="width:12px;height:12px;flex:none;display:inline-block"><circle cx="6" cy="6" r="4.6" fill="none" stroke="#52514e" stroke-width="1.1" stroke-dasharray="3 2"/></svg>Ecosystem hubs`;
+  legendEl.appendChild(hubChip);
   const hint = document.createElement('span');
   hint.className = 'hint';
   hint.textContent = 'startups & scaleups only; legacy primes appear as buyers inside the cards';
@@ -675,6 +707,14 @@ function showTT(n, e) {
     ${c.wins && c.wins.length ? `<ul class="tt-wins">${c.wins.map(w => `<li>${w}</li>`).join('')}</ul>` : ''}
     ${c.caveat ? `<div class="tt-caveat">⚠ ${c.caveat}</div>` : ''}
     ${c.detail ? `<details class="tt-detail"><summary>detail</summary><p>${c.detail}</p></details>` : ''}`;
+  tt.style.display = 'block';
+  tt.classList.remove('pinned');
+  placeTT(e);
+}
+function showHub(h, e) {
+  tt.innerHTML = `
+    <div class="tt-name">${h.name}<span class="tt-flag">ecosystem hub</span></div>
+    <div class="tt-desc">${h.desc}</div>`;
   tt.style.display = 'block';
   tt.classList.remove('pinned');
   placeTT(e);

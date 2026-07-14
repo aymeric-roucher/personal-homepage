@@ -96,7 +96,7 @@
     border-radius: 6px;
     opacity: 0;
     transition: opacity .1s ease;
-    white-space: nowrap;
+    max-width: 320px;
     z-index: 10;
   }
   html.dark .tip { color: #0b0b0b; }
@@ -113,32 +113,32 @@
     <span class="chip"><span class="swatch sw-terrestrial"></span>Terrestrial</span>
   </div>
   <svg id="chart" viewBox="0 0 760 680" role="img" aria-label="China's share of the drone supply chain by subsystem"></svg>
-  <p class="caption">Share of each subsystem sourced from or dependent on China. The grip is domain-specific: aerial and energy are China's, while naval and terrestrial subsystems invert to Western strength. Sources: RUSI (Nov 2025) and market-structure reports. Compute is a separate case: only ~5-10% China, but fabricated almost entirely in Taiwan and South Korea.</p>
+  <p class="caption">Share of each subsystem sourced from or dependent on China; hover a bar for the story behind it. The grip is domain-specific: the aerial stack is China's (which is why a European FPV costs €20,000 against €200 for the Chinese equivalent), while naval and terrestrial subsystems invert to Western strength. Compute is a separate case: only ~5-10% China, but Western-designed chips are etched almost entirely at TSMC and Samsung, a strait away. Sources: RUSI (Nov 2025) and market-structure reports.</p>
 </div>
 <div class="tip" id="tip"></div>
 
 <script>
 (function () {
   const data = [
-    { label: "LiPo pouch cells", value: 95, domain: "Energy" },
-    { label: "NdFeB permanent magnets", value: 90, domain: "Energy" },
-    { label: "Aerial BLDC motors", value: 85, domain: "Aerial" },
-    { label: "Aerial speed controllers (ESC)", value: 80, domain: "Aerial" },
-    { label: "Propellers", value: 75, domain: "Aerial" },
-    { label: "Flight-controller boards", value: 75, domain: "Aerial" },
-    { label: "Germanium IR optics", value: 70, domain: "Perception" },
-    { label: "RF datalink modules", value: 60, domain: "Aerial" },
-    { label: "Thermal / IR cores", value: 45, domain: "Perception" },
-    { label: "Aquatic thrusters", value: 40, domain: "Naval" },
-    { label: "LiDAR", value: 40, domain: "Perception" },
-    { label: "Terrestrial drive motors", value: 35, domain: "Terrestrial" },
-    { label: "Flight-control software", value: 30, domain: "Terrestrial" },
-    { label: "Terrestrial actuators / hydraulics", value: 30, domain: "Terrestrial" },
-    { label: "GNSS receivers", value: 25, domain: "Terrestrial" },
-    { label: "Pressure-tolerant hulls", value: 25, domain: "Naval" },
-    { label: "CMOS image sensors", value: 15, domain: "Perception" },
-    { label: "Sonar and acoustic modems", value: 15, domain: "Naval" },
-    { label: "Next-gen (Li-S) batteries", value: 15, domain: "Energy" }
+    { label: "LiPo pouch cells", value: 95, domain: "Energy", note: "Over 90% of drone-grade pouch cells come from Chinese lines like Dongguan Poweramp (a TDK subsidiary). Beijing weaponised this in 2024 by ordering the supplier to cut off Skydio over its Taiwan sales, and the West still has no pouch-cell line at scale: its 150-200 GWh of capacity makes EV cells, the wrong format for aerial drones." },
+    { label: "NdFeB permanent magnets", value: 90, domain: "Energy", note: "China makes ~90-94% of the world's permanent magnets and holds a near-monopoly on the heavy rare earths (dysprosium, terbium) inside them. This is the genuinely blocked link: the Energy Fuels / Vacuumschmelze mine-to-magnet chain will not deliver at scale before 2028-2030, and EV and wind-turbine demand keeps NATO in structural deficit." },
+    { label: "Aerial BLDC motors", value: 85, domain: "Aerial", note: "Brushless out-runner motors are ~85% Chinese: the copper winding, stator lamination and magnet insertion are Shenzhen-perfected processes, and every motor inherits the NdFeB magnet chokehold. T-Motor's parts even turned up inside Taiwan's 'sovereign' Jackal drone." },
+    { label: "Aerial speed controllers (ESC)", value: 80, domain: "Aerial", note: "Hobbywing alone holds ~78% of the brushless-ESC market. The MOSFETs and microcontrollers inside are often Western-designed, but the board assembly and the firmware are done in China, which is where the backdoor and cut-off risks live." },
+    { label: "Propellers", value: 75, domain: "Aerial", note: "About three quarters of propellers, including the carbon-fibre ones that matter for combat drones, are moulded and balanced in Asian plants; Gemfan is the default FPV prop worldwide." },
+    { label: "Flight-controller boards", value: 75, domain: "Aerial", note: "The chips are Western and Japanese (STMicroelectronics' STM32 has led general-purpose microcontrollers for five years), but ~75% of finished flight-controller boards are assembled in China with firmware flashed there. Croatia's Orqa sells the NDAA-compliant alternative." },
+    { label: "Germanium IR optics", value: 70, domain: "Perception", note: "Thermal lenses need germanium, and China refines ~70% of it and put the metalloid under export licence in 2023, choking the optics supply of every Western thermal-camera maker downstream." },
+    { label: "RF datalink modules", value: 60, domain: "Aerial", note: "The radio hardware is ~60% Chinese, but the protocol layer flipped open-source: ExpressLRS firmware, which Ukraine modified to widen frequency bands against Russian jamming and to stop DJI AeroScope from tracking its pilots." },
+    { label: "Thermal / IR cores", value: 45, domain: "Perception", note: "The perception bleed: China's InfiRay and HikMicro abandoned legacy vanadium-oxide for cheap amorphous-silicon arrays, cut module prices by over 60%, and took the commercial thermal market from FLIR. Western cooled cores (Lynred, Teledyne FLIR) survive at the defence-grade top end." },
+    { label: "Aquatic thrusters", value: 40, domain: "Naval", note: "Marine propulsion leans West (Denmark's Copenhagen Subsea builds silent rim-driven thrusters nobody else can), but electric thrusters still carry NdFeB magnets, so the magnet chokehold reaches underwater too." },
+    { label: "LiDAR", value: 40, domain: "Perception", note: "A contested battleground: China's Hesai rides automotive-ADAS volume (and is a Pentagon-designated Chinese military company that NVIDIA nonetheless partners with), squeezing Western pioneers like Luminar and Ouster on price." },
+    { label: "Terrestrial drive motors", value: 35, domain: "Terrestrial", note: "High-torque drive motors and transmissions for ground robots ride the existing US and European heavy-machinery industrial base, one of the few links where the West starts from strength." },
+    { label: "Flight-control software", value: 30, domain: "Aerial", note: "The one aerial link already at parity: the Pixhawk/PX4 open-source stack runs most Western drones, and Ukraine hardened it under fire. Software is the layer China's manufacturing scale cannot capture." },
+    { label: "Terrestrial actuators / hydraulics", value: 30, domain: "Terrestrial", note: "Precision actuators and hydraulics come out of the US and European industrial-automation heritage; China's ~30% share gives it no leverage here." },
+    { label: "GNSS receivers", value: 25, domain: "Terrestrial", note: "One of the most resilient Western nodes: Qualcomm (~21%), Broadcom (~17%), Switzerland's u-blox and Taiwan's MediaTek dominate a $3.3B market, and multi-constellation receivers (GPS, Galileo, GLONASS, BeiDou) are inherently harder to spoof or jam." },
+    { label: "Pressure-tolerant hulls", value: 25, domain: "Naval", note: "Deep pressure hulls and marine seals are Western defence-marine engineering (US ~40%, EU ~30% of the market); decades of submarine industrial base back it up." },
+    { label: "CMOS image sensors", value: 15, domain: "Perception", note: "Daylight eyes are allied-secure: Sony holds ~43% and Samsung ~20% of the image-sensor market, with design and fabrication in Japan and Korea. The contrast with thermal is the point: visible-light perception is safe, heat vision is not." },
+    { label: "Sonar and acoustic modems", value: 15, domain: "Naval", note: "A Western fortress: Teledyne, L3Harris, Norway's Kongsberg and France's Thales hold the sonar and underwater-acoustic-modem market on decades of transducer and multistatic expertise, and underwater warfare cannot be fought without them, since radio does not propagate in water." },
+    { label: "Next-gen (Li-S) batteries", value: 15, domain: "Energy", note: "The potential leapfrog over the LiPo chokehold: Lyten's lithium-sulfur cells, scaling on ex-Northvolt plants, use no nickel, cobalt, manganese or graphite at all, sidestepping China's minerals rather than competing inside them." }
   ];
 
   const domainClass = {
@@ -221,12 +221,12 @@
 
     // tooltip
     const showTip = evt => {
-      tip.textContent = d.label + ": " + d.value + "% China (" + d.domain + ")";
+      tip.textContent = d.label + ": " + d.value + "% China (" + d.domain + ")" + (d.note ? ". " + d.note : "");
       tip.style.opacity = "1";
       moveTip(evt);
     };
     const moveTip = evt => {
-      tip.style.left = (evt.clientX + 12) + "px";
+      tip.style.left = Math.min(evt.clientX + 12, window.innerWidth - tip.offsetWidth - 8) + "px";
       tip.style.top = (evt.clientY - 10) + "px";
     };
     const hideTip = () => { tip.style.opacity = "0"; };
