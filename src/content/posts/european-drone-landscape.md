@@ -16,7 +16,7 @@ In 2025, European defense, security and resilience startups raised a record \$8.
 
 <iframe src="/assets/images/european-drone-landscape/map-europe.html" height="560" title="Interactive map of European drone startups"></iframe>
 
-The dashed rings mark the ecosystem's physical centers, hover them: Munich (Europe's number-one hub, \$1.7B of 2025 VC), Kyiv's Brave1 battle-lab, Poland's "Aviation Valley" around Rzeszów with its Jasionka gateway into Ukraine, Toulouse's Aerospace Valley, the Paris DGA orbit, the Swiss commercial cluster around Zurich, Odense's 1,900 km² test airspace, the Baltic edge at Tallinn-Tartu, and the UK's build-out at Swindon.
+The dashed rings mark the ecosystem's physical centers, hover them: Munich (Europe's number-one hub, \$1.7B of 2025 VC), Kyiv's Brave1 battle-lab, Poland's "Aviation Valley" around Rzeszów with its Jasionka gateway into Ukraine, Toulouse's Aerospace Valley, the Paris DGA (France's defence-procurement agency) orbit, the Swiss commercial cluster around Zurich, Odense's 1,900 km² test airspace, the Baltic edge at Tallinn-Tartu, and the UK's build-out at Swindon.
 
 I've kept the legacy primes off the map. Airbus, Thales, Leonardo, Saab, Rheinmetall, BAE, and older specialists like France's veteran [Parrot (founded 1994)](https://en.wikipedia.org/wiki/Parrot_SA) or Poland's [WB Group (1997)](https://en.wikipedia.org/wiki/WB_Group), matter enormously to this story, but probably not as innovators.
 Why? 10-year V-shaped development process, and the slow ossification of decade-old dominant positions into narrow-minded despisal of innovation.
@@ -30,8 +30,8 @@ A distinct tier has emerged that the venture people call "neo-primes": verticall
 
 | Company | HQ, founded | Valuation | Products | Traction |
 |---|---|---|---|---|
-| [Helsing](https://en.wikipedia.org/wiki/Helsing_(company)) | Munich, 2021 | ~€1.37B raised; [\$1.2B round at ~\$18B](https://techcrunch.com/2026/05/11/daniel-ek-backed-defense-tech-helsing-to-raise-1-2b-at-18b-valuation/) reported, unconfirmed | Altra recce-strike software, Cirra EW, [HX-2](https://helsing.ai/hx-2) 12 kg loitering munition, SG-1 Fathom glider, CA-1 Europa jet (2027) | [€268M Bundeswehr HX-2 contract](https://dronexl.co/2026/02/25/germany-helsing-stark-kamikaze-drone-deal/); [Centaur autopilot flew a Saab Gripen E](https://www.technologyreview.com/2026/01/06/1129737/autonomous-warfare-europe-drones-defense-automated-kill-chains/) |
-| Quantum Systems | Gilching (Munich), 2015 | ~\$8B after a [\$1.2B Series D](https://www.cnbc.com/2026/07/02/autonomous-defense-startup-quantum-systems.html) (Blackstone, Airbus, Advent) | Vector electric-VTOL ISR | ~€300M 2025 revenue, [reportedly profitable](https://thenextweb.com/news/quantum-systems-1-2bn-series-d-8bn-valuation); claims 19,000+ Ukraine missions in 2025 |
+| [Helsing](https://en.wikipedia.org/wiki/Helsing_(company)) | Munich, 2021 | ~€1.37B raised; [\$1.2B round at ~\$18B](https://techcrunch.com/2026/05/11/daniel-ek-backed-defense-tech-helsing-to-raise-1-2b-at-18b-valuation/) reported, unconfirmed | Altra recce-strike software, Cirra electronic-warfare, [HX-2](https://helsing.ai/hx-2) 12 kg loitering munition, SG-1 Fathom glider, CA-1 Europa jet (2027) | [€268M Bundeswehr HX-2 contract](https://dronexl.co/2026/02/25/germany-helsing-stark-kamikaze-drone-deal/); [Centaur autopilot flew a Saab Gripen E](https://www.technologyreview.com/2026/01/06/1129737/autonomous-warfare-europe-drones-defense-automated-kill-chains/) |
+| Quantum Systems | Gilching (Munich), 2015 | ~\$8B after a [\$1.2B Series D](https://www.cnbc.com/2026/07/02/autonomous-defense-startup-quantum-systems.html) (Blackstone, Airbus, Advent) | Vector electric-VTOL (vertical take-off and landing) ISR (intelligence, surveillance and reconnaissance) | ~€300M 2025 revenue, [reportedly profitable](https://thenextweb.com/news/quantum-systems-1-2bn-series-d-8bn-valuation); claims 19,000+ Ukraine missions in 2025 |
 | Stark | Berlin, 2024 | [>€3.5B](https://thenextweb.com/news/stark-defence-500-million-sequoia-founders-fund-3-5-billion-valuation) | OWE-V Virtus loitering munition | €268M Bundeswehr contract |
 | Tekever | Lisbon, 2001 | [>£1B](https://tech.eu/2025/05/06/tekever-becomes-the-latest-unicorn-in-europes-defencetech-industry/) | AR3 maritime-ISR fixed-wing | 10,000+ combat hours over Ukraine; [RAF StormShroud](https://www.raf.mod.uk/news/articles/stormshroud-arrival-marks-the-future-of-uk-air-combat-power/) (~£19M order in a £400M program) |
 | Harmattan AI | Paris, 2024 | [\$1.4B after a \$200M round](https://sifted.eu/articles/harmattan-ai-200m-series-b-unicorn) anchored by Dassault | Sonora micro-drone, strike/FPV | DGA orders: [1,000 combat drones (2025)](https://www.uasvision.com/2025/07/09/france-orders-1000-ai-enabled-combat-drones/), [5,000 Sonora (2026)](https://www.defense.gouv.fr/dga/actualites/dga-commande-5-000-drones-du-combattant-delco-larmee-terre), France's largest single-type buys |
@@ -93,16 +93,16 @@ Of the ~\$3.86B in global drone-specific funding in 2025, roughly 77% went to du
 - **Voliro**: [contact-inspection drones](https://voliro.com/blog/best-inspection-drones/) that press ultrasonic probes against pipelines
 - **Dronehub**: [drone-in-a-box rail inspection](https://dronehub.ai/blog/top-european-drone-companies) across Deutsche Bahn's 33,000 km network
 
-These companies are worth watching for a non-obvious reason: they solved GPS-free autonomy and precision perception for commercial reasons years before the military needed it, and that expertise (Verity's SLAM, Spleenlab's certified vision, now folded into Quantum Systems) is exactly what the defense side is now scrambling to buy.
+These companies are worth watching for a non-obvious reason: they solved GPS-free autonomy and precision perception for commercial reasons years before the military needed it, and that expertise (Verity's SLAM (simultaneous localization and mapping), Spleenlab's certified vision, now folded into Quantum Systems) is exactly what the defense side is now scrambling to buy.
 
-On regulation : the one place regulation genuinely shapes a product is: EASA's SORA regime made airborne safety hardware a prerequisite for flying over people. That single rule created a real business for France's [Dronavia](https://www.dronavia.com/flight-termination-system-fts/), which sells the parachutes and flight-termination systems that let a commercial drone clear certification. The machinery keeps tightening: SORA 2.5 pushed many operations into a higher assurance class requiring EASA-assessed design verification, the Light UAS Operator Certificate lets mature operators self-authorize flights EU-wide, and the U-space traffic-management framework is pivoting from strategic to tactical deconfliction.[^programs] The traffic-management software layer itself turned out to be a terrible business: the UK flagship Altitude Angel went insolvent in October 2025 (its IP bought by Indra), leaving Unifly, Droniq and ANRA, holder of the first EASA traffic-service certificate, as the survivors.[^programs] (The one funding mechanism with teeth is the EU's [SAFE instrument's 35%-cap](https://ec.europa.eu/commission/presscorner/detail/en/ip_26_211) on non-European component content, precisely because it pushes buyers toward the European supply chain the components section is about.)
+On regulation : the one place regulation genuinely shapes a product is: EASA's SORA (Specific Operations Risk Assessment) regime made airborne safety hardware a prerequisite for flying over people. That single rule created a real business for France's [Dronavia](https://www.dronavia.com/flight-termination-system-fts/), which sells the parachutes and flight-termination systems that let a commercial drone clear certification. The machinery keeps tightening: SORA 2.5 pushed many operations into a higher assurance class requiring EASA-assessed design verification, the Light UAS Operator Certificate lets mature operators self-authorize flights EU-wide, and the U-space traffic-management framework is pivoting from strategic to tactical deconfliction.[^programs] The traffic-management software layer itself turned out to be a terrible business: the UK flagship Altitude Angel went insolvent in October 2025 (its IP bought by Indra), leaving Unifly, Droniq and ANRA, holder of the first EASA traffic-service certificate, as the survivors.[^programs] (The one funding mechanism with teeth is the EU's [SAFE instrument's 35%-cap](https://ec.europa.eu/commission/presscorner/detail/en/ip_26_211) on non-European component content, precisely because it pushes buyers toward the European supply chain the components section is about.)
 
 ---
 
 ## 2. The other battlefields, counter-drone, ground and sea
 
 
-### The kill zone: a lethal belt kilometres deep
+### A kill zone kilometres deep
 
 Artillery and air strikes alway deepened the front; what is new is a continuous, precise drone belt where almost anything that moves in daylight is seen and struck within minutes, and it keeps deepening.[^killzone]
 
@@ -134,8 +134,8 @@ Most are chasing the same sub-\$10k price point Ukraine's cheapest interceptors 
 | [Nordic Air Defence](https://defence-industry.eu/nordic-air-defence-unveils-kreuger-100-low-cost-missile-to-counter-growing-drone-threats/) | Sweden | Interceptor | Chasing the sub-\$10k point |
 | Vyriy ([ZIRKA](https://euromaidanpress.com/2026/07/01/russias-shaheds-cost-10000-each-ukraine-just-unveiled-drone-that-kills-them-for-2000/)) | Ukraine | Interceptor | ~\$2,000 |
 | Dark River ([APUS-1](https://thedefender.media/en/2026/07/apus-interceptor/)) | Ukraine | Interceptor | ~\$3,500 |
-| [MARSS](https://eos-aus.com/news/acquisition-of-marss-counter-drone-c2-system-provider/) (NiDAR) | Monaco | Sensor-fusion C2 | Acquired by Australia's EOS |
-| DroneShield | Australia | RF detection | [2025 revenue +276%](https://za.investing.com/news/company-news/droneshield-fy2025-slides-revenue-surges-276-pipeline-hits-23bn-93CH-4132962) to ~A\$217M |
+| [MARSS](https://eos-aus.com/news/acquisition-of-marss-counter-drone-c2-system-provider/) (NiDAR) | Monaco | Sensor-fusion command and control (C2) | Acquired by Australia's EOS |
+| DroneShield | Australia | radio-frequency (RF) detection | [2025 revenue +276%](https://za.investing.com/news/company-news/droneshield-fy2025-slides-revenue-surges-276-pipeline-hits-23bn-93CH-4132962) to ~A\$217M |
 | [MyDefence](https://defence-industry.eu/european-counter-drone-solutions-provider-mydefence-lands-major-contract-with-u-s-army/) | Denmark | RF detection | US Army contract |
 | [Sensofusion](https://www.unmannedairspace.info/counter-uas-systems-and-policies/sensofusion-launches-upgraded-version-airfence-c-uas/) | Finland | RF detection | Radio-frequency detection + jamming |
 
@@ -154,13 +154,13 @@ Europe's own airspace exposed how far behind the defence is. Between late 2024 a
 - Estonia's **[Milrem Robotics](https://breakingdefense.com/2023/02/emirati-conglomerate-edge-grabs-majority-stake-in-estonian-robotics-firm/)** fields the THeMIS, the most widely deployed unmanned ground vehicle in Europe (150+ in Ukraine, mostly for casualty evacuation), and is now pushing the 12-tonne, 30mm-cannon HAVOC on the back of a [60-vehicle order](https://defense-update.com/20240125_ugvs.html) from its UAE owner EDGE.
 - Germany's **[ARX Robotics](https://www.eu-startups.com/2025/07/german-defensetech-arx-robotics-reinforces-europes-battlefield-edge-with-e42-million-for-tactical-ugvs/)** is the venture-backed challenger (Gereon vehicles, Mithra OS, a JV with Ukraine's Roboneers)
 - while the prime Rheinmetall pushes its [Mission Master line](https://www.uncrewed-systems.com/how-intelligent-ugvs-are-being-used-to-rescue-casualties-in-dangerous-environments/)
-- the US Army runs its own competitions ([Textron's Ripsaw for the RCV](https://www.defensenews.com/land/2023/09/21/army-picks-four-to-build-robotic-combat-vehicle-prototypes/), [HDT and American Rheinmetall for the S-MET](https://fw-mag.com/shownews/195/the-us-army-picks-rheinmetall-and-hdt-for-the-s-met-increment-ii-robotic-cargo-vehicle) logistics mule)
+- the US Army runs its own competitions ([Textron's Ripsaw for the Robotic Combat Vehicle](https://www.defensenews.com/land/2023/09/21/army-picks-four-to-build-robotic-combat-vehicle-prototypes/), [HDT and American Rheinmetall for the S-MET](https://fw-mag.com/shownews/195/the-us-army-picks-rheinmetall-and-hdt-for-the-s-met-increment-ii-robotic-cargo-vehicle) logistics mule)
 - China's Norinco fields armed tracked robots and DeepSeek-driven robot dogs.[^ground]
 
 The theme is the same as in the air: the value is in the operating system, not the chassis.
 
 The fastest-moving corner is unglamorous: logistics.
-Because the kill zone makes a manned supply run near-suicidal, Ukraine's ground-robot market hit \$252M in 2025 (61% of it logistics platforms), the defence ministry ordered 25,000-plus unmanned ground vehicles in the first half of 2026, and UGVs flew more than 50,000 resupply and casualty-evacuation missions between January and May.[^ugv] A robot is attritable in a way a stretcher team is not: one [battlefield-medicine study](https://militaryhealth.bmj.com/content/early/2026/01/26/military-2025-003188) modelled a 53% UGV loss rate on evacuation runs but an 81% success rate at extracting the casualty when the run was attempted.
+Because the kill zone makes a manned supply run near-suicidal, Ukraine's ground-robot market hit \$252M in 2025 (61% of it logistics platforms), the defence ministry ordered 25,000-plus unmanned ground vehicles (UGVs) in the first half of 2026, and UGVs flew more than 50,000 resupply and casualty-evacuation missions between January and May.[^ugv] A robot is attritable in a way a stretcher team is not: one [battlefield-medicine study](https://militaryhealth.bmj.com/content/early/2026/01/26/military-2025-003188) modelled a 53% UGV loss rate on evacuation runs but an 81% success rate at extracting the casualty when the run was attempted.
 
 | Platform (maker) | Mobility and payload | Role |
 |---|---|---|
@@ -171,7 +171,7 @@ Because the kill zone makes a manned supply run near-suicidal, Ukraine's ground-
 
 ### Naval and undersea autonomy
 
-At sea the consolidation is spectacular, and the combat proof is Ukrainian. In the Black Sea, cheap uncrewed surface vessels, the military-intelligence **Magura** and the security service's **Sea Baby**, did what Ukraine's non-existent navy could not, forcing the Russian fleet out of the western Black Sea. The asymmetry peaked in May 2025 when a swarm of Magura V7s armed with Sidewinder missiles [shot down two Russian Su-30SM fighters](https://www.opex360.com/2025/05/04/un-drone-naval-ukrainien-aurait-abattu-au-moins-un-avion-de-combat-russe-su-30/) (~\$50M each) from a ~\$250k boat; the [latest Sea Baby](https://www.janes.com/defence-intelligence-insights/defence-news/sea/ukraine-unveils-new-generation-of-sea-baby-usvs) carries 2,000 kg, mounts Grad rocket tubes and a gyro-stabilised gun that downed an Mi-8 helicopter, and now harasses the shadow-fleet tankers.[^blacksea] That lesson is now being capitalized, and the primes are racing to own the tier.
+At sea the consolidation is spectacular, and the combat proof is Ukrainian. In the Black Sea, cheap uncrewed surface vessels (USVs), the military-intelligence **Magura** and the security service's **Sea Baby**, did what Ukraine's non-existent navy could not, forcing the Russian fleet out of the western Black Sea. The asymmetry peaked in May 2025 when a swarm of Magura V7s armed with Sidewinder missiles [shot down two Russian Su-30SM fighters](https://www.opex360.com/2025/05/04/un-drone-naval-ukrainien-aurait-abattu-au-moins-un-avion-de-combat-russe-su-30/) (~\$50M each) from a ~\$250k boat; the [latest Sea Baby](https://www.janes.com/defence-intelligence-insights/defence-news/sea/ukraine-unveils-new-generation-of-sea-baby-usvs) carries 2,000 kg, mounts Grad rocket tubes and a gyro-stabilised gun that downed an Mi-8 helicopter, and now harasses the shadow-fleet tankers.[^blacksea] That lesson is now being capitalized, and the primes are racing to own the tier.
 
 | Company | Country | Focus | Notable |
 |---|---|---|---|
@@ -201,7 +201,7 @@ The domain is splitting into two families: near-silent buoyancy gliders for pers
 
 ## 3. The technical frontiers
 
-### Seeing in the dark: twilight, and the all-weather race
+### Seeing through twilight and bad weather
 
 By 2026 the fight is no longer day-versus-night but all-weather: cheap sensors everywhere have stripped away the cover darkness used to give, so the frontier has moved to degraded visual environments (fog, smoke, rain, dust) and to the one physical gap that no amount of light can fix. Twilight is that gap, and it comes down to a drone carrying one of two kinds of camera, both of which fail at dusk.
 
@@ -209,12 +209,12 @@ A daylight electro-optical camera works on reflected light, so as the sun drops 
 
 The hardware answer is a better sensor, and the choice splits on the SWaP-C budget (size, weight, power, cost):
 
-- **Uncooled microbolometers** (vanadium-oxide or amorphous-silicon, ~30-50 mK sensitivity) are light and sip power, which is why they end up on small drones, but they are the ones that go blind at crossover.
-- **Cooled mid-wave infrared detectors** carry a cryogenic cooler, resolve a fraction of a degree at kilometres, and defeat crossover outright, but the cooler is heavy and power-hungry, so it rides only on large MALE drones.
+- **Uncooled microbolometers** (vanadium-oxide or amorphous-silicon, ~30-50 mK (millikelvin) sensitivity) are light and sip power, which is why they end up on small drones, but they are the ones that go blind at crossover.
+- **Cooled mid-wave infrared detectors** carry a cryogenic cooler, resolve a fraction of a degree at kilometres, and defeat crossover outright, but the cooler is heavy and power-hungry, so it rides only on large medium-altitude long-endurance (MALE) drones.
 
 This is one of the few genuinely European strong points on the whole board: France's **Lynred** (spin-off from Sofradir in Palaiseau) is a world leader in exactly these cooled infrared detectors, alongside America's Teledyne FLIR. But the thermal core is itself a supply-chain fault line: the Western benchmarks (FLIR's Boson+ at ~20 mK, Lynred's) are export-controlled and expensive, while China's InfiRay ships a 40 mK, export-free core for a fraction of the price, which is exactly why it turns up on cheap attritable FPV kamikazes.[^lynred]
 
-The cheaper answer, and the one the front actually runs on, is to stack sensors and fix it in software. Skydio's X10 pairs an RGB camera with a [Teledyne FLIR Boson+ thermal core](https://www.skydio.com/x10/faqs) and runs a YOLO-class vision model that fuses the two streams, aligning them for parallax and pulling a human silhouette or an engine's residual heat out of a scene where either sensor alone would fail. Ukraine, meanwhile, is closing the hole the way it closes everything, cheaply: domestic firms now mass-produce compact FPV thermal cameras (Odd Systems' Kurbas-256 has been quoted around \$150 at volume), and low-cost thermal interceptors are reported hitting ~68% night kill rates.[^twilight] Better low-light silicon fills the twilight band specifically: Sony's STARVIS 2 back-illuminated CMOS sees down to ~0.005 lux (starlight) with ~2.5x the near-infrared sensitivity of the prior generation, exactly the band thermal handles worst.[^starvis]
+The cheaper answer, and the one the front actually runs on, is to stack sensors and fix it in software. Skydio's X10 pairs an RGB camera with a [Teledyne FLIR Boson+ thermal core](https://www.skydio.com/x10/faqs) and runs a YOLO-class vision model that fuses the two streams, aligning them for parallax and pulling a human silhouette or an engine's residual heat out of a scene where either sensor alone would fail. Ukraine, meanwhile, is closing the hole the way it closes everything, cheaply: domestic firms now mass-produce compact FPV thermal cameras (Odd Systems' Kurbas-256 has been quoted around \$150 at volume), and low-cost thermal interceptors are reported hitting ~68% night kill rates.[^twilight] Better low-light silicon fills the twilight band specifically: Sony's STARVIS 2 back-illuminated CMOS (complementary metal-oxide semiconductor) sees down to ~0.005 lux (starlight) with ~2.5x the near-infrared sensitivity of the prior generation, exactly the band thermal handles worst.[^starvis]
 
 Beyond the visible and thermal bands, the sensor stack is widening.[^sensing] Short-wave infrared (SWIR) punches through fog, smoke and haze that blind both other cameras; event cameras report only the pixels that change, at microsecond latency, ideal for catching a fast interceptor or a laser designator; and acoustic arrays (Ukraine's Sky Fortress and Zvook) simply listen for a Shahed's engine. The democratization is the striking part: Ukraine's Odd Systems now sells a thermal FPV with an integrated terminal-guidance module (its Lupynis-10-TFL-1) for under \$1,000, putting all-hours precision on an attritable airframe. The lesson for Europe's expensive ISR platforms is uncomfortable: they tend to assume one excellent sensor, when the front rewards redundant, disposable, all-hours coverage, and on that measure the side that currently holds the night is the one making thermal cheap, not the one making it perfect.
 
@@ -225,7 +225,7 @@ In this war, the radio spectrum is heavily jammed. Russian electronic warfare ja
 - **Knowing where you are without GPS.** The naive methods drift. Optical flow and visual-inertial odometry track motion by watching the ground and fusing it with the inertial unit, but with no "loop closure" the error accumulates over kilometres of unfamiliar territory, and full SLAM's memory and compute blow up with distance, so neither survives a long ingress on a tiny processor. The state of the art is **absolute visual geolocalization**: align the live camera view against a satellite map pre-loaded into the drone, with a neural net trained to ignore lighting, season and even the switch to an infrared camera, and read off a position good to ~20 metres with no GPS at all. Ukraine's **Twist Robotics** (its [OSCAR module](https://www.pravda.com.ua/eng/news/2026/01/28/8018266/), refined over ~500,000 km of flights) and the US firm **Oksi** ([OMNInav](https://oksi.ai/omninav-gps-denied-navigation/)) do exactly this; Greece's **Delian Alliance** (founded by Dimitrios Kottas, an ex-Apple Special Projects engineering manager who moved home to Athens) built the same idea into a navigation module ([Osiris](https://united24media.com/war-in-ukraine/ukraine-tests-tomahawk-style-drone-navigation-module-across-3000-kilometers-of-trial-flights-19617)) it says has logged 3,000+ km over Ukraine at under 20 m error. This is also the "GPS-denied visual navigation" that made Zurich's **Daedalean** [worth CHF 180M](https://www.startupticker.ch/en/news/destinus-and-daedalean-sign-chf-180-million-acquisition-deal) to Destinus, and that Quantum Systems builds into the Vector.
 - **Hitting without guidance.** AI terminal guidance locks onto the target visually, then flies the last stretch autonomously. The drone can be jammed completely in the final seconds and still connect. Reconnaissance is going the same way, Ukraine's [Saker Scout](https://www.forbes.com/sites/davidhambling/2023/10/17/ukraines-ai-drones-seek-and-attack-russian-forces-without-human-oversight/) reportedly classifies dozens of types of Russian armour on its own and feeds coordinates straight into the DELTA command system.
 - Ukraine is good on the point above.
-Ukraine's **[The Fourth Law](https://thefourthlaw.ai/blog/vyriy-pro-10-drones-with-terminal-guidance-system-tfl-1-now-available-on-dot-chain-by-the-defense-procurement-agency-and-brava1-market-with-e-points/)** and **Vyriy** mass-produce a machine-vision terminal-guidance module, [TFL-1](https://www.kyivpost.com/post/60152), that takes over the final 400 to 500 metres and is immune to jamming once locked. A Vyriy drone with TFL-1 costs about \$448, only ~10% more than a dumb FPV, and reporting describes strike success [jumping from ~20% to ~80%](https://thedefensepost.com/2025/11/19/ai-upgrade-ukrainian-drones/) after fitting AI vision; the same logic drives the cheap autonomous interceptors now hunting Shaheds. The neo-primes sell the premium version of the same idea, Auterion's [Skynode strike kit](https://dronelife.com/2025/07/29/auterion-wins-50m-pentagon-contract-to-deliver-33000-ai%E2%80%91driven-drone-strike-kits-to-ukraine/) tracks moving targets out to a kilometre, Helsing's HX-2 does onboard AI targeting, Stark's Virtus pairs GNSS-denied navigation with visual terminal guidance, but the lesson from the front is that the cheap version wins. Autonomy here is not a luxury; it is the counter to electronic warfare, and the cheapest adequate autonomy beats the most sophisticated.
+Ukraine's **[The Fourth Law](https://thefourthlaw.ai/blog/vyriy-pro-10-drones-with-terminal-guidance-system-tfl-1-now-available-on-dot-chain-by-the-defense-procurement-agency-and-brava1-market-with-e-points/)** and **Vyriy** mass-produce a machine-vision terminal-guidance module, [TFL-1](https://www.kyivpost.com/post/60152), that takes over the final 400 to 500 metres and is immune to jamming once locked. A Vyriy drone with TFL-1 costs about \$448, only ~10% more than a dumb FPV, and reporting describes strike success [jumping from ~20% to ~80%](https://thedefensepost.com/2025/11/19/ai-upgrade-ukrainian-drones/) after fitting AI vision; the same logic drives the cheap autonomous interceptors now hunting Shaheds. The neo-primes sell the premium version of the same idea, Auterion's [Skynode strike kit](https://dronelife.com/2025/07/29/auterion-wins-50m-pentagon-contract-to-deliver-33000-ai%E2%80%91driven-drone-strike-kits-to-ukraine/) tracks moving targets out to a kilometre, Helsing's HX-2 does onboard AI targeting, Stark's Virtus pairs GNSS (global navigation satellite system)-denied navigation with visual terminal guidance, but the lesson from the front is that the cheap version wins. Autonomy here is not a luxury; it is the counter to electronic warfare, and the cheapest adequate autonomy beats the most sophisticated.
 
 Caveat: AI vision is still limited: front-line reports say it works beautifully on flat open terrain but struggles to discriminate targets in forests, hills and urban rubble, and analog FPV cameras lack the resolution to hold a lock past ~500 m (plus the enemy actively fights this vision, cf below).
 
@@ -244,72 +244,81 @@ So if what's the ventilation of control modes?[^controlmode]
 
 The split is a window into each side's economics. Russia leans on fibre-optic drones (~30% of its mix) and brute-forces the cost, because the bend-insensitive G.657.A2 glass they need is the exact grade hyperscalers buy for AI data centres, and that collision sent the price up roughly 560% (from about \$5 to \$33-35 per km, so a 50 km spool runs ~\$1,750 bare and ~\$2,500 as a module). The Russian state can absorb that and even outbids Western data centres for Chinese fibre; Ukraine largely cannot, so it pivoted to software instead: cheap last-mile AI modules (\$50-100, adding 10-20% to a drone's cost) that lift strike rates from ~20% to 70-80% under jamming, now ~35% of its mix. Russia is chasing the same autonomy with Chinese dual-use vision (the [~\$8,300 Veles](https://www.pravda.com.ua/eng/news/2025/07/08/7520760/)), but is throttled by a chronic shortage of trained operators ([~14,500 recruited in 2026, a fifth of its target and ~57,500 short](https://www.kyivpost.com/post/77984), while Ukraine destroyed ~10,000 Russian operator positions in a month), which is itself a reason both sides automate: an AI "fire-and-forget" drone turns months of pilot training into a task a soldier learns in half a day. The named hardware behind each column: Russia's fibre share rides Ushkuynik's [Knyaz Vandal Novgorodsky](https://grokipedia.com/page/ushkuynik_kvn) (decisive in Kursk, ~50,000/month by late 2025) and the ring-wing Knyaz Vladimir that hauls a 3 kg warhead 50 km; Ukraine's fibre analogues are the [Khyzhak REBOFF](https://mod.gov.ua/en/news/resistant-to-enemy-ew-ukrainian-fiber-optic-controlled-drones-khyzhak-reboff) and Ukrainian Armor's UB82FO. On the autonomy column, Russia fields the [Ovod and AI-retrofitted Molniya](https://english.nv.ua/russian-war/defense-advisor-warns-russia-adding-ai-to-molniya-drones-shahed-integration-next-50622668.html), the machine-vision [Geran-4](https://euromaidanpress.com/2026/07/12/ai-against-ai-over-ukraine-russias-shahed-now-sees-its-target-and-ukraines-interceptor-sees-shahed/) Shahed, and the [V2U](https://www.pravda.com.ua/eng/news/2025/06/09/7516344/), captured with no command antennas at all, hunting on an NVIDIA Jetson. Feeding all these models is a data moat: [half a million hours of combat drone footage](https://defensescoop.com/2026/06/16/data-from-half-a-million-hours-of-ukraine-conflict-drone-footage-now-available-to-train-ai/) was released for AI training in June 2026. And full autonomy already has its landmark: [Operation Spiderweb](https://en.wikipedia.org/wiki/Operation_Spiderweb) (June 2025), in which 117 quadcopters smuggled deep into Russia navigated by dead reckoning on open-source ArduPilot, recognised bombers with AI trained partly on museum exhibits, and destroyed or damaged 40+ strategic aircraft worth over \$7B, for about \$117k of drones.
 
-### The chip has to fit: embedded AI on a power budget
+### The chip has to fit on a power budget
 
 All of that autonomy has to run on a computer that fits on the airframe and inside its power budget, which on a small drone means a few hundred grams and single-digit-to-low-tens of watts, shared with everything else. Engineers call the constraint SWaP-C (size, weight, power, cost), and it bites hard: a stealthy micro-drone can't carry a noisy fan, so it cools passively through the airframe, and a chip that throttles under thermal load can slow its vision loop enough to crash the drone.
 
 Beneath the AI chip sits a layer so commoditized it goes unmentioned: the flight controller itself, dominated by the open [Pixhawk/PX4 standard](https://holybro.com/products/pixhawk-6x), an STM32 microcontroller with triple-redundant, vibration-isolated, heated inertial units, running the control loops on nearly every Group 1-3 drone in the West.
 
-The AI market above it splits on two chip philosophies. NVIDIA's Jetson line is **Von Neumann** (a flexible GPU running the full CUDA/TensorRT stack, effectively a mini-server that can do vision, SLAM and a small language model at once) but pays for that flexibility in power, because it shuttles data to and from external memory. The challengers are **dataflow** NPUs like Israel's Hailo, which pin the model's weights onto the compute cores and skip the memory traffic, trading software flexibility for radical efficiency (though efficiency alone pays no bills: Hailo, valued at \$1.2B, spent 2026 laying off half its staff and seeking a buyer[^chips]). Teardowns and regulatory filings let you map the actual chips to actual drones:[^chips]
+The AI market above it splits on two chip philosophies. NVIDIA's Jetson line is **Von Neumann** (a flexible GPU running the full CUDA/TensorRT stack, effectively a mini-server that can do vision, SLAM and a small language model at once) but pays for that flexibility in power, because it shuttles data to and from external memory. The challengers are **dataflow** neural processing units (NPUs), chips purpose-built to run neural networks, like Israel's Hailo, which pin the model's weights onto the compute cores and skip the memory traffic, trading software flexibility for radical efficiency (though efficiency alone pays no bills: Hailo, valued at \$1.2B, spent 2026 laying off half its staff and seeking a buyer[^chips]). Teardowns and regulatory filings let you map the actual chips to actual drones. Reading the table: a system-on-chip (SoC) bundles the processor and its peripherals on one die, AI capability is measured in trillions of operations per second (TOPS), and RISC-V is the open-source instruction-set standard, the license-free alternative to ARM's cores:[^chips]
 
-| Chip | Arch | AI throughput | Power | ~Price | Maker (fab) | Named platforms |
-|---|---|---|---|---|---|---|
-| NXP i.MX 8M Plus | NPU SoC | 2.3 TOPS | 4-6 W | \$15-45 | NXP (TSMC) | Auterion Skynode S, Ukrainian strike FPVs |
-| Rockchip RK3588 | NPU SoC | 6 TOPS | 5-12 W | \$60-100 | Rockchip (SMIC, China) | TFL-1, Vyriy, captured Russian FPVs |
-| NVIDIA Jetson TX2 | GPU | 1.3 TOPS | 7.5-15 W | ~\$220 | NVIDIA (Samsung) | ZALA Lancet |
-| NVIDIA Jetson Xavier NX | GPU | 21 TOPS | 10-20 W | ~\$350 | NVIDIA (Samsung) | Shield AI V-BAT, Anduril Ghost |
-| NVIDIA Jetson Orin Nano | GPU | 40-67 TOPS | 7-25 W | \$249 | NVIDIA (Samsung) | Quantum Vector (dual-SoC) |
-| NVIDIA Jetson Orin NX | GPU | 70-157 TOPS | 10-25 W | ~\$599 | NVIDIA (Samsung) | Anduril Fury / Bolt-M |
-| Hailo-10H | Dataflow NPU | 40 TOPS | ~2.5 W | ~\$130 w/ Pi | Hailo (TSMC) | Cheap FPV + host board |
-| Axelera Metis | RISC-V NPU | 214 TOPS | ~14 W | M.2 module | Axelera (TSMC N12) | Robotics, vision inference |
+| Chip | Arch | AI throughput | Power | TOPS/W | ~Price | Maker (fab) | Named platforms |
+|---|---|---|---|---|---|---|---|
+| NXP i.MX 8M Plus | NPU SoC | 2.3 TOPS | 4-6 W | ~0.5 | \$15-45 | NXP (TSMC) | Auterion Skynode S, Ukrainian strike FPVs |
+| Rockchip RK3588 | NPU SoC | 6 TOPS | 5-12 W | ~0.5-1.2 | \$60-100 | Rockchip (SMIC, China) | TFL-1, Vyriy, captured Russian FPVs |
+| NVIDIA Jetson TX2 | GPU | 1.3 TOPS | 7.5-15 W | ~0.1-0.2 | ~\$220 | NVIDIA (Samsung) | ZALA Lancet |
+| NVIDIA Jetson Xavier NX | GPU | 21 TOPS | 10-20 W | ~1-2 | ~\$350 | NVIDIA (Samsung) | Shield AI V-BAT, Anduril Ghost |
+| NVIDIA Jetson Orin Nano | GPU | 40-67 TOPS | 7-25 W | ~3-5 | \$249 | NVIDIA (Samsung) | Quantum Vector (dual-SoC) |
+| NVIDIA Jetson Orin NX | GPU | 70-157 TOPS | 10-25 W | ~6-7 | ~\$599 | NVIDIA (Samsung) | Anduril Fury / Bolt-M |
+| Hailo-10H | Dataflow NPU | 40 TOPS | ~2.5 W | ~16 | ~\$130 w/ Pi | Hailo (TSMC) | Cheap FPV + host board |
+| Axelera Metis | RISC-V NPU | 214 TOPS | ~14 W | ~15 | M.2 module | Axelera (TSMC N12) | Robotics, vision inference |
 
-The cheapest win: a \$448 Vyriy-TFL-1 attritable FPV runs its vision on a \$60-100 Rockchip RK3588, the same Chinese chip [found inside captured Russian drones](https://militarnyi.com/en/news/ukrainian-military-analyze-russian-drone-equipped-with-mv-tech/), and hits a target as reliably as a [Quantum Vector](https://quantum-systems.com/vector-ai/) carrying two \$249 Jetsons. The metric that matters on a power-starved airframe is TOPS-per-watt: Hailo delivers ~16 TOPS/W against the Orin Nano's ~3-5, which is why dedicated accelerators keep appearing on the cheapest drones. [Auterion's whole business is the \$15 NXP-based Skynode S](https://www.pravda.com.ua/eng/news/2024/11/18/7485091/); Russia's Lancet still flies a [2017-era Jetson TX2 alongside a Xilinx FPGA](https://snikolaj.com/2024/09/24/lancet-military-drone-analysis/) and a flight controller not much newer than a Game Boy's, a deliberately archaic, sanctions-proof "Frankenstein" bill of materials sourced through Chinese intermediaries.
+The cheapest win: a \$448 Vyriy-TFL-1 attritable FPV runs its vision on a \$60-100 Rockchip RK3588, the same Chinese chip [found inside captured Russian drones](https://militarnyi.com/en/news/ukrainian-military-analyze-russian-drone-equipped-with-mv-tech/), and hits a target as reliably as a [Quantum Vector](https://quantum-systems.com/vector-ai/) carrying two \$249 Jetsons. The metric that matters on a power-starved airframe is TOPS-per-watt: Hailo delivers ~16 TOPS/W against the Orin Nano's ~3-5, which is why dedicated accelerators keep appearing on the cheapest drones. [Auterion's whole business is the \$15 NXP-based Skynode S](https://www.pravda.com.ua/eng/news/2024/11/18/7485091/); Russia's Lancet still flies a [2017-era Jetson TX2 alongside a Xilinx field-programmable gate array (FPGA)](https://snikolaj.com/2024/09/24/lancet-military-drone-analysis/) and a flight controller not much newer than a Game Boy's, a deliberately archaic, sanctions-proof "Frankenstein" bill of materials sourced through Chinese intermediaries.
+
+What actually sets that compute budget? Two on-board workloads, two orders of magnitude apart:
+
+- **Simultaneous localisation and mapping (SLAM)**, the drone building a map of its surroundings while tracking its own position inside it. Classic feature-tracking visual-inertial odometry (ORB-SLAM3, VINS-Fusion) is a few billion operations per frame at 30 frames a second, on the order of **~0.1 TOPS**, and runs on a bare processor core with no accelerator at all. Swap in learned dense SLAM (DROID-SLAM-class reconstruction, the kind that rebuilds a scene dense enough to thread a drone between two wires) and you jump to **~10-40 TOPS** and need a real GPU.
+- **A 7-billion-parameter vision-language model flying the thing**, which Berkeley's [OmniVLA](https://omnivla-nav.github.io/) (built on the [OpenVLA](https://arxiv.org/abs/2406.09246) backbone) shows is already enough to navigate from a spoken instruction, a goal image, or a coordinate. One forward pass over a single camera frame plus a short instruction costs roughly **4 tera-operations** (two operations per parameter per token, about 280 tokens, with the image prefill dominating). A usable navigation loop wants ~10 updates a second, so the arithmetic floor is **~40 TOPS**, and because real accelerators sustain only 10-30% of their rated throughput the practical requirement is an Orin-class 100-275 TOPS part. Even then OmniVLA and its OpenVLA base run at just **~3-6 Hz on a desktop RTX 4090**, which is why nobody yet flies a 7B model on a \$448 first-person-view drone.
+
+The gap between those two lines is the whole game: geometric SLAM is free, a transformer brain is not, and every TOPS/W in the table above is what decides whether the second one fits. But that ceiling is a moving one. The 40-TOPS floor assumes the model decodes actions one token at a time, re-running the whole forward pass every control step; the newer flow-matching designs like Physical Intelligence's [π₀](https://www.alphaxiv.org/overview/2410.24164) run the expensive image pass once and then emit a whole one-second chunk of ~50 future actions in a few denoising steps, on a smaller 3.3-billion-parameter backbone. That amortises the pass across dozens of control steps instead of paying it each one, and early work like [AirVLA](https://arxiv.org/abs/2603.25038) is already porting these policies onto flying platforms. Nobody has yet shown one running inside a drone's power budget, but the arithmetic that keeps a 7B model on the desk today is the kind that shrinks by an order of magnitude every couple of years.
 
 Now that's a part where Europe is not doing great on sovereignty:
 - The brains of Western drone autonomy are overwhelmingly NVIDIA, an American company, and the cheap boards are frequently assembled in China.
 - Europe has exactly one serious contender: **Axelera AI**, a Netherlands company spun out of imec in 2021, whose Metis processor does 214 TOPS at around 14 watts (~15 TOPS/W) and is already going into "binoculars, visors, drones and vehicles"; it took €61.6M of EuroHPC money in March 2025 and is building a bigger chiplet for 2028.[^axelera]
 - But the deepest chokepoint is one level down: almost every advanced chip here, NVIDIA's (Samsung 8nm), Axelera's (TSMC N12), Hailo's, is fabricated at a handful of Asian fabs in Taiwan and Korea.
 
-### Talking through the jam: the link is half the weapon
+### Talking through the jam
 
 The clearest proof of how much the link matters came in 2026, when the whitelist engineered by digital minister Mykhailo Fedorov (the same official who built the Brave1 procurement machine) cut thousands of illicit Russian Starlink terminals and, the US Defense Intelligence Agency reported, coincided with Ukraine retaking about 400 km2, its first significant gains since 2023.[^links]
 
 Two approaches to keeping a standing link:
 - on the tactical scale: **mesh radios** (MANET, mobile ad-hoc networks) let every drone, ground station and vehicle relay for every other, so the network self-heals around jamming and terrain instead of depending on one vulnerable point-to-point channel; the Western benchmarks are America's **[Silvus StreamCaster](https://silvustechnologies.com/products/streamcaster-4400-enhanced/)** and **[Persistent Systems' MPU5 / Wave Relay](https://persistentsystems.com/mpu5/)**, which is why the hardware teardowns keep concluding that the real lethality of a modern system is its edge-compute card plus the resilience of its datalink, not its airframe.
 - On the operational scale, **Starlink** has quietly become the backbone: its phased-array terminals carry the video, the commander coordination and the deep-strike control the war runs on, and in 2026 connectivity itself was weaponised, with a Ukrainian whitelist and a Russian-side blockade turning access to the constellation into a tactical advantage.[^links]
-  - Why Starlink and not the old satellites? It's about latency. Geostationary dishes sit 36,000 km up and add roughly 600 ms, hopeless for flying an FPV, and only something the size of a Reaper could carry the dish; Starlink's satellites orbit 300 to 1,000 km for 20 to 40 ms, and its flat phased-array antenna (about a 1 kg panel drawing laptop-level power) steers its beam electronically in microseconds to track them, small enough to bolt onto a multirotor.
+  - Why Starlink and not the old satellites? It's about latency. Geostationary dishes sit 36,000 km up and add roughly 600 ms, hopeless for flying an FPV, and only something the size of a Reaper could carry the dish; Starlink's satellites orbit 300 to 1,000 km (low Earth orbit, LEO) for 20 to 40 ms, and its flat phased-array antenna (about a 1 kg panel drawing laptop-level power) steers its beam electronically in microseconds to track them, small enough to bolt onto a multirotor.
 
 | Link type | Range | Latency | Size and power |
 |---|---|---|---|
 | Line-of-sight radio | Terrain-limited, often under 30 km without a relay | Very low (under 50 ms) | Low, a few hundred grams |
-| Geostationary SATCOM | Global, but only very large aircraft | High (~600 ms) | Very high, heavy dish |
+| Geostationary satellite communications | Global, but only very large aircraft | High (~600 ms) | Very high, heavy dish |
 | Starlink (LEO + phased array) | Global, terrain-independent | Low (20 to 40 ms) | Low (~1 kg, laptop power) |
 
 The mature systems chain these into a PACE stack (primary, alternate, contingency, emergency) that fails over automatically: if Starlink is jammed the link drops to the MANET mesh, then to 4G/5G modems, then to peer-to-peer hops, so killing one frequency no longer blinds the drone.
 
-### Swarms: many cheap drones, one intent
+Starlink is jammable, but only locally. Russia has fielded a jammer called the Volna Kupol Garant, reportedly [around \$15M a unit](https://www.techtimes.com/articles/320506/20260714/russia-spent-15m-per-unit-jam-starlink-ukraine-destroys-them-hours.htm), and Ukrainian drone commanders [confirm it causes genuine disruption](https://united24media.com/war-in-ukraine/russia-deploys-15m-starlink-jammers-ukraine-uses-their-flaw-to-strike-back-20590) where it operates, particularly to the "mid-strike" drones Ukraine flies over Starlink to hit targets deep behind the lines. But a single complex only destabilises the constellation across roughly 20 km2, a radius of about 2.5 km, so it degrades a sector rather than denying the network. The reason it can't do more is that it [attacks the hard direction](https://cybernews.com/tech/russia-elon-musks-starlink-jam-ukraine-drones/): instead of jamming the downlink from satellite to terminal (easier, but effective only right under the beam), it jams the uplink, the signals Ukrainian terminals send up to satellites 550 km overhead. A ground transmitter therefore has to project enough noise to deafen the satellite's receiver from far below, not merely drown out the dish next to it, which is expensive and short-ranged; Ukraine has repeatedly located and [destroyed the emitters within hours](https://www.techtimes.com/articles/320506/20260714/russia-spent-15m-per-unit-jam-starlink-ukraine-destroys-them-hours.htm) of them switching on.
+
+### Swarms
 
 The endpoint of cheap autonomy plus a resilient link is the swarm: many drones that share what they see and divide the targets among themselves.
 - Kyiv's **[Swarmer](https://www.uatechjournal.com/swarmer-raises-15-million-in-series-a-led-by-u-s-investor-the-largest-defense-tech-deal-in-ukraine-since-2022/)** builds exactly this software (it raised \$15M and later moved toward a Nasdaq listing): its stack claims [82,000+ combat missions](https://www.drone-directory.com.ua/profile/swarmer/) and has demonstrated 25 drones operating under full communications denial.[^swarm]
 - Auterion sells the cross-platform **Nemyx** swarm-strike engine, and Helsing's Altra offers swarm control. Nemyx flew the [world's first multi-manufacturer swarm strike](https://auterion.com/auterion-performs-worlds-first-multi-manufacturer-swarm-strike-demonstration/) (Munich, December 2025: eight FPVs plus two fixed-wings from three makers as one formation), and at a [US Marine Corps live-fire](https://auterion.com/auterion-global-first-drone-swarm-live-fire/) a single operator struck three targets simultaneously.
 - The threat is symmetric: Russia's new **Izdeliye-53** loitering munition is [launched in salvos from a multi-tube pneumatic container](https://www.menadefense.net/le-nouveau-lancet-izdeliye-53-se-devoile-de-plus-en-plus/) (up to 16 on a single truck) and is designed to share targeting in flight and prioritise what it attacks with no human in the terminal loop; at the heavy end China unveiled the Jiutian SS-UAV, a 16-tonne, 7,000 km mothership built to disgorge drone swarms mid-flight.[^swarm]
 
-### Staying on station: the endurance race
+### The race to stay airborne longer
 
 On endurance, Chemistry is one front: America's **[Lyten](https://lyten.com/technology/lithium-sulfur/)** is scaling lithium-sulfur cells (built on bankrupt Northvolt's assets) that hold more energy per kilogram with none of China's nickel, cobalt or graphite. Fuel cells are another: Ukraine's Skyeton flew what it calls the [world's first hydrogen-electric combat drone](https://united24media.com/latest-news/ukrainian-raybird-becomes-worlds-first-hydrogen-electric-drone-used-in-combat-15046), pushing its Raybird's endurance well past a battery's.
 
 At the patient end sit wind-and-solar surface drones (America's [Saildrone](https://www.saildrone.com/media-room/press-releases/lockheed-martin-invests-usd-50m-saildrone-advance-unmanned-surface-vehicle-capabilities-us-navy)) and the buoyancy gliders for the naval warfare, trading speed for months of loiter.
 At the other (fast) end: Quantum Systems is [developing a super-fast interceptor](https://euromaidanpress.com/2026/05/31/ukraines-vector-drone-supplier-quantum-systems-is-developing-super-speed-interceptor-with-porsche-subsidiary-battery-cells/) on Porsche-subsidiary battery cells to out-accelerate a Shahed.[^endurance] China is not ceding the chemistry race either: CATL unveiled a ["condensed" cell at ~500 Wh/kg](https://www.greencarreports.com/news/1139428_catl-announces-very-energy-dense-battery-for-passenger-aircraft), nearly double today's automotive cells, aimed squarely at electric aviation.
 
-### Fooling the machine: the counter-AI fight
+### Fooling the enemy's AI
 
 Visual camouflage is the newest and least mature fight. Russia now fields multispectral decoys and camouflage tuned to defeat the target-recognition model's bounding box, and analysts keep finding that the "AI drone revolution" is real but oversold, with human pilots still [beating the algorithms against well-hidden targets](https://euromaidanpress.com/2025/03/06/forbes-ukrainian-ai-drones-claim-80-hit-rate-yet-human-pilots-remain-superior/) and the vision models faltering in forests, rubble and clutter.[^counterai] The research is precise about how the fooling works: a [3D-Gaussian-splatting pipeline](https://arxiv.org/html/2507.01367v1) can render camouflage that collapses a detector's recall from every viewing angle, an adversarial patch works once it covers 10-30% of the target's bounding box (5% does nothing), and both sides run cheap physical deception, Russia baiting air defences with [plywood decoys and \$500-engine fake Shaheds](https://www.fdd.org/analysis/2023/10/27/no-solid-evidence-russia-debuted-italmas-drone/), Ukraine spoofing Lancet optics with wooden HIMARS, while Russia answers by adding [thermal cameras to Shaheds to filter "cold" decoys](https://euromaidanpress.com/2026/07/12/ai-against-ai-over-ukraine-russias-shahed-now-sees-its-target-and-ukraines-interceptor-sees-shahed/).
 
-### The physical leash: caging a lethal AI in hardware
+### Hardware guardrails to a lethal AI
 
 How do you prevent your embedded AI control to kill your own soldiers? Helsing's HX-2 runs its AI on top of an FPGA "semantic coordination" layer plus analog guard channels that physically clamp the actuator signals: a spoofed command for 100% thrust is clipped by a comparator, a GPS-spoofed dive is vetoed by a proximity limiter, both in under 100 microseconds, so the model can misbehave without crashing the drone.[^leash] The same instinct scales down to the \$500 FPV: Ukraine's Vyriy ships a "Popcorn" arming board with four independent safety stages (a mechanical break in the detonator circuit, contact-sensor arming, a two-minute delay counted down on the pilot's video overlay, and a deterministic self-destruct if the round goes unused), so an attritable munition is made fail-safe by hardware, not by trust.
 
-One level lower, the chip itself is starting to be designed by AI: the US startup Architect Labs [raised \$24M in 2026](https://www.businesswire.com/news/home/20260618895194/en/Architect-Labs-Raises-%2424M-Seed-to-Democratize-Custom-Chip-Design) to have a model design and formally verify custom ASICs end to end, compressing the two-to-five-year, tens-of-millions-of-dollars silicon cycle toward weeks. It points at a "designless" chip industry, the logical endpoint of wanting a purpose-built neural chip on every airframe.
+One level lower, the chip itself is starting to be designed by AI: the US startup Architect Labs [raised \$24M in 2026](https://www.businesswire.com/news/home/20260618895194/en/Architect-Labs-Raises-%2424M-Seed-to-Democratize-Custom-Chip-Design) to have a model design and formally verify custom application-specific integrated circuits (ASICs) end to end, compressing the two-to-five-year, tens-of-millions-of-dollars silicon cycle toward weeks. It points at a "designless" chip industry, the logical endpoint of wanting a purpose-built neural chip on every airframe.
 
 ## 4. The global board: supply chains and geopolitics
 
@@ -323,11 +332,11 @@ Two powers dominate the picture, and a genuine third tier fills in around them: 
 - [Anduril](https://www.bloomberg.com/features/2025-euro-defense-startups/), Palmer Luckey's post-Oculus act, alone, at a \$61B valuation on ~\$2.2B of 2025 revenue and a reported \$20B ten-year contract to run the US Army on its Lattice software, is worth more than every European defense-drone startup combined; its [Arsenal-1 plant in Ohio](https://insideunmannedsystems.com/anduril-begins-production-of-fury-drones-at-new-arsenal-1-factory/) (5 million sq ft) is built to turn out tens of thousands of systems a year.
 - It's flanked by [Shield AI (\$12.7B)](https://techcrunch.com/2026/03/26/defense-startup-shield-ai-lands-12-7b-valuation-up-140-after-u-s-air-force-deal/), [Saronic](https://www.prnewswire.com/news-releases/saronic-closes-1-75b-series-d-at-9-25b-valuation-to-accelerate-a-new-era-of-maritime-autonomy-302729298.html) (\$9.25B, the naval-drone play at nine times Kraken's valuation), [Zipline](https://dronexl.co/2026/01/20/zipline-reaches-7-6-billion-valuation-drone/) (\$7.6B in delivery), [Skydio](https://www.tectonicdefense.com/skydio-raises-110m-at-4-4b-valuation/) (\$4.4B) and a deep bench of the merely-large like Red Cat and the wind-and-solar sea drones of Saildrone.
 - Since 2019 the US has captured roughly **[85% of all NATO defense-tech venture funding](https://techfundingnews.com/avp-earlybird-e2d-500m-fund-european-defence-startups-us-vc/)**.
-- But scale isn't the same as fit: AeroVironment's Switchblade 300, a decade of Pentagon R&D at [~\$53,000 a unit](https://www.thedroneoffice.com/post/ukraine-western-loitering-munition-drone-cost-gap-switchblade-bulava) (a quarter of it pure bureaucratic overhead, ITAR, audit compliance, Buy-American paperwork), proved too weak and too jammable in Ukraine and was largely abandoned for locally-made FPVs, 120 of which cost the same. Nor is American autonomy EW-proof: [Anduril's Ghost drones failed against Russian jamming and its Altius crashed twice in USAF tests](https://medium.com/@hayekesteloo/anduril-altius-drones-crash-twice-during-air-force-tests-ghost-drones-fail-against-russian-jamming-3276b6858d05), the same lesson Helsing learned in public.
+- But scale isn't the same as fit: AeroVironment's Switchblade 300, a decade of Pentagon R&D at [~\$53,000 a unit](https://www.thedroneoffice.com/post/ukraine-western-loitering-munition-drone-cost-gap-switchblade-bulava) (a quarter of it pure bureaucratic overhead, ITAR (International Traffic in Arms Regulations), audit compliance, Buy-American paperwork), proved too weak and too jammable in Ukraine and was largely abandoned for locally-made FPVs, 120 of which cost the same. Nor is American autonomy electronic-warfare-proof: [Anduril's Ghost drones failed against Russian jamming and its Altius crashed twice in USAF tests](https://medium.com/@hayekesteloo/anduril-altius-drones-crash-twice-during-air-force-tests-ghost-drones-fail-against-russian-jamming-3276b6858d05), the same lesson Helsing learned in public.
 
 **China has market share.** DJI still holds something like [70-80% of the global commercial drone market](https://www.quantumrun.com/consulting/drone-market-statistics/) and accounted for [83.5% of all drone detections](https://www.thedronegirl.com/2025/11/06/2025-drone-market-dji/) in one 2025 counter-drone dataset. Behind DJI, state primes CASC and CAIG export MALE drones like the CH-5 and Wing Loong II at [roughly half the price of a US Reaper](https://www.eurasiareview.com/24112024-chinas-increasing-global-drone-footprint-analysis/), and the export model is escalating from selling drones to exporting the factory itself: CAIG is [building a Wing Loong plant in Bangladesh](https://defencesecurityasia.com/en/china-drone-factory-bangladesh-wing-loong-india-bay-of-bengal/), locking in decades of dependency a strait from India.
 
-### Weaponised interdependence: the China chokehold
+### The China chokehold
 
 China makes roughly 94% of the world's permanent magnets, 75% of lithium-ion cells, about 90% of basic optical and infrared sensors, and 80% of small multirotors, and it has begun using that dominance as a weapon.[^chokehold] Through 2024-2025 Beijing blocked battery cells to the US supplier Skydio, redirected Ukraine's magnet supply toward Russia, added heavy rare earths (terbium, dysprosium) to its control list, and in October 2025 asserted an extraterritorial rule requiring a licence for any foreign product with more than 0.1% Chinese rare-earth content, prompting a threatened 100% US tariff and a nervous one-year truce.[^china] This is the one place a regulation genuinely constrains products, and it is China's, not the EU's. It is also the real reason a European-built FPV can cost €20,000 against €200 for the Chinese equivalent, and every red and blue bubble on the first map is, to some degree, built on top of these amber diamonds.
 
@@ -341,16 +350,16 @@ To see what those percentages mean on an actual airframe, here is the same data 
 
 | Subsystem | Dominant source (China %) | Chokepoint | Affects | De-risking |
 |---|---|---|---|---|
-| Carbon-fibre airframe | Japan/EU/US lead (~50%) | Medium: PAN precursor concentrated in Toray, but multi-sourced | Aerial, loitering | Automated fibre placement; Uplift360 99%-recycled with Leonardo; near parity |
+| Carbon-fibre airframe | Japan/EU/US lead (~50%) | Medium: polyacrylonitrile precursor concentrated in Toray, but multi-sourced | Aerial, loitering | Automated fibre placement; Uplift360 99%-recycled with Leonardo; near parity |
 | Brushless (BLDC) motors | China ~85% (Shenzhen) | Critical: inherits the magnet dependency | Aerial-FPV, loitering, multirotor ISR | Blocked with magnets to 2028-2030 |
 | Speed controllers (ESC) | China ~80% | High: Western chips, but China does the board assembly and firmware | Aerial-FPV, loitering | Unresolved |
 | Propellers | China ~75% | Medium-high: carbon-fibre props are Asia-moulded | Aerial | Unaddressed |
-| Flight-controller boards | Designed in West/Japan (STM32, NXP), ~75% China-assembled | Medium-high: assembly + firmware in China (backdoor risk) | All | Orqa ships NDAA-compliant boards |
-| Flight software / firmware | Open-source (~30% China hardware) | Low: ExpressLRS, Ukraine-modified against jamming | All | Near parity |
+| Flight-controller boards | Designed in West/Japan (STM32, NXP), ~75% China-assembled | Medium-high: assembly + firmware in China (backdoor risk) | All | Orqa ships NDAA (US National Defense Authorization Act)-compliant boards |
+| Flight software / firmware | Open-source (~30% China hardware) | Low: ExpressLRS (Express Long Range System), Ukraine-modified against jamming | All | Near parity |
 | RF datalink modules | China ~60% (open ELRS protocol) | Medium | Aerial-FPV | Open-source adaptation |
-| LiPo pouch cells | China >90% (Dongguan Poweramp / TDK) | Critical, acute: weaponised against Skydio; NDAA bans six makers by 2027 with no Western replacement | Aerial-FPV, loitering, small ISR | No scaled Western LiPo line yet |
+| Lithium-polymer (LiPo) pouch cells | China >90% (Dongguan Poweramp / TDK) | Critical, acute: weaponised against Skydio; NDAA bans six makers by 2027 with no Western replacement | Aerial-FPV, loitering, small ISR | No scaled Western LiPo line yet |
 | Next-gen lithium-sulfur cells | US/EU (Lyten, ex-Northvolt) | Opportunity: no nickel, cobalt or graphite, 40-75% lighter | All aerial, long-endurance | Lyten scaling 16 GWh for 2026-2027 |
-| NdFeB permanent magnets | China ~90-94% | Critical, blocked (2028-2030): capital-intensive, EV/wind demand crowds it out | All with BLDC motors and thrusters | Energy Fuels / Vacuumschmelze \$1.9B mine-to-magnet; Niron, Noveon nascent |
+| Neodymium-iron-boron (NdFeB) permanent magnets | China ~90-94% | Critical, blocked (2028-2030): capital-intensive, EV/wind demand crowds it out | All with BLDC motors and thrusters | Energy Fuels / Vacuumschmelze \$1.9B mine-to-magnet; Niron, Noveon nascent |
 | Heavy rare earths (Dy, Tb) | China near-total | Critical: Oct 2025 extraterritorial 0.1%-content rule | All (high-temp motors) | White Mesa (Utah), a fraction of demand |
 | CMOS daylight sensors | Sony/Samsung (Japan/Korea), China ~15% | Low: allied-secure | ISR, daylight FPV, USV | Already secure |
 | Thermal / infrared cores | US FLIR vs China InfiRay/HikMicro (~45%) | High: Chinese cores cut price >60% and took the commercial market | Night ops: loitering, ISR, night FPV | Western defence-grade survives, losing the cost war |
@@ -359,7 +368,7 @@ To see what those percentages mean on an actual airframe, here is the same data 
 | Advanced AI silicon | Designed in West, fabbed only at TSMC/Samsung (China ~5%) | Critical, unsolved: fabrication sits at Taiwan/Korea flashpoints | All autonomous | Semidynamics RISC-V, still Taiwan-fabbed |
 | Logic-chip foundry | Taiwan/Korea ~80% | Critical: allied but geographically exposed | All | No near-term Western node |
 | GNSS receivers | Qualcomm/Broadcom/u-blox, China ~25% | Low: multi-constellation resists spoofing | All autonomous | Already allied-controlled |
-| Marine thrusters / water propulsion | West-leaning (China ~40%) | Medium: still magnet-exposed | USV, UUV/glider | Rides the Western marine base |
+| Marine thrusters / water propulsion | West-leaning (China ~40%) | Medium: still magnet-exposed | USV, UUV (unmanned underwater vehicle)/glider | Rides the Western marine base |
 | Sonar and acoustic modems | US/EU/Norway (Teledyne, Kongsberg, Thales), China ~15% | Low: Western fortress | USV, UUV/glider | Sovereign, a source of leverage |
 | Pressure-tolerant hulls and seals | US/EU (China ~25%) | Low | UUV, USV | Sovereign |
 | Terrestrial drive motors and transmissions | US/EU legacy (China ~35%) | Low: Western advantage | UGV | Sovereign |
@@ -404,186 +413,184 @@ Europe has, in three years, built a genuine drone industry with real unicorns, c
 
 ## Appendix: the full company roster
 
-Every company from the twenty-plus deep researches behind this article, grouped by what it actually sells. The body above covers the load-bearing ones; this is the exhaustive reference layer.
-
 ### Strike drones and loitering munitions
 
 | Company | Country | Product | Notable |
 |---|---|---|---|
 | Helsing | Germany | HX-2 X-wing munition | €268M Bundeswehr contract; onboard AI targeting |
-| Stark | Germany | OWE-V Virtus | €268M Bundeswehr contract; also Vanta USVs + Minerva C2 |
 | Rheinmetall | Germany | FV-014 (UVision partner) | The prime in the German three-way split |
-| Harmattan AI | France | Sonora / DELCO micro-drone | 5,000-unit DGA order; sub-€1,000 attritable doctrine |
-| EOS Technologie | France | Veloce 330 jet munition | 400 km/h, KNDS EFP warhead; 17 delivered to French forces |
-| Turgis & Gaillard + Renault | France | Chorus remotely-operated munition | €35M DGA start, up to €1B / ~600 units per month at Le Mans |
+| Stark | Germany | OWE-V Virtus | €268M Bundeswehr contract; also Vanta USVs + Minerva C2 |
 | Donaustahl | Germany | ALMP MAUS / Ratte / Stryga | Founder-designer Stefan Thumann; 100%-German supply chain; exports to Ukraine's Kraken unit |
-| Delair | France | OSKAR + Damocles (with KNDS) | Revenue €30M to €60M in a year; 100+ kamikazes to Ukraine |
-| Fire Point | Ukraine | FP-1, FP-5 "Flamingo" | FP-1 ~\$55k / 1,600 km; FP-5 carries 1,150 kg to ~3,000 km |
-| Vyriy | Ukraine | FPV lines + ZIRKA interceptor | ~70% component localization; \$448 with TFL-1 guidance |
-| AeroVironment | US | Switchblade 300 / 600 | 300 failed in Ukraine; 600 is the US Army LASSO pick |
-| UVision | Israel | HERO family | \$982M US Army deal; acquired SpearUAV (VIPER) |
-| XTEND | Israel | Mass FPV + XOS autonomy | \$1.5B SPAC; IDF tender for thousands |
 | Elbit | Israel | SkyStriker | Part of a \$7.9B-revenue prime |
-| ZALA (Kalashnikov) | Russia | Lancet, Izdeliye-53 | Swarm-capable pneumatic multi-tube launch |
+| XTEND | Israel | Mass FPV + XOS autonomy | \$1.5B SPAC; IDF tender for thousands |
+| UVision | Israel | HERO family | \$982M US Army deal; acquired SpearUAV (VIPER) |
+| Baykar | Türkiye | TB2, Akinci, Kizilelma | TB2 in 37 countries; Kizilelma scored the first drone air-to-air kill |
+| AeroVironment | US | Switchblade 300 / 600 | 300 failed in Ukraine; 600 is the US Army LASSO pick |
+| Mach Industries | US | Autonomous strike systems | \$300M Series C at \$1.8B; "Forge" distributed manufacturing |
 | Neros | US | Archer FPV | 1M-a-year Torrance plant; 6,000-unit coalition order for Ukraine |
 | Firestorm Labs | US | 3D-printed expeditionary drones | \$100M USAF deal; prints airframes on-theater |
-| Mach Industries | US | Autonomous strike systems | \$300M Series C at \$1.8B; "Forge" distributed manufacturing |
-| Baykar | Türkiye | TB2, Akinci, Kizilelma | TB2 in 37 countries; Kizilelma scored the first drone air-to-air kill |
+| ZALA (Kalashnikov) | Russia | Lancet, Izdeliye-53 | Swarm-capable pneumatic multi-tube launch |
+| Fire Point | Ukraine | FP-1, FP-5 "Flamingo" | FP-1 ~\$55k / 1,600 km; FP-5 carries 1,150 kg to ~3,000 km |
+| Vyriy | Ukraine | FPV lines + ZIRKA interceptor | ~70% component localization; \$448 with TFL-1 guidance |
 | WB Group | Poland | Warmate munition, FlyEye ISR, Fonet comms | Piotr Wojciechowski's ~PLN 2.9B-revenue, PLN 679M-profit integrator |
 | Destinus | Netherlands | Hypersonic strike, LORD interceptor | Founder Mikhail Kokorich; bought Daedalean for GPS-denied navigation |
+| Delair | France | OSKAR + Damocles (with KNDS) | Revenue €30M to €60M in a year; 100+ kamikazes to Ukraine |
+| Turgis & Gaillard + Renault | France | Chorus remotely-operated munition | €35M DGA start, up to €1B / ~600 units per month at Le Mans |
+| Harmattan AI | France | Sonora / DELCO micro-drone | 5,000-unit DGA order; sub-€1,000 attritable doctrine |
+| EOS Technologie | France | Veloce 330 jet munition | 400 km/h, KNDS explosively-formed-penetrator warhead; 17 delivered to French forces |
 | Hypersonica | Germany/UK | Hypersonic strike missiles | €23.3M Series A led by Plural |
 
 ### ISR and reconnaissance aircraft
 
 | Company | Country | Product | Notable |
 |---|---|---|---|
+| Teledyne FLIR | US | Black Hornet 4 nano-drone | The pocket ISR standard, plus thermal cores |
+| Shield AI | US | V-BAT | Hivemind autonomy is the USAF collaborative-combat-aircraft default |
+| Skydio | US | X10 / X10D | \$52M US Army order; \$3.5B SkyForge reshoring plan |
 | Quantum Systems | Germany | Vector eVTOL | ~€300M revenue, profitable; dual Jetson autonomy |
+| SWARM Biotactics | Germany | Cyborg-insect ISR | Live cockroaches with edge-AI backpacks; Bundeswehr customer |
 | Tekever | Portugal | AR3, AR5 | 10,000+ combat hours; £400M UK OVERMATCH program |
-| Skyeton | Ukraine | Raybird | 28 h endurance; first hydrogen-electric combat missions |
 | Ukrspecsystems | Ukraine | Shark, PD-2 | \$200M UK factory; claims ~80% of HIMARS targeting |
-| Turgis & Gaillard | France | Aarok MALE | 5.5-tonne Reaper-class, first flight Sept 2025, mostly self-funded |
+| Skyeton | Ukraine | Raybird | 28 h endurance; first hydrogen-electric combat missions |
+| Buntar Aerospace | Ukraine | ISR software | \$10.4M raise |
 | Schiebel | Austria | Camcopter S-100/S-300 | The dominant maritime VTOL; EU "SWORD" anti-submarine project |
+| Turgis & Gaillard | France | Aarok MALE | 5.5-tonne Reaper-class, first flight Sept 2025, mostly self-funded |
+| Onodrim Industries | Netherlands | Multi-domain sensing, border security | €40M seed |
+| Sky-Watch | Denmark | RQ-35 Heidrun | Won the Dutch battalion-ISR tender |
 | Threod Systems | Estonia | EOS C VTOL | Sales +1,100% in five years; 200+ units for Ukrainian artillery |
+| KrattWorks | Estonia | Ghost Dragon ISR | Edge-AI vision with LTE/5G failover |
+| Kelluu | Finland | Autonomous airships | €15M led by the NATO Innovation Fund |
 | Granta Autonomy | Lithuania | Hornet XR | Sub-3 kg silent ISR, GPS-denied; >\$2M recurring revenue |
 | Atlas Aerospace | Latvia | AtlasPRO tricopter | Riga factory, combat-proven |
-| KrattWorks | Estonia | Ghost Dragon ISR | Edge-AI vision with LTE/5G failover |
-| Sky-Watch | Denmark | RQ-35 Heidrun | Won the Dutch battalion-ISR tender |
-| Kelluu | Finland | Autonomous airships | €15M led by the NATO Innovation Fund |
-| Shield AI | US | V-BAT | Hivemind autonomy is the USAF CCA default |
-| Skydio | US | X10 / X10D | \$52M US Army order; \$3.5B SkyForge reshoring plan |
-| Teledyne FLIR | US | Black Hornet 4 nano-drone | The pocket ISR standard, plus thermal cores |
-| SWARM Biotactics | Germany | Cyborg-insect ISR | Live cockroaches with edge-AI backpacks; Bundeswehr customer |
-| Buntar Aerospace | Ukraine | ISR software | \$10.4M raise |
-| Onodrim Industries | Netherlands | Multi-domain sensing, border security | €40M seed |
 | Robotican | Israel | ROOSTER drive-and-fly drone | GPS-denied indoor combat for NATO special forces |
 
 ### Counter-drone
 
 | Company | Country | Approach | Notable |
 |---|---|---|---|
-| Origin Robotics | Latvia | BLAZE interceptor | France and Sweden both buying |
-| Alpine Eagle | Germany | Sentinel mothership | Founder Jan-Hendrik Boelens; drops interceptors mid-air |
-| Frankenburg Technologies | Estonia | Sub-2 kg mini-missiles | Co-founded by Taavi Madiberk; ~100/day near the front |
-| Tytan Technologies | Germany | Autonomous interceptors | €30M Series A (Armira + NATO Innovation Fund) |
+| Raytheon | US | Coyote | The US Navy destroyer fit |
+| Anduril | US | Roadrunner-M | Reusable; ~8:1 cost ratio vs a Shahed; \$1.98B Kuwait deal |
+| AeroVironment | US | Titan-MS fusion | \$500M US Army Domestic Shield contract |
+| Epirus | US | Leonidas high-power microwave | Fries whole swarms in a cone; ~3 km range |
+| Fortem Technologies | US | DroneHunter F700 net interceptor | The debris-free option over cities |
+| Rafael | Israel | Iron Beam 100 kW laser | "A few dollars a shot"; fails in fog |
+| Skapion | Israel | Swarm neutralization | \$36M seed from Iron Dome veterans |
+| DroneShield | Australia | RF detection | Revenue +276%; under an ASIC disclosure investigation |
+| MARSS | Monaco | NiDAR C2 + Interceptor-MR | Core of the UAE's DAMITA; bought by EOS |
 | Alta Ares | France | X-Lock, Black Bird AI interceptors | €50M Series A; combat-deployed in Ukraine |
-| Nordic Air Defence | Sweden | Kreuger 100/100XR | Thermal seeker; integrated into Volvo convoy protection |
+| Tytan Technologies | Germany | Autonomous interceptors | €30M Series A (Armira + NATO Innovation Fund) |
+| Alpine Eagle | Germany | Sentinel mothership | Founder Jan-Hendrik Boelens; drops interceptors mid-air |
 | Argus Interception | Germany | FALCON net-capture | First systems delivered to the Bundeswehr |
+| MyDefence | Denmark | Wingman + Pitbull RF kits | \$26M US Army order for 485 mobile kits |
+| Frankenburg Technologies | Estonia | Sub-2 kg mini-missiles | Co-founded by Taavi Madiberk; ~100/day near the front |
+| Origin Robotics | Latvia | BLAZE interceptor | France and Sweden both buying |
 | Wild Hornets | Ukraine | Sting (~\$2,100) | 9,000+ Shaheds downed; ~70% of April 2026 interceptions |
+| Sky Fortress | Ukraine | ~9,500 acoustic sensors | Cued 80 of 84 kills in one saturation raid; Lithuania adopting |
 | Dark River | Ukraine | APUS-1 (~\$3,500) | GPS-free interception to 50 km |
 | Vidun | Ukraine | Fixed-wing interceptor | ~70% effective in December weather that grounded the rest |
-| Skapion | Israel | Swarm neutralization | \$36M seed from Iron Dome veterans |
-| MARSS | Monaco | NiDAR C2 + Interceptor-MR | Core of the UAE's DAMITA; bought by EOS |
-| DroneShield | Australia | RF detection | Revenue +276%; under an ASIC disclosure investigation |
-| MyDefence | Denmark | Wingman + Pitbull RF kits | \$26M US Army order for 485 mobile kits |
+| Nordic Air Defence | Sweden | Kreuger 100/100XR | Thermal seeker; integrated into Volvo convoy protection |
 | Sensofusion | Finland | AIRFENCE + Fennec-1 | Launched a satellite to spot drone RF from orbit |
-| Fortem Technologies | US | DroneHunter F700 net interceptor | The debris-free option over cities |
-| Epirus | US | Leonidas high-power microwave | Fries whole swarms in a cone; ~3 km range |
-| Anduril | US | Roadrunner-M | Reusable; ~8:1 cost ratio vs a Shahed; \$1.98B Kuwait deal |
-| Raytheon | US | Coyote | The US Navy destroyer fit |
-| Rafael | Israel | Iron Beam 100 kW laser | "A few dollars a shot"; fails in fog |
-| AeroVironment | US | Titan-MS fusion | \$500M US Army Domestic Shield contract |
-| Sky Fortress | Ukraine | ~9,500 acoustic sensors | Cued 80 of 84 kills in one saturation raid; Lithuania adopting |
 
 ### Naval and underwater
 
 | Company | Country | Product | Notable |
 |---|---|---|---|
+| Helsing | Germany | SG-1 Fathom glider | Lura acoustic AI; Royal Navy "Atlantic Bastion" |
+| Fincantieri | Italy | Underwater roll-up | WASS torpedoes, WSense modems, Graal Tech autonomous underwater vehicles; €1.8B by 2030 |
+| Kongsberg | Norway | HUGIN autonomous underwater vehicles | To 6,000 m; scaling a US plant for the Navy |
+| Naval Group | France | XL autonomous submarine | Sovereign demonstrator |
 | Exail (Thales) | France | UMIS, DriX, A18 | €3.9B acquisition; fibre-optic gyro monopoly play |
-| Kraken Technology Group | UK | K3 Scout, K5, K7 boats | Asset-light: built by Rheinmetall, Anduril and Davie |
-| Kraken Robotics | Canada | Synthetic-aperture sonar, SeaPower batteries | CAD\$102M revenue; \$615M Covelya buy; a different Kraken |
+| Alseamar | France | Seaexplorer 1000-M glider | 1,700 km, 110 days |
 | Saronic | US | Spyglass to 180-ft Marauder | \$392M Navy deal; Port Alpha shipyard targets 600 hulls/yr |
 | Saildrone | US | Wind/solar Explorer to Surveyor | Lockheed \$50M to arm them; Fincantieri-built Spectre class |
-| Fincantieri | Italy | Underwater roll-up | WASS torpedoes, WSense modems, Graal Tech AUVs; €1.8B by 2030 |
-| Naval Group | France | XL autonomous submarine | Sovereign demonstrator |
-| Kongsberg | Norway | HUGIN AUVs | To 6,000 m; scaling a US plant for the Navy |
-| Saab Seaeye | UK/Sweden | Falcon ROV, Sabertooth | Found Shackleton's Endurance |
+| Kraken Robotics | Canada | Synthetic-aperture sonar, SeaPower batteries | CAD\$102M revenue; \$615M Covelya buy; a different Kraken |
+| Saab Seaeye | UK/Sweden | Falcon remotely-operated vehicle, Sabertooth | Found Shackleton's Endurance |
 | Ocean Infinity | UK | Crewless survey fleet | Eight 78-m robot ships |
+| Kraken Technology Group | UK | K3 Scout, K5, K7 boats | Asset-light: built by Rheinmetall, Anduril and Davie |
 | SubSea Craft | UK | VICTA diver-submersible | Ten ordered by Greece |
-| Copenhagen Subsea | Denmark | Silent rim-driven thrusters | The component that keeps it independent |
-| Helsing | Germany | SG-1 Fathom glider | Lura acoustic AI; Royal Navy "Atlantic Bastion" |
-| Alseamar | France | Seaexplorer 1000-M glider | 1,700 km, 110 days |
 | Magura (HUR) | Ukraine | V5, V7 USVs | A V7 with Sidewinders downed two Su-30SM fighters |
-| Sea Baby (SBU) | Ukraine | 2,000 kg-payload USV | Carries Grad MLRS tubes; shot down an Mi-8 |
+| Sea Baby (SBU) | Ukraine | 2,000 kg-payload USV | Carries Grad multiple-launch rocket system tubes; shot down an Mi-8 |
 | Toloka | Ukraine | TLK-150 to TLK-1000 | Up to 5,000 kg warhead, 2,000 km |
 | Delian Alliance | Greece | Interceptigon-N | Sleeps on the seabed for years, then 43 knots |
+| Copenhagen Subsea | Denmark | Silent rim-driven thrusters | The component that keeps it independent |
 
 ### Ground robots
 
 | Company | Country | Product | Notable |
 |---|---|---|---|
-| Milrem Robotics | Estonia | THeMIS, HAVOC | 19 countries; EDGE-owned; leads the EU iMUGS program |
-| ARX Robotics | Germany | Gereon line, Mithra OS | CEO Marc Wietfeld (ex-Bundeswehr officer); six European armies |
-| Rheinmetall | Germany | Mission Master | The prime's UGV line |
-| Textron | US | Ripsaw M3 | Won the US Army RCV phase |
-| HDT + American Rheinmetall | US | S-MET logistics mules | 2,195 systems targeted by 2027 |
-| Tencore | Ukraine | Termit | 300 kg tracked resupply/medevac |
-| BlueBird Tech | Ukraine | Bandura | Starlink integrated to survive jamming |
 | Norinco | China | VU-T10, P60 | P60 runs DeepSeek onboard; 10,000 scenarios in 48 s |
 | Unitree (militarized) | China | "Machine Wolf" robot dogs | Rifle-armed, shown at PLA exercises |
+| Textron | US | Ripsaw M3 | Won the US Army Robotic Combat Vehicle phase |
+| HDT + American Rheinmetall | US | S-MET logistics mules | 2,195 systems targeted by 2027 |
+| Rheinmetall | Germany | Mission Master | The prime's UGV line |
+| ARX Robotics | Germany | Gereon line, Mithra OS | CEO Marc Wietfeld (ex-Bundeswehr officer); six European armies |
+| Milrem Robotics | Estonia | THeMIS, HAVOC | 19 countries; EDGE-owned; leads the EU iMUGS program |
+| Tencore | Ukraine | Termit | 300 kg tracked resupply/medevac |
+| BlueBird Tech | Ukraine | Bandura | Starlink integrated to survive jamming |
 
 ### Delivery and commercial
 
 | Company | Country | Product | Notable |
 |---|---|---|---|
-| Manna | Ireland | Food delivery | 250,000+ flights, per-flight profitable; pushed out of Ireland by councils |
 | Zipline | US | Medical logistics | 2M+ deliveries; \$150M State Dept Africa contract |
-| Dronamics | Bulgaria | Black Swan cargo | 350 kg over 2,500 km, middle-mile |
-| Wingcopter | Germany | Tilt-rotor delivery | UNICEF/UPS heritage; TAF Industries JV |
-| Dufour Aerospace | Switzerland | Aero-200 tilt-wing | 20 kg over 200 km demonstrated |
-| RigiTech | Switzerland | Eiger quadplane | Daily medical routes on three continents, sold OEM |
-| Everdrone | Sweden | Autonomous defibrillator delivery | Beats the ambulance in 94% of cases |
-| Flyability | Switzerland | Elios caged drones | Inspects boilers and nuclear vaults from inside |
-| Wingtra | Switzerland | VTOL survey | Centimetre accuracy, 50+ countries |
-| Verity | Switzerland | Warehouse swarms | GPS-free, in the dark, for IKEA and Maersk |
-| Voliro | Switzerland | Contact inspection | Presses ultrasonic probes on pipes |
-| Dronehub | Poland | Drone-in-a-box + AUDROS net C-UAS | Deutsche Bahn's 33,000 km network |
-| Azur Drones | France | Skeyetech security drone-in-a-box | First EASA no-pilot BVLOS approvals; 200+ sites |
-| Elistair | France | Tethered Orion | 50 h endurance, jam-immune power-line link |
-| Nordic Unmanned | Norway | Operations-as-a-service | 10,000+ hours flying EMSA maritime patrol |
-| Parrot | France | ANAFI USA / Ai | The NDAA-compliant Western multirotor |
-| ABZ Innovation | Hungary | L10/L30 spray drones | Attacking the DJI/XAG agri monopoly in Europe |
 | BRINC | US | Drone-as-first-responder | \$157M raised; Motorola alliance |
 | XAG | China | P150 agri drone + R150 rover | >60% of China's agricultural drone market |
-| EHang | China | EH216-S passenger eVTOL | First type-certified autonomous passenger craft |
 | JOUAV | China | VTOL mapping | ~620M RMB revenue |
+| EHang | China | EH216-S passenger eVTOL | First type-certified autonomous passenger craft |
+| Skyports | UK | Vertiports and drone logistics | \$151M raised, ADP-backed, Dubai eVTOL network |
+| Wingcopter | Germany | Tilt-rotor delivery | UNICEF/UPS heritage; TAF Industries JV |
+| Verity | Switzerland | Warehouse swarms | GPS-free, in the dark, for IKEA and Maersk |
+| Wingtra | Switzerland | VTOL survey | Centimetre accuracy, 50+ countries |
+| Flyability | Switzerland | Elios caged drones | Inspects boilers and nuclear vaults from inside |
+| Dufour Aerospace | Switzerland | Aero-200 tilt-wing | 20 kg over 200 km demonstrated |
+| Voliro | Switzerland | Contact inspection | Presses ultrasonic probes on pipes |
+| RigiTech | Switzerland | Eiger quadplane | Daily medical routes on three continents, sold OEM |
+| Parrot | France | ANAFI USA / Ai | The NDAA-compliant Western multirotor |
+| Azur Drones | France | Skeyetech security drone-in-a-box | First EASA no-pilot beyond-visual-line-of-sight approvals; 200+ sites |
+| Elistair | France | Tethered Orion | 50 h endurance, jam-immune power-line link |
+| Manna | Ireland | Food delivery | 250,000+ flights, per-flight profitable; pushed out of Ireland by councils |
+| Dronamics | Bulgaria | Black Swan cargo | 350 kg over 2,500 km, middle-mile |
+| Nordic Unmanned | Norway | Operations-as-a-service | 10,000+ hours flying EMSA maritime patrol |
+| Everdrone | Sweden | Autonomous defibrillator delivery | Beats the ambulance in 94% of cases |
+| Dronehub | Poland | Drone-in-a-box + AUDROS net counter-drone | Deutsche Bahn's 33,000 km network |
+| ABZ Innovation | Hungary | L10/L30 spray drones | Attacking the DJI/XAG agri monopoly in Europe |
 | FIXAR | Latvia | Fixed-angle VTOL survey | Mechanically simpler tilt-rotor alternative |
 | Acecore Technologies | Netherlands | Heavy-lift weatherproof multirotors | The Dutch industrial workhorse |
-| Skyports | UK | Vertiports and drone logistics | \$151M raised, ADP-backed, Dubai eVTOL network |
 
 ### Autonomy software and command-and-control
 
 | Company | Country | Product | Notable |
 |---|---|---|---|
-| Auterion | Switzerland/US | AuterionOS, Skynode, Nemyx | 33,000 strike kits to Ukraine; first multi-vendor swarm strike |
 | Helsing | Germany | Altra, Centaur, Lura | The software-first thesis; Centaur flew a Gripen E |
-| Shield AI | US | Hivemind | CEO Ryan Tseng; ported across airframes, DT25 to cruise missiles |
+| Spleenlab | Germany | Certified vision | Bought by Quantum Systems |
 | Anduril | US | Lattice | \$20B ten-year US Army deal |
-| Swarmer | Ukraine | Styx / MINAS / Trident OS | 82,000+ combat missions; 25 drones under full jamming |
-| Comand AI | France | Prevail C2 | CEO Loïc Mougeolle; Saab invested; feeds GlobalEye |
-| XTEND | Israel | XOS | Untrained soldiers directing swarms |
-| Twist Robotics | Ukraine | OSCAR visual navigation | ~500,000 km of flights refined it |
+| Shield AI | US | Hivemind | CEO Ryan Tseng; ported across airframes, DT25 to cruise missiles |
 | Oksi | US | OMNInav | Satellite-map matching, no GPS |
-| Delian Alliance | Greece | OSIRIS navigation | Under 0.1% position error while jammed |
+| XTEND | Israel | XOS | Untrained soldiers directing swarms |
+| Auterion | Switzerland/US | AuterionOS, Skynode, Nemyx | 33,000 strike kits to Ukraine; first multi-vendor swarm strike |
+| Daedalean | Switzerland | Certified visual AI | CHF 180M acquisition by Destinus |
+| Comand AI | France | Prevail C2 | CEO Loïc Mougeolle; Saab invested; feeds GlobalEye |
+| Swarmer | Ukraine | Styx / MINAS / Trident OS | 82,000+ combat missions; 25 drones under full jamming |
+| Twist Robotics | Ukraine | OSCAR visual navigation | ~500,000 km of flights refined it |
 | The Fourth Law | Ukraine | TFL-1 terminal guidance | \$50-100 module; strike rates 20% to 70-80% |
 | Trident Group | Ukraine | Universal targeting module | Raspberry Pi-based, zero-config |
-| Daedalean | Switzerland | Certified visual AI | CHF 180M acquisition by Destinus |
-| Spleenlab | Germany | Certified vision | Bought by Quantum Systems |
+| Delian Alliance | Greece | OSIRIS navigation | Under 0.1% position error while jammed |
 
 ### Chips and compute
 
 | Company | Country | Product | Notable |
 |---|---|---|---|
 | NVIDIA | US | Jetson line | The Western autonomy default; Samsung-fabbed |
-| NXP | Netherlands | i.MX 8M Plus | The \$15 brain of Auterion's Skynode S |
-| STMicroelectronics | France/Italy | STM32 flight controllers | The Pixhawk standard under every autonomy stack |
-| Rockchip | China | RK3588 | \$60-100; guides both Ukrainian and Russian FPVs |
-| Hailo | Israel | Hailo-10H dataflow NPU | ~16 TOPS/W; in distress, seeking a buyer in 2026 |
-| Axelera AI | Netherlands | Metis | Europe's one serious contender; €61.6M EuroHPC |
 | Ambarella | US | CV5 vision SoC | \$391M revenue; the domestic camera-chip option |
-| Horizon Robotics | China | Journey 6 | 560 TOPS; sanctions-proof Chinese edge AI |
-| Semidynamics | Spain | Gazzillion RISC-V | Sidesteps the HBM memory wall; still Taiwan-fabbed |
 | Architect Labs | US | AI-designed ASICs | \$24M to compress the 2-5 year silicon cycle to weeks |
 | TSMC / Samsung | Taiwan/Korea | The fabs | Where ~80% of the logic actually gets etched |
+| STMicroelectronics | France/Italy | STM32 flight controllers | The Pixhawk standard under every autonomy stack |
+| NXP | Netherlands | i.MX 8M Plus | The \$15 brain of Auterion's Skynode S |
+| Axelera AI | Netherlands | Metis | Europe's one serious contender; €61.6M EuroHPC |
+| Rockchip | China | RK3588 | \$60-100; guides both Ukrainian and Russian FPVs |
+| Horizon Robotics | China | Journey 6 | 560 TOPS; sanctions-proof Chinese edge AI |
+| Hailo | Israel | Hailo-10H dataflow NPU | ~16 TOPS/W; in distress, seeking a buyer in 2026 |
+| Semidynamics | Spain | Gazzillion RISC-V cores | Sidesteps the high-bandwidth-memory bottleneck; still Taiwan-fabbed |
 
 ### Communications and datalinks
 
@@ -591,9 +598,9 @@ Every company from the twenty-plus deep researches behind this article, grouped 
 |---|---|---|---|
 | SpaceX Starlink | US | LEO constellation | The war's backbone; whitelisted in 2026 |
 | Silvus Technologies | US | StreamCaster MANET | Bought by Motorola for \$4.4B |
+| Kymeta | US | Flat-panel satcom | Anti-jam links on Ukrainian USVs |
 | Persistent Systems | US | MPU5 / Wave Relay | 130-mile mesh links, onboard Android edge compute |
 | Doodle Labs | US/Singapore | Mini Mesh Rider | 27 g mesh radio for small drones, 47 km links |
-| Kymeta | US | Flat-panel satcom | Anti-jam links on Ukrainian USVs |
 | Himera | Ukraine | Jam-resistant tactical radios | \$2.5M seed, front-proven |
 | ExpressLRS | Open source | RC link firmware | Ukraine-modified to dodge jamming and AeroScope |
 
@@ -601,39 +608,39 @@ Every company from the twenty-plus deep researches behind this article, grouped 
 
 | Company | Country | Product | Notable |
 |---|---|---|---|
-| Teledyne FLIR | US | Boson+ thermal cores | ~20 mK; export-controlled |
-| Lynred | France | Cooled MWIR detectors | Europe's genuine strong point |
-| InfiRay / HikMicro | China | Amorphous-silicon thermal | Cut module prices >60%; the cheap-FPV standard |
 | Sony | Japan | STARVIS 2, SenSWIR | 0.005 lux starlight vision; record SWIR pixels |
-| SCD | Israel | Cardinal SWIR, Swift EI event camera | Decodes enemy laser designators at 50 kHz |
+| Teledyne FLIR | US | Boson+ thermal cores | ~20 mK; export-controlled |
+| InfiRay / HikMicro | China | Amorphous-silicon thermal | Cut module prices >60%; the cheap-FPV standard |
+| Hesai | China | LiDAR | US-designated Chinese military company; NVIDIA friction |
+| Quantum Systems | Germany | WASP acoustic payload | Locates artillery fire at 15 km from a 150 g module |
+| Lynred | France | Cooled mid-wave infrared detectors | Europe's genuine strong point |
 | NextVision | Israel | Stabilized micro EO/IR gimbals | \$168M revenue; inside half the West's drones |
+| SCD | Israel | Cardinal SWIR, Swift EI event camera | Decodes enemy laser designators at 50 kHz |
 | Odd Systems | Ukraine | Kurbas, Lupynis thermal FPV | \$150 thermal cameras at volume |
 | Oko Camera | Ukraine | Oko Pro thermal | Under 30 mK sensitivity, 17 ms latency to onboard AI |
-| Quantum Systems | Germany | WASP acoustic payload | Locates artillery fire at 15 km from a 150 g module |
-| Hesai | China | LiDAR | US-designated Chinese military company; NVIDIA friction |
 
 ### Components, materials and energy
 
 | Company | Country | Product | Notable |
 |---|---|---|---|
-| T-Motor | China | BLDC motors | Found inside Taiwan's "sovereign" Jackal drone |
-| Hobbywing | China | ESCs | ~78.5% of the brushless ESC market |
-| Gemfan | China | Propellers | The default FPV prop |
 | CATL | China | Cells, incl. 500 Wh/kg condensed battery | Purpose-built for electric aviation |
+| Hobbywing | China | ESCs | ~78.5% of the brushless ESC market |
+| T-Motor | China | BLDC motors | Found inside Taiwan's "sovereign" Jackal drone |
+| Gemfan | China | Propellers | The default FPV prop |
+| Toray | Japan | polyacrylonitrile carbon-fibre precursor | >50% of the world's supply |
+| Energy Fuels + Vacuumschmelze | US/Germany | Mine-to-magnet chain | \$1.9B deal; White Mesa to Hanau and Sumter |
+| Verkor / ACC | France | Sovereign pouch cells | The European traceable-cell bet |
+| LN Innov | France | VF65 sovereign motors | Reshoring on the old BIC factory site |
+| Dronavia | France | Parachutes, flight termination | The business SORA regulation created |
 | Lyten | US | Lithium-sulfur cells | On ex-Northvolt plants; no nickel, cobalt or graphite |
 | Amprius | US | Silicon-nanowire cells | >450 Wh/kg, military-qualified |
-| Verkor / ACC | France | Sovereign pouch cells | The European traceable-cell bet |
-| Intelligent Energy | UK | Hydrogen fuel cells | Powers the hydrogen Raybird |
-| Unusual Machines | US | NDAA motors, FCs, ESCs | 1M-motor/yr capacity; >\$100M cash, listed |
-| LN Innov | France | VF65 sovereign motors | Reshoring on the old BIC factory site |
-| Orqa | Croatia | FPV video + NDAA electronics | The European FPV-stack alternative |
-| Uplift360 | UK/Luxembourg | Recycled carbon fibre and Kevlar | 99% purity, with Leonardo |
-| Toray | Japan | PAN carbon-fibre precursor | >50% of the world's supply |
-| Energy Fuels + Vacuumschmelze | US/Germany | Mine-to-magnet chain | \$1.9B deal; White Mesa to Hanau and Sumter |
 | Niron Magnetics | US | Iron-nitride magnets | Rare-earth-free chemistry, scaling in Minnesota |
 | Noveon Magnetics | US | Recycled NdFeB | \$215M Series C; 90% less energy than virgin |
+| Unusual Machines | US | NDAA motors, flight controllers, ESCs | 1M-motor/yr capacity; >\$100M cash, listed |
+| Intelligent Energy | UK | Hydrogen fuel cells | Powers the hydrogen Raybird |
+| Orqa | Croatia | FPV video + NDAA electronics | The European FPV-stack alternative |
+| Uplift360 | UK/Luxembourg | Recycled carbon fibre and Kevlar | 99% purity, with Leonardo |
 | 3DTech | Ukraine | Fibre-optic spools | The 20 km coils behind unjammable FPVs |
-| Dronavia | France | Parachutes, flight termination | The business SORA regulation created |
 
 ## Additional good reads
 
@@ -647,19 +654,19 @@ Every company from the twenty-plus deep researches behind this article, grouped 
 
 [^starvis]: [Sony Semiconductor](https://www.sony-semicon.com/en/technology/security/index.html) on STARVIS 2 low-light and near-infrared sensitivity.
 
-[^lynred]: Cooled vs uncooled infrared and the thermal-crossover fix draw on the two "gemini_world" global-drone syntheses; Lynred is the Sofradir spin-off and a European leader in cooled MWIR detectors, Teledyne FLIR the US counterpart (Boson+ core on the Skydio X10). The InfiRay export-free thermal core, and its role as the cheap-FPV thermal supplier of choice, from the sensing-frontier synthesis (2026).
+[^lynred]: Cooled vs uncooled infrared and the thermal-crossover fix draw on the two "gemini_world" global-drone syntheses; Lynred is the Sofradir spin-off and a European leader in cooled mid-wave infrared detectors, Teledyne FLIR the US counterpart (Boson+ core on the Skydio X10). The InfiRay export-free thermal core, and its role as the cheap-FPV thermal supplier of choice, from the sensing-frontier synthesis (2026).
 
 [^sensing]: Short-wave infrared for atmospheric penetration, event cameras for microsecond-latency change detection, acoustic arrays, and the Odd Systems Lupynis thermal-FPV line (the Lupynis-10-TFL-1 with an integrated terminal-guidance module quoted under \$1,000) all from a sensing-frontier-of-drone-warfare research synthesis (2026), which frames 2026 as the shift from day/night to all-weather, degraded-visual-environment sensing.
 
 [^acoustic]: Acoustic detection arrays, Ukraine's Sky Fortress (a distributed microphone mesh cueing mobile fire teams onto Shahed engines) and Zvook, from the same sensing synthesis and the counter-drone research; they are cheap, passive, and hard to jam, but short-ranged and degraded by ambient noise. The Sky Fortress specifics (~9,500 sensors at \$400-500 each, edge classification with time-difference triangulation, the 80-of-84 raid, Lithuanian adoption) and the RF-fingerprinting technique from the sensing-frontier synthesis (2026).
 
-[^programs]: National-program and funding-machinery detail from the 2026 worldwide drone-tech financing research synthesis: the UK Defence Investment Plan and its lethal-autonomy language; the Replicator-to-DAWG restructuring and \$54.6B FY2027 request; SAFE's wave allocations, the UK walkout, Canada's accession and the Greek/Cypriot veto of Türkiye plus its \$5B HIT answer; the SFDR sustainable-finance exclusion and the NATO Hague 5%-of-GDP pledge; Germany's 45th Panzer Brigade fielding plan; Helsing's ~€580M Combat Fighter System Nucleus contract and 80%-European cap-table engineering; the NATO Innovation Fund, DIANA, EDIP and ReArm figures; and the EASA SORA 2.5 / Light UAS Operator Certificate / U-space evolution with the Altitude Angel insolvency, from the regulatory research notes. Programme figures are governments' own announcements.
+[^programs]: National-program and funding-machinery detail from the 2026 worldwide drone-tech financing research synthesis: the UK Defence Investment Plan and its lethal-autonomy language; the Replicator-to-Defense Autonomous Warfare Group restructuring and \$54.6B FY2027 request; SAFE's wave allocations, the UK walkout, Canada's accession and the Greek/Cypriot veto of Türkiye plus its \$5B HIT answer; the SFDR sustainable-finance exclusion and the NATO Hague 5%-of-GDP pledge; Germany's 45th Panzer Brigade fielding plan; Helsing's ~€580M Combat Fighter System Nucleus contract and 80%-European cap-table engineering; the NATO Innovation Fund, DIANA, EDIP and ReArm figures; and the EASA SORA 2.5 / Light UAS Operator Certificate / U-space evolution with the Altitude Angel insolvency, from the regulatory research notes. Programme figures are governments' own announcements.
 
 [^killzone]: The drone kill-zone depth (about 10 km by late 2025, 25 km by mid-2026, 30 km expected by year-end, 50-100 km for "medium" strikes) and the casualty inversion (artillery from ~80% to under 30%, drones to 70-80%) from a Ukrainian corps commander via [Euromaidan Press](https://euromaidanpress.com/2026/07/03/ukraines-eastern-kill-zone-is-25-km-deep-corps-commander-expects-30-by-years-end/) and [Ukrainska Pravda](https://www.pravda.com.ua/eng/news/2025/10/14/8002683/); the "Baba Yaga" night bombers and their mothership-relay role via [ASPI](https://www.aspistrategist.org.au/beyond-the-front-line-ukraine-is-deepening-its-drone-wall/); the doctrinal shift also from [Austin Vernon's Ukraine-war synthesis](https://www.austinvernon.site/blog/ukrainewar.html). These are battlefield estimates and one operator's-eye reading, not audited figures. The 25-50-drones-per-10-km density and the Russian infiltration-assault attrition (60-70% before the first line) from the sensing and communications syntheses via the same Euromaidan Press reporting.
 
 [^glider]: The SG-1 Fathom, the Blue Ocean LOCUS glider acquisition, the Lura Large Acoustic Model and the £350M Plymouth "Resilience Factory" from a worldwide naval-and-terrestrial-drone research synthesis and [Janes](https://www.janes.com/defence-intelligence-insights/defence-news/c4isr/helsing-to-produce-sg-1-fathom-underwater-glider-at-uk-resilience-factory); Delian's seabed-dormant cylinder and Ukraine's Toloka undersea line from the same synthesis. SG-1 Fathom specifications (60 kg, 1.95 m, to 1,000 m, ~3 months) and the Royal Navy's SG-1-based "Atlantic Bastion" programme via [Helsing](https://helsing.ai/newsroom/helsing-unveils-lura-and-sg-1-fathom-autonomous-mass-to-surveil-and-defend-the-depths); France's Alseamar Seaexplorer 1000-M (1,700 km, 110 days) via [EDR Magazine](https://www.edrmagazine.eu/imdex-2025-alseamar-presents-the-seaexplorer-1000-m-underwater-glider-for-civilian-and-military-use); the Toloka TLK-150/400/1000 range-and-payload ladder via [United24](https://united24media.com/latest-news/ukraines-massive-underwater-drone-toloka-unveiled-at-brave1-defense-tech-valley-2025-in-lviv-11798); Delian's Interceptigon-N via [EDR Magazine](https://www.edrmagazine.eu/defea-2025-delian-alliance-industries-defending-the-greek-approaches-and-not-only).
 
-[^links]: Silvus StreamCaster and Persistent Systems MPU5 / Wave Relay, and the "edge compute plus a resilient MANET datalink is the real weapon" framing, from an embedded-compute research synthesis ([Silvus](https://silvustechnologies.com/products/streamcaster-4400-enhanced/), [Persistent Systems](https://persistentsystems.com/solutions/uas-datalink/)); the Starlink backbone and the 2026 whitelist / blockade dynamic from [Austin Vernon's Ukraine-war synthesis](https://www.austinvernon.site/blog/ukrainewar.html). The geostationary-versus-LEO latency and the phased-array (AESA) mechanism via [Skyfront](https://skyfront.com/learn/starlink-drones) and [Qorvo](https://www.qorvo.com/design-hub/blog/the-role-of-beamforming-and-aesa-antennas-in-satcom-communications-part-3); the whitelist mechanics and the ~400 km2 gain via [InCyber](https://incyber.org/en/article/ukraine-to-block-access-to-starlink-for-unauthorized-devices/) and [Ukrainska Pravda](https://www.pravda.com.ua/eng/news/2026/05/22/8035859/); PACE failover via a communications-and-kill-zone research synthesis.
+[^links]: Silvus StreamCaster and Persistent Systems MPU5 / Wave Relay, and the "edge compute plus a resilient MANET datalink is the real weapon" framing, from an embedded-compute research synthesis ([Silvus](https://silvustechnologies.com/products/streamcaster-4400-enhanced/), [Persistent Systems](https://persistentsystems.com/solutions/uas-datalink/)); the Starlink backbone and the 2026 whitelist / blockade dynamic from [Austin Vernon's Ukraine-war synthesis](https://www.austinvernon.site/blog/ukrainewar.html). The geostationary-versus-LEO latency and the phased-array mechanism via [Skyfront](https://skyfront.com/learn/starlink-drones) and [Qorvo](https://www.qorvo.com/design-hub/blog/the-role-of-beamforming-and-aesa-antennas-in-satcom-communications-part-3); the whitelist mechanics and the ~400 km2 gain via [InCyber](https://incyber.org/en/article/ukraine-to-block-access-to-starlink-for-unauthorized-devices/) and [Ukrainska Pravda](https://www.pravda.com.ua/eng/news/2026/05/22/8035859/); PACE failover via a communications-and-kill-zone research synthesis.
 
 [^swarm]: Swarmer's \$15M raise and Nasdaq path from a Ukraine militaro-industrial research synthesis ([UA Tech Journal](https://www.uatechjournal.com/swarmer-raises-15-million-in-series-a-led-by-u-s-investor-the-largest-defense-tech-deal-in-ukraine-since-2022/), [United24](https://united24media.com/war-in-ukraine/ukrainian-drone-swarm-firm-swarmer-eyes-nasdaq-ipo-after-15m-funding-boost-15657)); the Russian Izdeliye-53 swarm architecture (pneumatic multi-tube launch, in-flight target sharing) from the embedded-compute synthesis and ISW.
 
@@ -693,7 +700,7 @@ Every company from the twenty-plus deep researches behind this article, grouped 
 
 [^bubble]: Revenue, valuation and multiple figures, the \$49B 2025 defence-VC total, the profitable-vs-speculative split and the correction anatomy come from a focused financial research synthesis drawing on audited German/registry filings (via Sacra), company results, and market analysis (New Market Pitch); Papperger's "Legos" remark is from The Atlantic (March 2026). Private-company revenues are frequently third-party estimates. The same synthesis reports Quantum Systems' CEO publicly floating a merger with Stark, and the US restructuring of "Replicator" into a Defense Autonomous Warfare Group whose FY2027 budget request jumped to ~\$54.6B.
 
-[^ground]: Ground-robot detail (Milrem THeMIS/HAVOC and the 60-vehicle EDGE order, ARX-Roboneers, Rheinmetall's Mission Master, the US Army's Ripsaw/RCV and S-MET mule competitions, and China's Norinco armed robots and DeepSeek-driven robot dogs) from a worldwide naval-and-terrestrial-drone research synthesis (2026).
+[^ground]: Ground-robot detail (Milrem THeMIS/HAVOC and the 60-vehicle EDGE order, ARX-Roboneers, Rheinmetall's Mission Master, the US Army's Ripsaw/Robotic Combat Vehicle and S-MET mule competitions, and China's Norinco armed robots and DeepSeek-driven robot dogs) from a worldwide naval-and-terrestrial-drone research synthesis (2026).
 
 [^blacksea]: The Magura (military-intelligence, HUR) and Sea Baby (security service, SBU) uncrewed-surface-vessel campaigns, plus the Toloka underwater line, per the same synthesis; the "sank multiple warships / first USV to down crewed aircraft" claims are Ukrainian-government-stated.
 
