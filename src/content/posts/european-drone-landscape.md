@@ -12,7 +12,7 @@ In 2025, European defense, security and resilience startups raised a record \$8.
 
 <iframe src="/assets/images/european-drone-landscape/chart-funding.html" height="480" title="Defence-tech VC funding, US versus Europe, 2024 to 2025"></iframe>
 
-## Part I: Who's building what in Europe
+## 1. Who's building what in Europe
 
 <iframe src="/assets/images/european-drone-landscape/map-europe.html" height="560" title="Interactive map of European drone startups"></iframe>
 
@@ -99,7 +99,7 @@ On regulation : the one place regulation genuinely shapes a product is: EASA's S
 
 ---
 
-## Part II: The other battlefields, counter-drone, ground and sea
+## 2. The other battlefields, counter-drone, ground and sea
 
 
 ### The kill zone: a lethal belt kilometres deep
@@ -143,7 +143,7 @@ Demand is now urgent (Belgium's €50M emergency BLAZE buy in November 2025, [Fr
 
 Detection is also going passive and cheap beyond the radio-frequency sensors above: acoustic arrays simply listen for a Shahed's engine. Ukraine's Sky Fortress mesh runs on roughly 9,500 microphones at \$400-500 each and in one 2026 saturation raid cued the interception of 80 of 84 incoming drones; Lithuania is adopting it, and RF fingerprinting (identifying a drone by its electronics' parasitic emissions in a tenth of a second) is emerging beside it.[^acoustic] The urgency is that conventional air defence is drowning: the interception rate against Shaheds fell from 94-97% in early 2025 to 80-85% by late 2025 on saturation alone.[^cuas]
 
-Jamming and RF detection are becoming secondary, because fibre-optic and AI-guided drones (Part III) ignore the radio spectrum entirely.
+Jamming and RF detection are becoming secondary, because fibre-optic and AI-guided drones (part 3) ignore the radio spectrum entirely.
 
 Drone destruction: At the top end, Israel's Iron Beam 100 kW laser [went operational in December 2025](https://www.autonomyglobal.co/israels-iron-beam-laser-air-defense-system-set-for-first-idf-delivery-on-december-30-2025/) at "a few dollars a shot," and the US answer is Anduril's reusable Roadrunner-M (it flies home if it doesn't engage) and [Raytheon's Coyote](https://www.twz.com/sea/coyote-roadrunner-loitering-drone-interceptors-to-arm-u-s-navy-destroyers), but lasers still [fail in fog and can only dwell on one target](https://www.jpost.com/israel-news/defense-news/article-894838) at a time ([Iron Beam is now wired into Iron Dome's battle management](https://migflug.com/jetflights/israel-iron-dome-iron-beam-integrated-test-2026/), letting commanders choose per-threat between a ~\$50k Tamir missile and the laser, and adversaries are already hardening drones with reflective and ablative coatings).[^cuas] Two whole categories sit outside the ram-or-shoot paradigm: **[high-power microwaves](https://publicationsdrdo.in/index.php/dsj/article/download/21114/8787)** (America's Epirus, China's FK-4000) that fry every drone in a cone, at the cost of a huge electromagnetic signature and ~3 km reach, and **net capture** (Fortem's DroneHunter, Germany's Argus FALCON, [ParaZero](https://www.defenseadvancement.com/company/parazero-technologies/)), the only debris-free option over cities.[^cuas] And part of why Europe's airports were so blind is a design choice: air-traffic and missile radars are tuned to ignore small slow objects so birds don't clutter the screen, exactly the regime a wave-skimming drone flies in.[^cuas]
 
@@ -199,7 +199,7 @@ The domain is splitting into two families: near-silent buoyancy gliders for pers
 | Toloka TLK-1000 (UA) | Strategic strike | 2,000 km | Up to 5,000 kg |
 | [Interceptigon-N (Delian, GR)](https://navyleaders.com/news/interceptigon-one-way-attack-uav-and-usv-launched-by-greek-firm/) | Seabed-dormant attack USV | Dormant 5 yrs, over 40 knots | ~70 kg charge |
 
-## Part III: The technical frontiers
+## 3. The technical frontiers
 
 ### Seeing in the dark: twilight, and the all-weather race
 
@@ -311,7 +311,7 @@ How do you prevent your embedded AI control to kill your own soldiers? Helsing's
 
 One level lower, the chip itself is starting to be designed by AI: the US startup Architect Labs [raised \$24M in 2026](https://www.businesswire.com/news/home/20260618895194/en/Architect-Labs-Raises-%2424M-Seed-to-Democratize-Custom-Chip-Design) to have a model design and formally verify custom ASICs end to end, compressing the two-to-five-year, tens-of-millions-of-dollars silicon cycle toward weeks. It points at a "designless" chip industry, the logical endpoint of wanting a purpose-built neural chip on every airframe.
 
-## Part IV: The global board: supply chains and geopolitics
+## 4. The global board: supply chains and geopolitics
 
 ### The global board
 
