@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --grid: #e1e0d9;
+    --gpu: #2a78d6;
+    --npu: #199e70;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --grid: rgba(255,255,255,0.14);
+    --gpu: #3987e5;
+    --npu: #1baf7a;
+  }
+  html, body { margin: 0; padding: 0; background: transparent; }
+  .wrap {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 12px 8px 6px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .title { color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1.35; margin: 0 0 4px; }
+  .caption { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 0 0 6px; }
+  .legend { display: flex; gap: 14px; margin: 0 0 6px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+  .dot-swatch { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  svg { width: 100%; height: auto; display: block; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .axis-label { fill: var(--muted); font-size: 11px; }
+  .axis-title { fill: var(--muted); font-size: 12px; font-weight: 600; }
+  .pt { stroke: #fff; stroke-width: 1; cursor: pointer; transition: opacity .12s ease; }
+  .pt:hover { opacity: .8; }
+  .pt-label { fill: var(--ink); font-size: 10.5px; pointer-events: none; }
+  .trend { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+  .trend-label { fill: var(--muted); font-size: 11px; font-style: italic; }
+  .tip {
+    position: fixed; pointer-events: none;
+    background: var(--ink); color: #fcfcfb;
+    font-size: 12px; line-height: 1.4;
+    padding: 7px 10px; border-radius: 6px;
+    opacity: 0; transition: opacity .1s ease;
+    max-width: 290px; z-index: 10;
+  }
+  html.dark .tip { color: #0b0b0b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">Edge-AI efficiency trend: ~100x per decade (doubling every ~16 months)</p>
+  <div class="legend">
+    <span class="chip"><span class="dot-swatch" style="background:var(--gpu)"></span>GPU modules (NVIDIA Jetson line)</span>
+    <span class="chip"><span class="dot-swatch" style="background:var(--npu)"></span>Dedicated neural accelerators</span>
+  </div>
+  <svg id="chart" viewBox="0 0 720 440" role="img" aria-label="Scatter of embedded AI chips, year versus TOPS per watt on a log scale"></svg>
+  <p class="caption">Peak inference throughput (TOPS) per watt at each chip's typical power, log scale. The metric follows each era's dominant inference precision (FP16 early, INT8 since ~2018, FP4 on the newest parts), and that precision drop is itself part of the efficiency gain. The fitted trend is ~100x per decade, a doubling every ~16 months: the efficiency that keeps a 7-billion-parameter model off a $448 FPV today stops being the obstacle around the end of the decade (onboard memory and software will lag the raw arithmetic). Sources: vendor datasheets (NVIDIA Jetson, Google Coral, Hailo, Axelera).</p>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function () {
+  const CHIPS = [
+    { year: 2015, name: "Jetson TX1", topw: 0.1, type: "gpu", prec: "FP16", node: "20 nm (TSMC)",
+      tip: "1 TFLOPS FP16 at ~10 W. The first credible embedded deep-learning module." },
+    { year: 2017, name: "Jetson TX2", topw: 0.13, type: "gpu", dy: 12, prec: "FP16", node: "16 nm (TSMC)",
+      tip: "1.3 TFLOPS FP16 at 7.5-15 W. Still flying today inside Russia's Lancet." },
+    { year: 2018, name: "Jetson AGX Xavier", topw: 1.1, type: "gpu", prec: "INT8", node: "12 nm (TSMC)",
+      tip: "32 INT8 TOPS at ~30 W. The jump to INT8 inference." },
+    { year: 2019, name: "Google Coral (Edge TPU)", topw: 2, type: "npu", prec: "INT8", node: "28 nm",
+      tip: "4 INT8 TOPS at ~2 W. The first mass-market dedicated edge accelerator; architecture beats a trailing node." },
+    { year: 2020, name: "Jetson Xavier NX", topw: 1.4, type: "gpu", dy: 12, prec: "INT8", node: "12 nm (TSMC)",
+      tip: "21 INT8 TOPS at 10-20 W. Flies in Shield AI's V-BAT and Anduril's Ghost." },
+    { year: 2021, name: "Hailo-8", topw: 10, type: "npu", prec: "INT8", node: "16 nm (TSMC)",
+      tip: "26 INT8 TOPS at ~2.5 W. Dataflow architecture: weights pinned to compute, no external memory traffic; 10x the efficiency of same-node GPUs." },
+    { year: 2023, name: "Jetson Orin NX", topw: 6.5, type: "gpu", dy: 12, prec: "INT8 (sparse)", node: "8 nm (Samsung)",
+      tip: "Up to 157 INT8 TOPS at 10-25 W. The board on Anduril's Fury and Bolt-M." },
+    { year: 2024, name: "Hailo-10H", topw: 16, type: "npu", side: "left", dy: -8, prec: "INT8", node: "undisclosed (TSMC)",
+      tip: "40 INT8 TOPS at ~2.5 W. The TOPS/W leader in the chip table above." },
+    { year: 2025, name: "Axelera Metis", topw: 15, type: "npu", dy: 16, prec: "INT8", node: "12 nm (TSMC N12)",
+      tip: "214 INT8 TOPS at ~14 W. Europe's contender; not yet flying (host and software maturity, not efficiency)." },
+    { year: 2025, name: "Jetson Thor", topw: 16, type: "gpu", dy: -10, side: "right", prec: "FP4", node: "4N, 5 nm-class (TSMC)",
+      tip: "~2,070 FP4 TFLOPS at ~130 W. FP4 precision flatters the number, but transformer inference genuinely runs at these low precisions now." }
+  ];
+
+  const W = 720, H = 440;
+  const pl = 60, pr = W - 20, pt = 20, pb = H - 46;
+  const x0 = 2014.3, x1 = 2026.7;
+  const y0 = Math.log10(0.05), y1 = Math.log10(40);
+  const xOf = v => pl + (v - x0) / (x1 - x0) * (pr - pl);
+  const yOf = v => pb - (Math.log10(v) - y0) / (y1 - y0) * (pb - pt);
+
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("chart");
+  const tip = document.getElementById("tip");
+  function el(name, attrs) { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+
+  // Gridlines: log decades on Y
+  [0.1, 1, 10].forEach(v => {
+    const y = yOf(v);
+    svg.appendChild(el("line", { class: "grid-line", x1: pl, x2: pr, y1: y, y2: y }));
+    const lab = el("text", { class: "axis-label", x: pl - 8, y: y + 4, "text-anchor": "end" });
+    lab.textContent = String(v);
+    svg.appendChild(lab);
+  });
+  for (let yr = 2015; yr <= 2026; yr += 1) {
+    const x = xOf(yr);
+    if (yr % 2 === 1) {
+      svg.appendChild(el("line", { class: "grid-line", x1: x, x2: x, y1: pt, y2: pb }));
+      const lab = el("text", { class: "axis-label", x: x, y: pb + 16, "text-anchor": "middle" });
+      lab.textContent = yr;
+      svg.appendChild(lab);
+    }
+  }
+  const yt = el("text", { class: "axis-title", x: 14, y: (pt + pb) / 2, "text-anchor": "middle", transform: `rotate(-90 14 ${(pt + pb) / 2})` });
+  yt.textContent = "TOPS per watt (log)";
+  svg.appendChild(yt);
+
+  // Fitted trend: 0.1 TOPS/W (2015) -> 16 TOPS/W (2025), ~100x/decade
+  const rate = Math.log10(16 / 0.1) / 10; // log10 units per year
+  const trendY = yr => 0.1 * Math.pow(10, rate * (yr - 2015));
+  const t0 = 2014.5, t1 = 2026.5;
+  svg.appendChild(el("line", {
+    class: "trend",
+    x1: xOf(t0), y1: yOf(trendY(t0)),
+    x2: xOf(t1), y2: yOf(trendY(t1))
+  }));
+
+  // Points
+  CHIPS.forEach(d => {
+    const cx = xOf(d.year), cy = yOf(d.topw);
+    const c = el("circle", { class: "pt", cx: cx.toFixed(1), cy: cy.toFixed(1), r: 6 });
+    c.style.fill = d.type === "gpu" ? "var(--gpu)" : "var(--npu)";
+    c.style.fillOpacity = 0.9;
+    svg.appendChild(c);
+
+    const anchorRight = d.side === "left" || (d.side !== "right" && cx > W - 130);
+    const dy = d.dy || 0;
+    const t = el("text", { class: "pt-label", x: (anchorRight ? cx - 9 : cx + 9).toFixed(1), y: (cy + 3.5 + dy).toFixed(1), "text-anchor": anchorRight ? "end" : "start" });
+    t.textContent = d.name;
+    svg.appendChild(t);
+
+    const show = evt => {
+      tip.innerHTML = "<b>" + d.name + " (" + d.year + ")</b> · ~" + d.topw + " TOPS/W · quantization " + d.prec + " · " + d.node + "<br>" + d.tip;
+      tip.style.opacity = "1"; move(evt);
+    };
+    const move = evt => {
+      const tw = tip.offsetWidth || 260;
+      let lx = evt.clientX + 12;
+      if (lx + tw > window.innerWidth - 8) lx = evt.clientX - tw - 12;
+      tip.style.left = lx + "px";
+      tip.style.top = Math.max(8, evt.clientY - 10) + "px";
+    };
+    const hide = () => { tip.style.opacity = "0"; };
+    c.addEventListener("mouseenter", show);
+    c.addEventListener("mousemove", move);
+    c.addEventListener("mouseleave", hide);
+  });
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>
