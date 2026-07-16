@@ -635,12 +635,21 @@ fetch('europe.geo.json').then(r => r.json()).then(geo => {
       { x: n.x, y: n.y - n.r - 4, anchor: 'middle' },
       { x: n.x, y: n.y + n.r + 11, anchor: 'middle' },
     ];
-    let best = candidates[0];
+    // A label overlapping ANOTHER company's bubble reads as belonging to it; score candidates on both.
+    const circleHitsBox = (c, box) => {
+      const cx = Math.max(box.x0, Math.min(c.x, box.x1)), cy = Math.max(box.y0, Math.min(c.y, box.y1));
+      return Math.hypot(c.x - cx, c.y - cy) < c.r;
+    };
+    let best = candidates[0], bestScore = Infinity;
     for (const cand of candidates) {
       const x0 = cand.anchor === 'start' ? cand.x : cand.anchor === 'end' ? cand.x - wEst : cand.x - wEst / 2;
       const box = { x0, x1: x0 + wEst, y0: cand.y - hEst, y1: cand.y };
-      const hitsLabel = placed.some(p => box.x0 < p.x1 && box.x1 > p.x0 && box.y0 < p.y1 && box.y1 > p.y0);
-      if (!hitsLabel) { best = cand; break; }
+      const labelHits = placed.filter(p => box.x0 < p.x1 && box.x1 > p.x0 && box.y0 < p.y1 && box.y1 > p.y0).length;
+      // Overlapping a big labeled bubble misattributes the name; weight it far above grazing a dot.
+      const bubblePenalty = nodes.reduce((s, o) => s + (o !== n && circleHitsBox(o, box) ? (o.r >= 10 ? 6 : 1) : 0), 0);
+      const score = labelHits * 2 + bubblePenalty;
+      if (score === 0) { best = cand; break; }
+      if (score < bestScore) { bestScore = score; best = cand; }
     }
     const bx0 = best.anchor === 'start' ? best.x : best.anchor === 'end' ? best.x - wEst : best.x - wEst / 2;
     placed.push({ x0: bx0, x1: bx0 + wEst, y0: best.y - hEst, y1: best.y });
