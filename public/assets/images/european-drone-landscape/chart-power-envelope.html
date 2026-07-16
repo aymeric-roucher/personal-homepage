@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --grid: #e1e0d9;
+    --dot: #2a78d6;
+    --band1: rgba(0,131,0,0.10);
+    --band2: rgba(237,161,0,0.12);
+    --band3: rgba(227,73,72,0.10);
+    --band1-ink: #008300;
+    --band2-ink: #c98500;
+    --band3-ink: #e34948;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --grid: rgba(255,255,255,0.14);
+    --dot: #3987e5;
+    --band1: rgba(0,131,0,0.16);
+    --band2: rgba(237,161,0,0.14);
+    --band3: rgba(227,73,72,0.14);
+    --band1-ink: #35b04a;
+    --band2-ink: #eda100;
+    --band3-ink: #e66767;
+  }
+  html, body { margin: 0; padding: 0; background: transparent; }
+  .wrap {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 12px 8px 6px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .title { color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1.35; margin: 0 0 4px; }
+  .caption { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 0 0 8px; }
+  svg { width: 100%; height: auto; display: block; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .axis-label { fill: var(--muted); font-size: 11px; }
+  .axis-title { fill: var(--muted); font-size: 12px; font-weight: 600; }
+  .dot { fill: var(--dot); fill-opacity: 0.85; stroke: #fff; stroke-width: 1; cursor: pointer; transition: opacity .12s ease; }
+  .dot:hover { opacity: .8; }
+  .dot-label { fill: var(--ink); font-size: 10.5px; paint-order: stroke; pointer-events: none; }
+  .band-label { font-size: 10.5px; font-weight: 600; }
+  .tip {
+    position: fixed; pointer-events: none;
+    background: var(--ink); color: #fcfcfb;
+    font-size: 12px; line-height: 1.4;
+    padding: 7px 10px; border-radius: 6px;
+    opacity: 0; transition: opacity .1s ease;
+    max-width: 300px; z-index: 10;
+  }
+  html.dark .tip { color: #0b0b0b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">Which drone can afford a transformer brain? Price versus onboard power for compute</p>
+  <p class="caption">Sustained electrical power a platform can spare for payload electronics (1+ minute, engineering estimates from battery capacity, payload-port specs and fitted hardware; DJI M300 figure from its payload-SDK spec) against unit price, log-log. Bubble size &prop; takeoff weight. Bands: rated-silicon demand of each AI workload at 10-30% real utilization. Physics stops being the obstacle around €10k platforms; from there on the barrier is that the airframe is no longer attritable.</p>
+  <svg id="chart" viewBox="0 0 720 460" role="img" aria-label="Scatter plot of drone price versus available payload power, bubble size showing weight"></svg>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function () {
+  // power: sustained W available for payload electronics; price USD; weight kg (MTOW)
+  const DRONES = [
+    { name: "5\" FPV (Vyriy TFL-1)", price: 448, power: 10, kg: 1.2, dy: -10,
+      tip: "~10 W spare from a ~30 Wh 6S pack over a 10-min sortie. Runs a $15-100 NPU (NXP, Rockchip) for terminal guidance; an Orin would cost more than the whole drone and halve its flight time." },
+    { name: "Thermal FPV (Lupynis)", price: 950, power: 10, kg: 1.4, dy: 14,
+      tip: "Same airframe class plus a $150 Kurbas thermal camera; the compute budget stays ~10 W." },
+    { name: "Heavy fibre FPV (10\")", price: 2500, power: 20, kg: 3.5,
+      tip: "Bigger pack, ~3.8 kg spool; ~20 W of electronics headroom. Estimate." },
+    { name: "Mavic-class ISR quad", price: 4000, power: 12, kg: 1.0,
+      tip: "Integrated consumer platform; roughly 10-15 W for sensors and processing. Estimate." },
+    { name: "DJI M300 (enterprise)", price: 13000, power: 70, kg: 6.3,
+      tip: "Documented: payload ports at 17 V / 4 A, ~70 W sustained per port, 180 W across ports. Enough for an Orin AGX; a 3B VLA fits, a 7B is within reach. The barrier is the $13k+ price, not physics." },
+    { name: "Baba Yaga (R18-class octo)", price: 20000, power: 150, kg: 30, side: "left",
+      tip: "Agricultural octocopter conversion; hauls a Starlink terminal (50-100 W) plus relay radios aloft, so ~150 W of electrical headroom demonstrated in the field. Estimate." },
+    { name: "Quantum Vector (eVTOL ISR)", price: 180000, power: 50, kg: 7.4, side: "left",
+      tip: "Ships with two Jetson SoCs; on a fixed-wing eVTOL, tens of watts of continuous compute. Estimate." },
+    { name: "Shahed / Geran-4", price: 70000, power: 250, kg: 200,
+      tip: "200 kg airframe with generator power off the engine; the Geran-4 already carries machine-vision compute. Estimate." },
+    { name: "Bayraktar TB2 (MALE)", price: 5000000, power: 1500, kg: 700,
+      tip: "Engine-driven alternator, kW-class electrical system: cooled MWIR gimbals (25-100 W) and any edge-AI board fit trivially. Estimate." }
+  ];
+
+  const BANDS = [
+    { from: 2, to: 10, label: "YOLO terminal guidance (2-10 W)", cls: 1 },
+    { from: 25, to: 60, label: "3B VLA, π₀-class (25-60 W)", cls: 2 },
+    { from: 60, to: 200, label: "7B VLA (60-200 W)", cls: 3 }
+  ];
+
+  const W = 720, H = 460;
+  const pl = 64, pr = W - 20, pt = 30, pb = H - 52;
+  const x0 = Math.log10(300), x1 = Math.log10(10000000);
+  const y0 = Math.log10(1), y1 = Math.log10(3000);
+  const xOf = v => pl + (Math.log10(v) - x0) / (x1 - x0) * (pr - pl);
+  const yOf = v => pb - (Math.log10(v) - y0) / (y1 - y0) * (pb - pt);
+  const rOf = kg => Math.min(40, 4 + Math.sqrt(kg) * 1.6);
+
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("chart");
+  const tip = document.getElementById("tip");
+  function el(name, attrs) { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+
+  // Workload bands (behind everything)
+  BANDS.forEach(b => {
+    const yTop = yOf(b.to), yBot = yOf(b.from);
+    svg.appendChild(el("rect", { x: pl, y: yTop, width: pr - pl, height: yBot - yTop, fill: `var(--band${b.cls})` }));
+    const t = el("text", { class: "band-label", x: pr - 6, y: yTop + 12, "text-anchor": "end", fill: `var(--band${b.cls}-ink)` });
+    t.textContent = b.label;
+    svg.appendChild(t);
+  });
+
+  // Gridlines
+  [1, 10, 100, 1000].forEach(v => {
+    const y = yOf(v);
+    svg.appendChild(el("line", { class: "grid-line", x1: pl, x2: pr, y1: y, y2: y }));
+    const lab = el("text", { class: "axis-label", x: pl - 8, y: y + 4, "text-anchor": "end" });
+    lab.textContent = v >= 1000 ? (v / 1000) + " kW" : v + " W";
+    svg.appendChild(lab);
+  });
+  [1000, 10000, 100000, 1000000, 10000000].forEach(v => {
+    const x = xOf(v);
+    svg.appendChild(el("line", { class: "grid-line", x1: x, x2: x, y1: pt, y2: pb }));
+    const lab = el("text", { class: "axis-label", x: x, y: pb + 16, "text-anchor": "middle" });
+    lab.textContent = v >= 1000000 ? "$" + (v / 1000000) + "M" : "$" + (v / 1000) + "k";
+    svg.appendChild(lab);
+  });
+
+  // Axis titles
+  const xt = el("text", { class: "axis-title", x: (pl + pr) / 2, y: H - 8, "text-anchor": "middle" });
+  xt.textContent = "Unit price (log)";
+  svg.appendChild(xt);
+  const yt = el("text", { class: "axis-title", x: 14, y: (pt + pb) / 2, "text-anchor": "middle", transform: `rotate(-90 14 ${(pt + pb) / 2})` });
+  yt.textContent = "Power available for electronics (log)";
+  svg.appendChild(yt);
+
+  // Dots + labels
+  DRONES.forEach(d => {
+    const cx = xOf(d.price), cy = yOf(d.power), r = rOf(d.kg);
+    const c = el("circle", { class: "dot", cx: cx.toFixed(1), cy: cy.toFixed(1), r: r.toFixed(1) });
+    svg.appendChild(c);
+    const anchorRight = d.side === "left" || cx > W - 170;
+    const dy = d.dy || 0;
+    const t = el("text", { class: "dot-label", x: (anchorRight ? cx - r - 4 : cx + r + 4).toFixed(1), y: (cy + 3.5 + dy).toFixed(1), "text-anchor": anchorRight ? "end" : "start" });
+    t.textContent = d.name;
+    svg.appendChild(t);
+
+    const fmtP = d.price >= 1000000 ? "$" + (d.price / 1000000) + "M" : "$" + Math.round(d.price / 100) / 10 + "k";
+    const show = evt => {
+      tip.innerHTML = "<b>" + d.name + "</b><br>" + fmtP + " · ~" + (d.power >= 1000 ? (d.power / 1000) + " kW" : d.power + " W") + " for electronics · ~" + d.kg + " kg<br>" + d.tip;
+      tip.style.opacity = "1"; move(evt);
+    };
+    const move = evt => {
+      const tw = tip.offsetWidth || 260;
+      let lx = evt.clientX + 12;
+      if (lx + tw > window.innerWidth - 8) lx = evt.clientX - tw - 12;
+      tip.style.left = lx + "px";
+      tip.style.top = Math.max(8, evt.clientY - 10) + "px";
+    };
+    const hide = () => { tip.style.opacity = "0"; };
+    c.addEventListener("mouseenter", show);
+    c.addEventListener("mousemove", move);
+    c.addEventListener("mouseleave", hide);
+  });
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>
