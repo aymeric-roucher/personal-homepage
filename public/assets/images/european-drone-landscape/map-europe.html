@@ -23,7 +23,7 @@
   svg { width: 100%; height: auto; display: block; }
   .country { fill: var(--land); stroke: var(--border); stroke-width: 0.7; }
   .bubble { stroke: #fff; stroke-width: 1.2; cursor: pointer; transition: opacity .12s; }
-  .bubble.na { fill: none !important; stroke-width: 1.6; }
+  .bubble.na { stroke: #898781 !important; stroke-dasharray: 2 1.6; stroke-width: 1.3; }
   .blabel { font-size: 10.5px; fill: var(--ink-2); paint-order: stroke; stroke: rgba(255,255,255,0.85); stroke-width: 2.5px; pointer-events: none; }
   .hub { fill: rgba(82,81,78,0.05); stroke: #52514e; stroke-width: 1.1; stroke-dasharray: 4 3; cursor: pointer; }
   .hub:hover { fill: rgba(82,81,78,0.12); }
@@ -61,7 +61,7 @@
   <div class="legend" id="legend"></div>
   <svg id="map" viewBox="0 0 960 760" role="img" aria-label="Map of Europe with drone startups as bubbles sized by money raised"></svg>
   <div class="foot">
-    <span>Bubble area &prop; money raised (hollow ring = undisclosed). Hover for details, click to pin &amp; open sources.</span>
+    <span>Bubble area &prop; money raised (dashed gray outline = undisclosed). Hover for details, click to pin &amp; open sources.</span>
     <span class="sizekey" id="sizekey"></span>
   </div>
   <div class="tooltip" id="tt"></div>

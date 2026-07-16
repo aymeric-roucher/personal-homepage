@@ -24,7 +24,7 @@
   svg { width: 100%; height: auto; display: block; }
   .country { fill: var(--land); stroke: var(--border); stroke-width: 0.4; }
   .bubble, .comp { stroke: #fff; stroke-width: 1; cursor: pointer; transition: opacity .12s; }
-  .bubble.na { fill: none !important; stroke-width: 1.4; }
+  .bubble.na { stroke: #898781 !important; stroke-dasharray: 2 1.6; stroke-width: 1.3; }
   .blabel { font-size: 9.5px; fill: var(--ink-2); paint-order: stroke; stroke: rgba(255,255,255,0.85); stroke-width: 2.2px; pointer-events: none; }
   .facts { margin: 10px 2px 2px; padding: 9px 11px; border: 1px solid var(--ring); border-radius: 8px; background: #fbfbf9; font-size: 12px; line-height: 1.5; }
   .facts b { color: var(--ink); }
@@ -52,7 +52,7 @@
   <div class="legend" id="legend"></div>
   <svg id="map" viewBox="0 0 1180 320" role="img" aria-label="World map of drone makers and component suppliers"></svg>
   <div class="facts" id="facts"></div>
-  <div class="foot">Circles = drone makers (sized by valuation, or revenue/market weight where private; hollow = undisclosed). ◆ = the components &amp; chips everyone depends on. Hover for details, click to pin &amp; open sources.</div>
+  <div class="foot">Circles = drone makers (sized by valuation, or revenue/market weight where private; dashed gray outline = undisclosed). ◆ = the components &amp; chips everyone depends on. Hover for details, click to pin &amp; open sources.</div>
   <div class="tooltip" id="tt"></div>
 </div>
 <script>
