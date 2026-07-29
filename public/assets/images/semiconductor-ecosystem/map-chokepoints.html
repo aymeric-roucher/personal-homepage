@@ -51,7 +51,7 @@
 <body>
 <div class="wrap">
   <p class="title">Semiconductor companies, and how much their vanishing would delay global supply</p>
-  <p class="sub">Companies sit where they produce, not where they are registered. Circle area is annual revenue. A black ring marks the ones whose loss <b>stops</b> the chain rather than slowing it, thickening with the months the world would wait.</p>
+  <p class="sub">Companies sit where they produce, not where they are registered. Circle size grows with annual revenue, on a compressed scale so the small suppliers stay legible. A black ring marks the ones whose loss <b>stops</b> the chain rather than slowing it, thickening with the months the world would wait.</p>
   <div class="legend" id="legend"></div>
   <svg id="map" viewBox="0 0 1180 400" role="img" aria-label="World map of semiconductor chokepoints sized by revenue and ringed by months of disruption"></svg>
   <p class="note" id="note"></p>
@@ -242,7 +242,11 @@ function fit() {
   document.getElementById('map').setAttribute('viewBox', `0 0 ${W} ${H}`);
 }
 const px = (lat, lon) => { const [x, y] = raw(lat, lon); return [x * SC + TX, y * SC + TY]; };
-const radius = (rev) => Math.max(3.2, 2.5 * Math.sqrt(rev));
+// Cube root, not square root. Area-proportional sizing spans $0.3B to $90B, which pushes
+// the whole small-supplier tail below the minimum legible radius and flattens it into
+// identical dots. Compressing harder keeps Ajinomoto and Namics distinguishable, at the
+// cost of under-drawing the giants, which the map is not about.
+const radius = (rev) => Math.max(3, 5.4 * Math.cbrt(rev));
 const ringWidth = (stop) => 0.42 * stop;
 
 fetch('world.geo.json').then(r => r.json()).then(geo => {
