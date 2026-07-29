@@ -1,6 +1,6 @@
 ---
 title: The Math Behind Harmony - why a fifth sounds sweet and a piano is tuned wrong
-thumbnail: Why do some notes sound sweet together and others clash? Starting from two sine waves, we derive the physics of dissonance, rebuild musical scales from scratch, and end on a 3D map of every possible chord.
+thumbnail: Why do some notes sound sweet together and others clash? From the physics of dissonance, we derive harmony and rebuild musical scales.
 date: 2026-07-05
 type: blog
 url: math-of-harmony

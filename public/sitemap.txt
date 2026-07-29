@@ -9,7 +9,9 @@ https://m-ric.com/projects/screensuite
 https://m-ric.com/projects/open-computer-agent
 https://m-ric.com/blog/ultra-endurance-data-science
 https://m-ric.com/blog/transformers-interactive
+https://m-ric.com/blog/semiconductor-ecosystem
 https://m-ric.com/blog/math-of-harmony
+https://m-ric.com/blog/looping-transformers
 https://m-ric.com/blog/humanitys-role-in-global-warming
 https://m-ric.com/blog/how-to-get-number-1-on-producthunt
 https://m-ric.com/blog/how-producthunt-botched-our-launch

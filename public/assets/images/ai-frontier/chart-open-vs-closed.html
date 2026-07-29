@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --faint: #898781;
+    --grid: #e1e0d9;
+    --surface: #fcfcfb;
+    --closed: #2a78d6;
+    --open: #1baf7a;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --faint: #898781;
+    --grid: #2c2c2a;
+    --surface: #1a1a19;
+    --closed: #3987e5;
+    --open: #199e70;
+  }
+  html, body { margin: 0; padding: 0; background: transparent; }
+  .wrap {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 12px 8px 6px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .title { color: var(--ink); font-size: 20px; font-weight: 700; line-height: 1.35; margin: 0 0 5px; }
+  .caption { color: var(--muted); font-size: 15.5px; line-height: 1.45; margin: 6px 0 0; }
+  .legend { display: flex; gap: 18px; margin: 0; flex-wrap: wrap; align-items: baseline; }
+  .watermark { margin-left: auto; color: var(--faint); font-size: 15px; opacity: 0.65; }
+  .chip { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 18px; }
+  .line-key { width: 18px; height: 0; border-top: 2.5px solid; border-radius: 2px; display: inline-block; }
+  svg { width: 100%; height: auto; display: block; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .axis-label { fill: var(--faint); font-size: 15px; font-variant-numeric: tabular-nums; }
+  .axis-title { fill: var(--muted); font-size: 16px; font-weight: 600; }
+  .step-label { font-size: 14.5px; fill: var(--muted); }
+  .step-label .mname { fill: var(--ink); font-weight: 600; }
+  .leader { stroke: var(--faint); stroke-width: 0.75; opacity: 0.55; }
+  .chip-marker circle { stroke-width: 1.5; fill: #ffffff; }
+  .crosshair { stroke: var(--faint); stroke-width: 1; opacity: 0; }
+  .tip {
+    position: fixed; pointer-events: none;
+    background: var(--ink); color: var(--surface);
+    font-size: 15.5px; line-height: 1.45;
+    padding: 7px 10px; border-radius: 6px;
+    opacity: 0; transition: opacity .1s ease;
+    max-width: 300px; z-index: 10;
+  }
+  .tip .row { display: flex; align-items: baseline; gap: 6px; }
+  .tip .key { display: inline-block; width: 12px; border-top: 2.5px solid; transform: translateY(-3px); }
+  .tip b { font-weight: 700; }
+  details { margin-top: 8px; color: var(--muted); font-size: 15px; }
+  details summary { cursor: pointer; }
+  table { border-collapse: collapse; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 3px 10px 3px 0; border-bottom: 1px solid var(--grid); color: var(--muted); }
+  th { color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">Frontier AI intelligence over time: open weights vs closed models</p>
+  <div class="legend">
+    <span class="chip"><span class="line-key" style="border-color:var(--closed)"></span>Closed frontier</span>
+    <span class="chip"><span class="line-key" style="border-color:var(--open)"></span>Open-weights frontier</span>
+    <span class="watermark">Aymeric Roucher</span>
+  </div>
+  <svg id="chart" viewBox="0 0 940 540" role="img" aria-label="Step chart of the best Artificial Analysis Intelligence Index score over time, one line for closed models and one for open-weights models, each record-setting model labeled"></svg>
+  <p class="caption">Each line tracks the running best score on the Artificial Analysis Intelligence Index v4.1 (9 evaluations, including GDPval-AA v2, Terminal-Bench 2.1, Humanity's Last Exam and GPQA Diamond), across the 15 leading labs; scores before mid-2025 are back-estimates from earlier index versions. Every logo marks the model that set a new record for its camp, labeled with total parameter count; closed labs do not disclose parameter counts. Minor records (under 3% improvement, less than a month after the previous one) are folded into the next step. The axis starts in July 2024, where the frontiers stood at Claude 3 Opus (closed) and Grok-1 (open); the data table below lists every record back to GPT-3.5 in November 2022. Kimi K3's weights are announced but not yet published (due by Jul 27). Meta switched to closed weights in 2026: its Muse Spark models never led either camp, so Llama's last open record stands at 2024. Source: Artificial Analysis, July 2026.</p>
+  <details>
+    <summary>Data table</summary>
+    <table id="datatable"></table>
+  </details>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function () {
+  // Every model that set a new record for its camp on the Artificial Analysis
+  // Intelligence Index v4.1, per AA's live model table (Jul 2026). Scores before
+  // mid-2025 are AA back-estimates from earlier index versions. params null = undisclosed.
+  const STEPS = [
+    { camp: "closed", date: "2022-11-30", score: 3.6,  model: "GPT-3.5",       lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2023-03-14", score: 7.0,  model: "GPT-4",         lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2023-11-06", score: 7.9,  model: "GPT-4 Turbo",   lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2024-03-04", score: 11.8, model: "Claude 3 Opus", lab: "Anthropic", logo: "anthropic", params: null },
+    { camp: "closed", date: "2024-09-12", score: 17.0, model: "o1-preview",    lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2024-12-05", score: 23.4, model: "o1",            lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2025-02-24", score: 27.1, model: "Claude 3.7",    lab: "Anthropic", logo: "anthropic", params: null },
+    { camp: "closed", date: "2025-04-16", score: 30.4, model: "o3",            lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2025-05-22", score: 31.0, model: "Opus 4",        lab: "Anthropic", logo: "anthropic", params: null },
+    { camp: "closed", date: "2025-06-10", score: 32.5, model: "o3-pro",        lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2025-07-10", score: 33.3, model: "Grok 4",        lab: "xAI",       logo: "x",         params: null },
+    { camp: "closed", date: "2025-08-05", score: 33.7, model: "Opus 4.1",      lab: "Anthropic", logo: "anthropic", params: null },
+    { camp: "closed", date: "2025-08-07", score: 34.7, model: "GPT-5",         lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2025-09-23", score: 36.1, model: "GPT-5 Codex",   lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2025-09-29", score: 36.4, model: "Sonnet 4.5",    lab: "Anthropic", logo: "anthropic", params: null },
+    { camp: "closed", date: "2025-11-13", score: 36.9, model: "GPT-5.1",       lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2025-11-18", score: 39.6, model: "Gemini 3 Pro",  lab: "Google",    logo: "google",    params: null },
+    { camp: "closed", date: "2025-11-24", score: 40.8, model: "Opus 4.5",      lab: "Anthropic", logo: "anthropic", params: null },
+    { camp: "closed", date: "2025-12-11", score: 42.2, model: "GPT-5.2",       lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2026-02-05", score: 44.3, model: "GPT-5.3 Codex", lab: "OpenAI",    logo: "openai",    params: null,
+      note: "Claude Opus 4.6 landed the same day at 43.7" },
+    { camp: "closed", date: "2026-02-17", score: 47.2, model: "Sonnet 4.6",    lab: "Anthropic", logo: "anthropic", params: null },
+    { camp: "closed", date: "2026-03-05", score: 51.4, model: "GPT-5.4",       lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2026-04-16", score: 53.5, model: "Opus 4.7",      lab: "Anthropic", logo: "anthropic", params: null },
+    { camp: "closed", date: "2026-04-23", score: 54.8, model: "GPT-5.5",       lab: "OpenAI",    logo: "openai",    params: null },
+    { camp: "closed", date: "2026-05-28", score: 55.7, model: "Opus 4.8",      lab: "Anthropic", logo: "anthropic", params: null },
+    { camp: "closed", date: "2026-06-09", score: 59.9, model: "Fable 5",       lab: "Anthropic", logo: "anthropic", params: null,
+      note: "Suspended Jun 12 to 30 under a US export-control directive, redeployed Jul 1" },
+
+    { camp: "open", date: "2023-02-24", score: 2.1,  model: "LLaMA",         lab: "Meta",     logo: "meta",     params: "65B" },
+    { camp: "open", date: "2023-07-18", score: 4.3,  model: "Llama 2",       lab: "Meta",     logo: "meta",     params: "70B" },
+    { camp: "open", date: "2024-03-17", score: 6.0,  model: "Grok-1",        lab: "xAI",      logo: "x",        params: "314B" },
+    { camp: "open", date: "2024-07-23", score: 8.5,  model: "Llama 3.1",     lab: "Meta",     logo: "meta",     params: "405B" },
+    { camp: "open", date: "2024-09-19", score: 9.6,  model: "Qwen2.5",       lab: "Alibaba",  logo: "qwen",     params: "72B" },
+    { camp: "open", date: "2024-12-26", score: 14.2, model: "DeepSeek V3",   lab: "DeepSeek", logo: "deepseek", params: "671B" },
+    { camp: "open", date: "2025-01-20", score: 18.5, model: "R1",            lab: "DeepSeek", logo: "deepseek", params: "671B" },
+    { camp: "open", date: "2025-05-28", score: 20.1, model: "R1-0528",       lab: "DeepSeek", logo: "deepseek", params: "671B" },
+    { camp: "open", date: "2025-08-05", score: 23.8, model: "gpt-oss-120b",  lab: "OpenAI",   logo: "openai",   params: "117B" },
+    { camp: "open", date: "2025-09-22", score: 30.4, model: "V3.1-Terminus", lab: "DeepSeek", logo: "deepseek", params: "671B" },
+    { camp: "open", date: "2025-11-06", score: 32.7, model: "K2 Thinking",   lab: "Moonshot", logo: "kimi",     params: "1T" },
+    { camp: "open", date: "2025-12-16", score: 33.2, model: "MiMo-V2-Flash", lab: "Xiaomi",   logo: "xiaomi",   params: "309B" },
+    { camp: "open", date: "2025-12-22", score: 33.7, model: "GLM-4.7",       lab: "Z AI",     logo: "zai",      params: "357B" },
+    { camp: "open", date: "2026-01-27", score: 35.4, model: "K2.5",          lab: "Moonshot", logo: "kimi",     params: "1T" },
+    { camp: "open", date: "2026-02-11", score: 39.5, model: "GLM-5",         lab: "Z AI",     logo: "zai",      params: "744B" },
+    { camp: "open", date: "2026-04-07", score: 40.2, model: "GLM-5.1",       lab: "Z AI",     logo: "zai",      params: "744B" },
+    { camp: "open", date: "2026-04-20", score: 44.2, model: "K2.6",          lab: "Moonshot", logo: "kimi",     params: "1T" },
+    { camp: "open", date: "2026-04-24", score: 44.3, model: "V4 Pro",        lab: "DeepSeek", logo: "deepseek", params: "1.6T" },
+    { camp: "open", date: "2026-06-01", score: 44.4, model: "MiniMax-M3",    lab: "MiniMax",  logo: "minimax",  params: "428B" },
+    { camp: "open", date: "2026-06-16", score: 51.1, model: "GLM-5.2",       lab: "Z AI",     logo: "zai",      params: "753B" },
+    { camp: "open", date: "2026-07-16", score: 57.1, model: "Kimi K3",       lab: "Moonshot", logo: "kimi",     params: "2.8T",
+      note: "Weights announced but not yet published; Hugging Face release due by Jul 27" }
+  ];
+  const TODAY = "2026-07-17";
+
+  const W = 940, H = 540;
+  const plotL = 44, plotR = 830, plotT = 44, plotB = 480;
+  const CUTOFF = "2024-06-20";
+  const t0 = Date.parse(CUTOFF), t1 = Date.parse("2026-08-05");
+  const sMax = 62;
+  const xOf = iso => plotL + (Date.parse(iso) - t0) / (t1 - t0) * (plotR - plotL);
+  const yOf = s => plotB - s / sMax * (plotB - plotT);
+
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("chart");
+  const tip = document.getElementById("tip");
+  function el(name, attrs) { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+  function fmtDate(iso) {
+    const d = new Date(iso + "T00:00:00Z");
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+  }
+
+  const closedAll = STEPS.filter(s => s.camp === "closed");
+  const openAll = STEPS.filter(s => s.camp === "open");
+
+  // Declutter: a record that improves the frontier by less than 3% within a
+  // month of the last shown record is folded into the next step. It stays in
+  // the data table and in the crosshair tooltip.
+  function declutter(pts) {
+    const kept = [];
+    for (const s of pts) {
+      const prev = kept[kept.length - 1];
+      const minor = prev && s.score < prev.score * 1.03 && Date.parse(s.date) - Date.parse(prev.date) < 30 * 86400000;
+      if (!minor) kept.push(s);
+    }
+    return kept;
+  }
+  const closed = declutter(closedAll);
+  const open = declutter(openAll);
+
+  // The axis starts at CUTOFF: earlier records are folded into a synthetic
+  // entry point at the left edge, at the frontier level of that date.
+  function visibleWithEntry(pts) {
+    const before = pts.filter(s => Date.parse(s.date) < t0);
+    const after = pts.filter(s => Date.parse(s.date) >= t0);
+    return [{ date: CUTOFF, score: before[before.length - 1].score }].concat(after);
+  }
+  const closedDraw = visibleWithEntry(closed);
+  const openDraw = visibleWithEntry(open);
+
+  // Gridlines and axes
+  [0, 15, 30, 45, 60].forEach(v => {
+    const y = yOf(v);
+    svg.appendChild(el("line", { class: "grid-line", x1: plotL, x2: plotR, y1: y, y2: y }));
+    const lab = el("text", { class: "axis-label", x: plotL - 8, y: y + 4, "text-anchor": "end" });
+    lab.textContent = String(v);
+    svg.appendChild(lab);
+  });
+  [["2024-07-01", "Jul 24"], ["2025-01-01", "Jan 25"], ["2025-07-01", "Jul 25"], ["2026-01-01", "Jan 26"], ["2026-07-01", "Jul 26"]].forEach(([iso, label]) => {
+    const x = xOf(iso);
+    svg.appendChild(el("line", { class: "grid-line", x1: x, x2: x, y1: plotT, y2: plotB }));
+    const lab = el("text", { class: "axis-label", x: x, y: plotB + 16, "text-anchor": "middle" });
+    lab.textContent = label;
+    svg.appendChild(lab);
+  });
+  const yt = el("text", { class: "axis-title", x: 14, y: (plotT + plotB) / 2, "text-anchor": "middle", transform: `rotate(-90 14 ${(plotT + plotB) / 2})` });
+  yt.textContent = "Artificial Analysis Intelligence Index";
+  svg.appendChild(yt);
+
+  // Wash between the two frontiers: the open-closed gap
+  function stepPath(pts, extendTo) {
+    let d = `M${xOf(pts[0].date)},${yOf(pts[0].score)}`;
+    for (let i = 1; i < pts.length; i++) d += `H${xOf(pts[i].date)}V${yOf(pts[i].score)}`;
+    d += `H${xOf(extendTo)}`;
+    return d;
+  }
+  function stepPtsReversed(pts, extendTo) {
+    let d = `L${xOf(extendTo)},${yOf(pts[pts.length - 1].score)}`;
+    for (let i = pts.length - 1; i > 0; i--) d += `L${xOf(pts[i].date)},${yOf(pts[i].score)}L${xOf(pts[i].date)},${yOf(pts[i - 1].score)}`;
+    d += `L${xOf(pts[0].date)},${yOf(pts[0].score)}`;
+    return d;
+  }
+  const wash = el("path", { d: stepPath(closedDraw, TODAY) + stepPtsReversed(openDraw, TODAY) + "Z", fill: "var(--closed)", opacity: 0.07 });
+  svg.appendChild(wash);
+
+  // Frontier lines
+  svg.appendChild(el("path", { d: stepPath(closedDraw, TODAY), fill: "none", stroke: "var(--closed)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+  svg.appendChild(el("path", { d: stepPath(openDraw, TODAY), fill: "none", stroke: "var(--open)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+
+  // Marker positions: chips slide right along their flat run when two records
+  // land days apart (e.g. K2.6 then V4 Pro then M3 in spring 2026), so no chip
+  // hides another. Lines are drawn from true dates; tooltips carry exact dates.
+  function markerPositions(pts) {
+    let prevX = -1e9, prevY = 1e9;
+    return pts.map(s => {
+      let px = xOf(s.date);
+      const py = yOf(s.score);
+      if (px < prevX + 15 && Math.abs(py - prevY) < 15) px = prevX + 15;
+      prevX = px; prevY = py;
+      return { s, px, py };
+    });
+  }
+  const closedMarkers = markerPositions(closedDraw.slice(1));
+  const openMarkers = markerPositions(openDraw.slice(1));
+  const markers = closedMarkers.concat(openMarkers);
+
+  // Rotated step labels. All text runs at +72 degrees (reading downhill).
+  // Closed labels END at their chip and extend up-left: for a rising staircase
+  // that quadrant never contains the line, the chips, or later labels.
+  // Open labels START at their chip and extend down-right (same argument below).
+  // Collisions are resolved in the coordinate perpendicular to the text
+  // direction, nudging labels rightward along their row when bands get closer
+  // than one line height.
+  const ANGLE = 30, RAD = ANGLE * Math.PI / 180, SIN = Math.sin(RAD), COS = Math.cos(RAD), MIN_P = 18;
+  function placeLabels(ms, dir) {
+    let prevP = -1e9;
+    ms.forEach(m => {
+      const { s, px, py } = m;
+      // Anchor just off the chip rim, along the text direction (not straight
+      // above/below): closed labels trail off the upper-left shoulder, open
+      // labels off the lower-right shoulder.
+      const OFF = 14;
+      const ly = py + dir * OFF * SIN;
+      let lx = px + dir * OFF * COS;
+      let p = lx * SIN - ly * COS;
+      if (p < prevP + MIN_P) {
+        lx += (prevP + MIN_P - p) / SIN;
+        p = prevP + MIN_P;
+      }
+      prevP = p;
+      if (Math.abs(lx - (px + dir * OFF * COS)) > 2) {
+        svg.appendChild(el("line", { class: "leader", x1: px + dir * 9 * COS, y1: py + dir * 9 * SIN, x2: lx, y2: ly + (dir === -1 ? 3 : -3) }));
+      }
+      const t = el("text", { class: "step-label", x: lx, y: ly, transform: `rotate(${ANGLE} ${lx} ${ly})`, "text-anchor": dir === -1 ? "end" : "start" });
+      const name = el("tspan", { class: "mname" });
+      name.textContent = s.model;
+      t.appendChild(name);
+      if (s.params) {
+        const rest = el("tspan", {});
+        rest.textContent = ` · ${s.params}`;
+        t.appendChild(rest);
+      }
+      svg.appendChild(t);
+    });
+  }
+  placeLabels(closedMarkers, -1);
+  placeLabels(openMarkers, +1);
+
+  // Favicons with heavy built-in padding get drawn larger; a circular clip
+  // keeps any square logo background inside the chip.
+  const LOGO_SIZE = { openai: 19, anthropic: 19, google: 18, x: 19, meta: 17 };
+  markers.forEach((m, i) => {
+    const g = el("g", { class: "chip-marker" });
+    g.appendChild(el("circle", { cx: m.px, cy: m.py, r: 10, stroke: m.s.camp === "closed" ? "var(--closed)" : "var(--open)" }));
+    const clip = el("clipPath", { id: "chipclip" + i });
+    clip.appendChild(el("circle", { cx: m.px, cy: m.py, r: 9 }));
+    g.appendChild(clip);
+    const size = LOGO_SIZE[m.s.logo] || 15;
+    g.appendChild(el("image", { x: m.px - size / 2, y: m.py - size / 2, width: size, height: size, href: "logos/" + m.s.logo + ".png", "clip-path": "url(#chipclip" + i + ")" }));
+    svg.appendChild(g);
+  });
+
+  // Hover: crosshair snapping to dates, tooltip reads both frontiers
+  const cross = el("line", { class: "crosshair", y1: plotT, y2: plotB });
+  svg.appendChild(cross);
+  function frontierAt(pts, t) {
+    let cur = null;
+    for (const s of pts) { if (Date.parse(s.date) <= t) cur = s; else break; }
+    return cur;
+  }
+  function tipRow(color, s) {
+    const row = document.createElement("div");
+    row.className = "row";
+    const key = document.createElement("span");
+    key.className = "key";
+    key.style.borderColor = color;
+    row.appendChild(key);
+    const b = document.createElement("b");
+    b.textContent = s.score.toFixed(1);
+    row.appendChild(b);
+    const rest = document.createElement("span");
+    rest.textContent = s.model + (s.params ? ` (${s.params})` : "") + " · " + s.lab;
+    row.appendChild(rest);
+    return row;
+  }
+  svg.addEventListener("pointermove", ev => {
+    const box = svg.getBoundingClientRect();
+    const mx = (ev.clientX - box.left) * W / box.width;
+    const my = (ev.clientY - box.top) * H / box.height;
+    if (mx < plotL || mx > plotR + 20 || my < 20 || my > plotB + 30) { hide(); return; }
+    const near = markers.reduce((best, m) => {
+      const d = Math.hypot(m.px - mx, m.py - my);
+      return d < best.d ? { d, m } : best;
+    }, { d: 1e9, m: null });
+    const clampedX = Math.min(Math.max(mx, plotL), plotR);
+    const t = t0 + (clampedX - plotL) / (plotR - plotL) * (t1 - t0);
+    tip.replaceChildren();
+    const head = document.createElement("div");
+    tip.appendChild(head);
+    if (near.d < 22) {
+      cross.setAttribute("x1", near.m.px); cross.setAttribute("x2", near.m.px);
+      head.textContent = fmtDate(near.m.s.date);
+      tip.appendChild(tipRow(near.m.s.camp === "closed" ? "var(--closed)" : "var(--open)", near.m.s));
+      const note = document.createElement("div");
+      note.textContent = near.m.s.camp === "closed" ? "New closed-model record" : "New open-weights record";
+      note.style.opacity = "0.75";
+      tip.appendChild(note);
+      if (near.m.s.note) {
+        const extra = document.createElement("div");
+        extra.textContent = near.m.s.note;
+        extra.style.opacity = "0.75";
+        tip.appendChild(extra);
+      }
+    } else {
+      cross.setAttribute("x1", mx); cross.setAttribute("x2", mx);
+      const d = new Date(t);
+      head.textContent = d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
+      const c = frontierAt(closedAll, t), o = frontierAt(openAll, t);
+      if (c) tip.appendChild(tipRow("var(--closed)", c));
+      if (o) tip.appendChild(tipRow("var(--open)", o));
+      if (c && o) {
+        const gapEl = document.createElement("div");
+        gapEl.textContent = "Gap: " + (c.score - o.score).toFixed(1) + " pts";
+        gapEl.style.opacity = "0.75";
+        tip.appendChild(gapEl);
+      }
+    }
+    cross.style.opacity = 0.5;
+    tip.style.opacity = 1;
+    tip.style.left = Math.min(ev.clientX + 14, window.innerWidth - 310) + "px";
+    tip.style.top = (ev.clientY + 14) + "px";
+  });
+  function hide() { cross.style.opacity = 0; tip.style.opacity = 0; }
+  svg.addEventListener("pointerleave", hide);
+
+  // Table view
+  const table = document.getElementById("datatable");
+  const hr = document.createElement("tr");
+  ["Date", "Frontier", "Model", "Lab", "Params", "Score"].forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = h;
+    hr.appendChild(th);
+  });
+  table.appendChild(hr);
+  [...STEPS].sort((a, b) => Date.parse(a.date) - Date.parse(b.date)).forEach(s => {
+    const tr = document.createElement("tr");
+    [fmtDate(s.date), s.camp === "closed" ? "Closed" : "Open weights", s.model, s.lab, s.params || "undisclosed", s.score.toFixed(1)].forEach(v => {
+      const td = document.createElement("td");
+      td.textContent = v;
+      tr.appendChild(td);
+    });
+    table.appendChild(tr);
+  });
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+</body>
+</html>
