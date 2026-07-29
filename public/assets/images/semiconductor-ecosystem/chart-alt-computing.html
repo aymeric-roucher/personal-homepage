@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --grid: #e1e0d9;
+    --halo: #fcfcfb;
+    --dot: #2a78d6;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --grid: rgba(255,255,255,0.14);
+    --halo: #1a1a19;
+    --dot: #3987e5;
+  }
+  html, body { margin: 0; padding: 0; background: transparent; }
+  .wrap { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 12px 8px 6px; max-width: 760px; margin: 0 auto; }
+  .title { color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1.35; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 0 0 10px; }
+  svg { width: 100%; height: auto; display: block; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .axis-label { fill: var(--muted); font-size: 11px; }
+  .pt-label { fill: var(--ink); font-size: 12px; font-weight: 600; paint-order: stroke; stroke: var(--halo); stroke-width: 3px; stroke-linejoin: round; }
+  .pt-sub { fill: var(--muted); font-size: 10.5px; paint-order: stroke; stroke: var(--halo); stroke-width: 3px; stroke-linejoin: round; }
+  .dot { cursor: pointer; stroke: var(--halo); stroke-width: 2; fill: var(--dot); }
+  .caption { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 8px 0 0; }
+  .caption a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+  .tip { position: fixed; pointer-events: none; background: var(--ink); color: #fcfcfb; font-size: 12px; line-height: 1.35; padding: 6px 9px; border-radius: 6px; opacity: 0; transition: opacity .1s ease; max-width: 270px; z-index: 10; }
+  html.dark .tip { color: #0b0b0b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">Alternatives to CMOS: money raised vs maturity</p>
+  <p class="sub">Horizontal: technology-readiness level (TRL 1 research, 9 deployed). Vertical: cumulative disclosed startup funding per approach, log scale (equity plus IPO proceeds; incumbents' internal R&amp;D and corporate investments excluded).</p>
+  <svg id="chart" viewBox="0 0 760 440" role="img" aria-label="Scatter plot of startup funding versus technology readiness for CMOS alternatives"></svg>
+  <p class="caption">Wafer-scale includes Cerebras's <a href="https://techcrunch.com/2026/05/14/cerebras-raises-5-5b-kicking-off-2026s-ipo-season-with-a-bang/" target="_blank" rel="noopener">$5.55B May 2026 IPO</a>; photonic computing includes Lightelligence's ~$310M Hong Kong IPO. Optical interconnect counts startup equity only: adding <a href="https://www.cnbc.com/2026/05/29/nvidia-photonics-investment-ai.html" target="_blank" rel="noopener">NVIDIA's &gt;$6.5B into photonics suppliers</a> and Marvell's $3.25B Celestial AI acquisition would put that row past $12B. Figures compiled July 2026 from company press releases; tracker totals diverge 10-20%. Hover any point for the company breakdown and the demonstrated result.</p>
+  <div class="tip" id="tip"></div>
+</div>
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("chart");
+  const tip = document.getElementById("tip");
+  const W = 760, H = 440;
+  const padL = 64, padR = 20, padT = 16, padB = 36;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  const xOf = trl => padL + ((trl - 1) / 8) * plotW;
+  // log scale $50M .. $12B
+  const LO = Math.log10(5e7), HI = Math.log10(1.2e10);
+  const yOf = v => padT + plotH * (1 - (Math.log10(v) - LO) / (HI - LO));
+
+  const pts = [
+    { label: "Wafer-scale CMOS", sub: "Cerebras · ~$7.4B", trl: 9, fund: 7.4e9, dx: -14, dy: 4, anchor: "end",
+      note: "Cerebras: ~$1.9B private + $5.55B IPO (May 2026). WSE-3 in production, 969 tok/s on Llama 3.1 405B, measured." },
+    { label: "Optical interconnect (CPO)", sub: "~$2.4B", trl: 8.5, fund: 2.4e9, dx: -14, dy: 4, anchor: "end",
+      note: "Ayar Labs ~$870M, Lightmatter ~$850M, Celestial AI ~$580M (acquired by Marvell), Scintil ~$77M. Broadcom Bailly and NVIDIA Quantum-X shipping. Excludes NVIDIA's >$6.5B corporate investments." },
+    { label: "Photonic computing (MVM)", sub: "~$770M", trl: 4.5, fund: 7.7e8, dx: 14, dy: 4, anchor: "start",
+      note: "Lightelligence ~$247M private + ~$310M Hong Kong IPO, Q.ANT ~$88M, Optalysys ~$63M, Salience ~$42M, Arago $26M. Still blocked by ADC/DAC overhead and calibration drift." },
+    { label: "Neuromorphic (spiking)", sub: "~$550M", trl: 5.5, fund: 5.5e8, dx: 14, dy: -8, anchor: "start",
+      note: "BrainChip ~$250M (ASX), Prophesee ~$130M (insolvency, restructured), SynSense $77M, Innatera $43M. Wins on always-on sensing; ~0.1x GPU on dense models." },
+    { label: "Analog in-memory (AIMC)", sub: "~$500M", trl: 5.5, fund: 5.0e8, dx: 14, dy: 18, anchor: "start",
+      note: "Mythic ~$300M, EnCharge ~$144M, Sagence ~$55M. IBM 14nm PCM: ALBERT within 1.8% of FP. Blocked by ADC/DAC cost and drift." },
+    { label: "Thermodynamic / probabilistic", sub: "~$100M", trl: 2.5, fund: 1.0e8, dx: 14, dy: 4, anchor: "start",
+      note: "Normal Computing ~$85M (CN101 taped out 2025), Extropic $14M disclosed. Toy-scale demos, no software ecosystem." },
+    { label: "Superconducting logic", sub: "~$75M", trl: 3.5, fund: 7.5e7, dx: 14, dy: 4, anchor: "start",
+      note: "SeeQC ~$52M, Snowcap $23M (Gelsinger-chaired, first chip end-2026). >100 GHz but 4K cryogenics eat the gain. IARPA/imec public programs excluded." }
+  ];
+
+  const el = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+
+  // x gridlines TRL 1,3,5,7,9
+  [1,3,5,7,9].forEach(t => {
+    const x = xOf(t);
+    svg.appendChild(el("line", { class: "grid-line", x1: x, y1: padT, x2: x, y2: padT + plotH }));
+    const lab = el("text", { class: "axis-label", x: x, y: H - 12, "text-anchor": "middle" });
+    lab.textContent = "TRL " + t;
+    svg.appendChild(lab);
+  });
+  // y gridlines $100M, $1B, $10B
+  [[1e8,"$100M"],[1e9,"$1B"],[1e10,"$10B"]].forEach(([v, txt]) => {
+    const y = yOf(v);
+    svg.appendChild(el("line", { class: "grid-line", x1: padL, y1: y, x2: padL + plotW, y2: y }));
+    const lab = el("text", { class: "axis-label", x: padL - 8, y: y + 4, "text-anchor": "end" });
+    lab.textContent = txt;
+    svg.appendChild(lab);
+  });
+
+  pts.forEach(d => {
+    const cx = xOf(d.trl), cy = yOf(d.fund);
+    const dot = el("circle", { class: "dot", cx: cx, cy: cy, r: 8 });
+    svg.appendChild(dot);
+    const lab = el("text", { class: "pt-label", x: cx + d.dx, y: cy + d.dy, "text-anchor": d.anchor });
+    lab.textContent = d.label;
+    svg.appendChild(lab);
+    const sub = el("text", { class: "pt-sub", x: cx + d.dx, y: cy + d.dy + 13, "text-anchor": d.anchor });
+    sub.textContent = d.sub;
+    svg.appendChild(sub);
+    const show = evt => {
+      tip.innerHTML = "<b>" + d.label + " (TRL " + d.trl + ")</b><br>" + d.note;
+      tip.style.opacity = "1"; move(evt);
+    };
+    const move = evt => {
+      tip.style.left = Math.min(evt.clientX + 12, window.innerWidth - 280) + "px";
+      tip.style.top = (evt.clientY - 10) + "px";
+    };
+    dot.addEventListener("mouseenter", show);
+    dot.addEventListener("mousemove", move);
+    dot.addEventListener("mouseleave", () => { tip.style.opacity = "0"; });
+  });
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>

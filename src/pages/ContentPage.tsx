@@ -14,6 +14,7 @@ import PlotlyChart from "@/components/PlotlyChart";
 import FigureCard from "@/components/FigureCard";
 import TechnicalBlock from "@/components/TechnicalBlock";
 import TableOfContents from "@/components/TableOfContents";
+import LoopingTransformerDiagram from "@/components/looping-transformers/LoopingTransformerDiagram";
 
 const ContentPage = () => {
   const { type: typeParam, slug } = useParams<{ type?: string; slug?: string }>();
@@ -148,7 +149,7 @@ const ContentPage = () => {
               .replace(/<\s*\/\s*end\s*>/gi, '&lt;/end&gt;');
             return (
               <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkMath]}
+            remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkMath]}
             rehypePlugins={[rehypeRaw, rehypeKatex]}
             components={{
               h1: ({ children }) => {
@@ -345,6 +346,11 @@ const ContentPage = () => {
                 />
               ),
               div: ({ className, children, ...props }) => {
+                // The low-detail Transformer flow diagram of the Looping Transformers post
+                if (className && className.includes('looping-transformer-diagram')) {
+                  return <LoopingTransformerDiagram />;
+                }
+
                 // Check if this is a plotly chart div
                 if (className && className.includes('plotly-chart')) {
                   const dataSrc = props['data-src'] as string;

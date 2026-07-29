@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --halo: #fcfcfb;
+    --silicon: #2a78d6;
+    --consumable: #eda100;
+    --memory: #4a3aa7;
+    --packaging: #eb6834;
+    --process: #898781;
+    --final: #1baf7a;
+    --margin: #b8b6ad;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --halo: #1a1a19;
+    --silicon: #3987e5;
+    --consumable: #c98500;
+    --memory: #9085e9;
+    --packaging: #d95926;
+    --process: #898781;
+    --final: #199e70;
+    --margin: #55554f;
+  }
+  html, body { margin: 0; padding: 0; background: transparent; }
+  .wrap {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 12px 8px 6px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .title { color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1.35; margin: 0 0 8px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 8px; }
+  .legend .chip { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; line-height: 1; }
+  .legend .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+  svg { width: 100%; height: auto; display: block; }
+  .node { cursor: pointer; }
+  .link { cursor: pointer; transition: opacity .12s ease; }
+  .node-label {
+    fill: var(--ink); font-size: 11px;
+    paint-order: stroke; stroke: var(--halo); stroke-width: 3px; stroke-linejoin: round;
+  }
+  .node-value { font-weight: 700; }
+  .side-label { fill: var(--muted); font-size: 11px; }
+  .caption { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 8px 0 0; }
+  .caption a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+  .caption a:hover { color: var(--ink); }
+  .mtitle { color: var(--ink); font-size: 12.5px; font-weight: 700; margin: 12px 0 4px; }
+  table.margins { width: 100%; border-collapse: collapse; font-size: 11.5px; color: var(--muted); }
+  table.margins th, table.margins td { text-align: left; padding: 3px 8px 3px 0; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  table.margins th { color: var(--muted); font-weight: 600; }
+  table.margins td.co { color: var(--ink); font-weight: 600; }
+  table.margins td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.margins tr.builder td { color: var(--ink); font-weight: 700; }
+  .mnote { color: var(--muted); font-size: 11px; line-height: 1.4; margin: 6px 0 0; }
+  .tip {
+    position: fixed; pointer-events: none;
+    background: var(--ink); color: #fcfcfb;
+    font-size: 12px; line-height: 1.35; padding: 6px 9px; border-radius: 6px;
+    opacity: 0; transition: opacity .1s ease;
+    max-width: 260px; z-index: 10;
+  }
+  html.dark .tip { color: #0b0b0b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">What one Blackwell B200 costs to build (~$6,400) versus what it sells for (~$40,000)</p>
+  <div class="legend">
+    <span class="chip"><span class="swatch" style="background:var(--silicon)"></span>Silicon &amp; logic</span>
+    <span class="chip"><span class="swatch" style="background:var(--consumable)"></span>Consumables &amp; masks</span>
+    <span class="chip"><span class="swatch" style="background:var(--memory)"></span>Memory (HBM3e)</span>
+    <span class="chip"><span class="swatch" style="background:var(--packaging)"></span>Packaging &amp; substrate</span>
+    <span class="chip"><span class="swatch" style="background:var(--process)"></span>Process value added</span>
+  </div>
+  <svg id="sankey" viewBox="0 0 940 600" role="img" aria-label="Sankey diagram of the B200 cost build-up from raw materials to shipped module, with a selling-price bar"></svg>
+  <p class="caption">Flow width is the estimated contribution to the ~$6,400 manufacturing cost of one B200 module (per <a href="https://epoch.ai/data-insights/b200-cost-breakdown" target="_blank" rel="noopener">Epoch AI's teardown-based breakdown</a> and <a href="https://siliconanalysts.com/analysis/nvidia-b200-blackwell-cost-breakdown" target="_blank" rel="noopener">Silicon Analysts</a>, 2025-26). The bar on the right shows the ~$40,000 street price: build cost is only ~16% of it, the rest is NVIDIA's gross margin (~84%). That price bar is on its own scale, not the flow scale. Hover any flow or node for detail.</p>
+  <p class="mtitle">NVIDIA takes the biggest margin, but each bought-in part already carries its supplier's</p>
+  <table class="margins">
+    <thead>
+      <tr><th>Bought-in part</th><th>Who makes it</th><th class="num">~ cost in a B200</th><th class="num">Gross margin (est.)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2 logic dies (4NP)</td><td class="co">TSMC</td><td class="num">~$850</td><td class="num">~59%</td></tr>
+      <tr><td>CoWoS-L packaging</td><td class="co">TSMC</td><td class="num">~$900</td><td class="num">~59%</td></tr>
+      <tr><td>HBM3e, 8 stacks</td><td class="co">SK hynix (+ Micron, Samsung)</td><td class="num">~$2,900</td><td class="num">~55% on HBM</td></tr>
+      <tr><td>ABF substrate</td><td class="co">Ibiden / Shinko / Unimicron</td><td class="num">~$200</td><td class="num">~20-30%</td></tr>
+      <tr><td>ABF build-up film</td><td class="co">Ajinomoto</td><td class="num">(in substrate)</td><td class="num">&gt;50%</td></tr>
+      <tr><td>Test + burn-in</td><td class="co">Advantest / KYEC</td><td class="num">~$550</td><td class="num">tester ~55%, OSAT ~30%</td></tr>
+      <tr class="builder"><td>Finished module</td><td class="co">NVIDIA</td><td class="num">sells ~$40,000</td><td class="num">~84% on this SKU</td></tr>
+    </tbody>
+  </table>
+  <p class="mnote">Margins are company-level gross margins from 2025 earnings used as a proxy for the per-part margin; HBM and packaging figures are estimates. So the ~$6,400 build cost already contains TSMC's, SK hynix's and the substrate makers' margins, and NVIDIA's ~84% sits on top of all of it.</p>
+  <div class="tip" id="tip"></div>
+</div>
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("sankey");
+  const tip = document.getElementById("tip");
+  const W = 760, H = 600;
+  const PLOT_TOP = 8, PLOT_H = 560;
+  const NODE_W = 10, GAP = 8, MIN_H = 5;
+  const COL_X = [176, 318, 452, 566, 664];
+  const fmt = v => "$" + v.toLocaleString("en-US");
+
+  const nodes = {
+    quartz:   { col: 0, label: "Ultra-pure quartz", value: 10,  cat: "silicon",
+                tip: "Spruce Pine, North Carolina. Sibelco + The Quartz Corp: 70-90% of world supply. Cents per chip, no substitute." },
+    poly:     { col: 0, label: "Polysilicon 11N", value: 110, cat: "silicon",
+                tip: "Wacker (DE), Hemlock (US), Tokuyama (JP): ~80% of electronic grade." },
+    wgrow:    { col: 0, label: "Ingot growth + polish", value: 130, cat: "process",
+                tip: "Czochralski growth in Spruce Pine quartz crucibles, diamond-wire slicing, atomic-level polishing." },
+    chem:     { col: 0, label: "Chemicals & gases", value: 100, cat: "consumable",
+                tip: "Photoresists (JSR, TOK, Shin-Etsu), neon, helium, etch gases, wet chemicals, CMP slurries, targets." },
+    mask:     { col: 0, label: "Photomasks", value: 150, cat: "consumable",
+                tip: "The master stencil of each circuit layer that light is projected through, not the coating on the wafer. EUV blanks: Hoya + AGC ~95%. Writing: DNP, Toppan, Photronics, TSMC captive. Millions per mask set, amortized per die." },
+    dram:     { col: 0, label: "DRAM wafers", value: 2000, cat: "memory",
+                tip: "SK hynix (Icheon, Cheongju), Micron (Taichung, Hiroshima), Samsung (Pyeongtaek). The raw silicon behind the stacks." },
+    tsv:      { col: 0, label: "TSV stacking", value: 900, cat: "process",
+                tip: "Through-silicon-via drilling and 8-to-12-high stacking. One bad via kills the whole stack; yields ~60-80% depending on maker." },
+    abf:      { col: 0, label: "ABF film", value: 50, cat: "packaging",
+                tip: "Ajinomoto Fine-Techno: ~95% of the world's build-up film. Yes, the food company." },
+    subbuild: { col: 0, label: "Substrate build", value: 150, cat: "process",
+                tip: "Ibiden, Shinko, Unimicron, AT&S laminate the high-density organic substrate." },
+
+    wafers:   { col: 1, label: "300 mm wafers", value: 250, cat: "silicon",
+                tip: "Shin-Etsu + SUMCO ~50-60%; GlobalWafers, Siltronic, SK Siltron. A megafab eats 500k-1M wafers a month." },
+    fabproc:  { col: 1, label: "TSMC 4NP processing", value: 350, cat: "process",
+                tip: "Fab 18, Tainan. ~$17k per processed wafer, 3-4 months in the line, 100% single-source." },
+    hbm:      { col: 1, label: "HBM3e, 8 stacks", value: 2900, cat: "memory",
+                tip: "192 GB total. ~45% of the whole COGS. SK hynix ~60% of Blackwell supply (>90% of initial allocations), Micron ~20%, Samsung late to qualify.<br><b>Supplier margin: SK hynix, est. ~55% gross on HBM.</b>" },
+    substrate:{ col: 1, label: "ABF substrate", value: 200, cat: "packaging",
+                tip: "The organic base routing thousands of connections from package to board.<br><b>Supplier margin: Ibiden / Shinko / Unimicron, ~20-30%; the ABF film itself, Ajinomoto, &gt;50%.</b>" },
+
+    logic:    { col: 2, label: "2 logic dies", value: 850, cat: "silicon",
+                tip: "Two ~800 mm² dies at the reticle limit, ~60% yield. $850 of compute vs $2,900 of memory.<br><b>Supplier margin: TSMC, ~59% company gross.</b>" },
+    cowos:    { col: 2, label: "CoWoS-L processing", value: 900, cat: "process",
+                tip: "TSMC AP fabs, Taichung/Tainan. Local-silicon-interconnect bridges instead of one giant interposer. The world's GPU bottleneck since 2023.<br><b>Supplier margin: TSMC, ~59% company gross.</b>" },
+
+    pkg:      { col: 3, label: "Packaged module", value: 4850, cat: "packaging",
+                tip: "Dies + HBM + substrate fused. Warpage and thermal stress across dissimilar materials is the engineering nightmare here." },
+    yield:    { col: 3, label: "Yield-loss provision", value: 1000, cat: "process",
+                tip: "A failed package destroys ~$3,750 of known-good dies and HBM inside it. That risk is priced into every good unit." },
+    test:     { col: 3, label: "Test + board", value: 550, cat: "process",
+                tip: "Advantest/Teradyne testers at KYEC and ASE, burn-in, small components.<br><b>Supplier margin: Advantest testers ~55%; KYEC test service ~30%.</b>" },
+
+    shipped:  { col: 4, label: "B200 module", value: 6400, cat: "final",
+                tip: "COGS ~$6,400. Street price ~$30-40k, i.e. a gross margin in the low 80s percent. 72 of these per GB200 NVL72 rack (~$3M)." }
+  };
+
+  const links = [
+    { s: "quartz", t: "wafers", v: 10 },
+    { s: "poly", t: "wafers", v: 110 },
+    { s: "wgrow", t: "wafers", v: 130 },
+    { s: "wafers", t: "logic", v: 250 },
+    { s: "fabproc", t: "logic", v: 350 },
+    { s: "chem", t: "logic", v: 100 },
+    { s: "mask", t: "logic", v: 150 },
+    { s: "dram", t: "hbm", v: 2000 },
+    { s: "tsv", t: "hbm", v: 900 },
+    { s: "abf", t: "substrate", v: 50 },
+    { s: "subbuild", t: "substrate", v: 150 },
+    { s: "logic", t: "pkg", v: 850 },
+    { s: "hbm", t: "pkg", v: 2900 },
+    { s: "substrate", t: "pkg", v: 200 },
+    { s: "cowos", t: "pkg", v: 900 },
+    { s: "pkg", t: "shipped", v: 4850 },
+    { s: "yield", t: "shipped", v: 1000 },
+    { s: "test", t: "shipped", v: 550 }
+  ];
+
+  const colOrder = [
+    ["quartz", "poly", "wgrow", "chem", "mask", "dram", "tsv", "abf", "subbuild"],
+    ["wafers", "fabproc", "hbm", "substrate"],
+    ["logic", "cowos"],
+    ["pkg", "yield", "test"],
+    ["shipped"]
+  ];
+
+  const SCALE = 0.082;
+  const hOf = v => Math.max(MIN_H, v * SCALE);
+
+  // Stack nodes per column, vertically centered
+  colOrder.forEach((ids, c) => {
+    const total = ids.reduce((a, id) => a + hOf(nodes[id].value), 0) + GAP * (ids.length - 1);
+    let y = PLOT_TOP + (PLOT_H - total) / 2;
+    ids.forEach(id => {
+      const n = nodes[id];
+      n.x = COL_X[c]; n.y = y; n.h = hOf(n.value);
+      n.inOff = 0; n.outOff = 0;
+      y += n.h + GAP;
+    });
+  });
+
+  // The dies column would be centered mid-plot, straight into the HBM ribbon's path:
+  // pin logic to the top (matching its top slot on the packaged module) and CoWoS below the band.
+  nodes.logic.y = 20;
+  nodes.cowos.y = 430;
+
+  const el = (tag, attrs) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  };
+
+  const bindTip = (elem, html) => {
+    const move = evt => {
+      tip.style.left = Math.min(evt.clientX + 12, window.innerWidth - 270) + "px";
+      tip.style.top = (evt.clientY - 10) + "px";
+    };
+    elem.addEventListener("mouseenter", evt => { tip.innerHTML = html; tip.style.opacity = "1"; move(evt); });
+    elem.addEventListener("mousemove", move);
+    elem.addEventListener("mouseleave", () => { tip.style.opacity = "0"; });
+  };
+
+  // Links first (under nodes)
+  links.forEach(l => {
+    const s = nodes[l.s], t = nodes[l.t];
+    const sc = s.value ? s.h * (l.v / outSum(l.s)) : MIN_H;
+    const tc = t.h * (l.v / inSum(l.t));
+    const th = Math.max(1.5, sc), th2 = Math.max(1.5, tc);
+    const x0 = s.x + NODE_W, x1 = t.x;
+    const sy0 = s.y + s.outOff, sy1 = sy0 + th;
+    const ty0 = t.y + t.inOff, ty1 = ty0 + th2;
+    s.outOff += th; t.inOff += th2;
+    const mx = (x0 + x1) / 2;
+    const d = "M" + x0 + "," + sy0 +
+      " C" + mx + "," + sy0 + " " + mx + "," + ty0 + " " + x1 + "," + ty0 +
+      " L" + x1 + "," + ty1 +
+      " C" + mx + "," + ty1 + " " + mx + "," + sy1 + " " + x0 + "," + sy1 + " Z";
+    const p = el("path", { class: "link", d: d, fill: "var(--" + s.cat + ")", opacity: "0.38" });
+    p.addEventListener("mouseenter", () => p.setAttribute("opacity", "0.62"));
+    p.addEventListener("mouseleave", () => p.setAttribute("opacity", "0.38"));
+    bindTip(p, "<b>" + s.label + " → " + t.label + "</b><br>" + fmt(l.v) + " per module");
+    svg.appendChild(p);
+  });
+
+  function outSum(id) { return links.filter(l => l.s === id).reduce((a, l) => a + l.v, 0); }
+  function inSum(id) { return links.filter(l => l.t === id).reduce((a, l) => a + l.v, 0); }
+
+  // Node rects first, all labels after, so no rect ever covers a label
+  for (const id in nodes) {
+    const n = nodes[id];
+    const r = el("rect", {
+      class: "node", x: n.x, y: n.y, width: NODE_W, height: n.h,
+      rx: 2, fill: "var(--" + n.cat + ")"
+    });
+    bindTip(r, "<b>" + n.label + " · " + fmt(n.value) + "</b><br>" + n.tip);
+    svg.appendChild(r);
+  }
+  for (const id in nodes) {
+    const n = nodes[id];
+    const leftSide = n.col === 0 || id === "cowos";
+    const lx = leftSide ? n.x - 8 : n.x + NODE_W + 8;
+    const anchor = leftSide ? "end" : "start";
+    const cy = n.y + n.h / 2;
+    if (n.h < 26) {
+      const lab = el("text", { class: "node-label", x: lx, y: cy + 4, "text-anchor": anchor });
+      lab.textContent = n.label + " · " + fmt(n.value);
+      svg.appendChild(lab);
+    } else {
+      const lab = el("text", { class: "node-label", x: lx, y: cy - 1, "text-anchor": anchor });
+      lab.textContent = n.label;
+      const val = el("text", { class: "node-label node-value", x: lx, y: cy + 11, "text-anchor": anchor });
+      val.textContent = fmt(n.value);
+      svg.appendChild(lab); svg.appendChild(val);
+    }
+  }
+
+  // Selling-price bar (own scale): build cost + NVIDIA margin = street price
+  (function () {
+    const COGS = 6400, STREET = 40000, MARGIN = STREET - COGS;
+    const BX = 792, BW = 30;            // bar x, width
+    const BTOP = 96, BH = 300;          // bar top, total height
+    const psc = BH / STREET;            // price scale (own)
+    const shipped = nodes.shipped;
+    const buildH = COGS * psc;          // ~48px
+    const buildY = BTOP + BH - buildH;
+    const marginH = MARGIN * psc;
+    const marginY = BTOP;
+
+    // dashed connector from shipped node to the build-cost segment
+    const conn = el("path", {
+      d: "M" + (shipped.x + NODE_W) + "," + (shipped.y + shipped.h / 2) +
+         " C" + (BX - 40) + "," + (shipped.y + shipped.h / 2) +
+         " " + (BX - 40) + "," + (buildY + buildH / 2) +
+         " " + BX + "," + (buildY + buildH / 2),
+      fill: "none", stroke: "var(--muted)", "stroke-width": 1,
+      "stroke-dasharray": "3 3", opacity: 0.6
+    });
+    svg.appendChild(conn);
+
+    const marginRect = el("rect", { x: BX, y: marginY, width: BW, height: marginH, rx: 2, fill: "var(--margin)" });
+    bindTip(marginRect, "<b>NVIDIA gross margin · " + fmt(MARGIN) + "</b><br>~84% of the ~$40,000 street price");
+    svg.appendChild(marginRect);
+    const buildRect = el("rect", { x: BX, y: buildY, width: BW, height: buildH, rx: 2, fill: "var(--final)" });
+    bindTip(buildRect, "<b>Build cost (COGS) · " + fmt(COGS) + "</b><br>everything in the flow to the left");
+    svg.appendChild(buildRect);
+
+    const LX = BX + BW + 7;
+    const top = el("text", { class: "node-label node-value", x: BX + BW / 2, y: BTOP - 8, "text-anchor": "middle" });
+    top.textContent = "~" + fmt(STREET);
+    svg.appendChild(top);
+    const streetlab = el("text", { class: "side-label", x: BX + BW / 2, y: BTOP - 22, "text-anchor": "middle" });
+    streetlab.textContent = "Street price";
+    svg.appendChild(streetlab);
+
+    const m1 = el("text", { class: "node-label", x: LX, y: marginY + marginH / 2 - 2, "text-anchor": "start" });
+    m1.textContent = "NVIDIA margin";
+    const m2 = el("text", { class: "node-label node-value", x: LX, y: marginY + marginH / 2 + 12, "text-anchor": "start" });
+    m2.textContent = "~" + fmt(MARGIN) + " (84%)";
+    svg.appendChild(m1); svg.appendChild(m2);
+
+    const b1 = el("text", { class: "node-label node-value", x: LX, y: buildY + buildH / 2 + 4, "text-anchor": "start" });
+    b1.textContent = "Build cost " + fmt(COGS);
+    svg.appendChild(b1);
+
+    const scaleNote = el("text", { class: "side-label", x: BX + BW / 2, y: BTOP + BH + 14, "text-anchor": "middle" });
+    scaleNote.textContent = "own scale";
+    svg.appendChild(scaleNote);
+  })();
+
+  // Column headers
+  const heads = ["Raw inputs", "Intermediates", "Dies", "Assembly", "Shipped"];
+  heads.forEach((h, i) => {
+    const t = el("text", { class: "side-label", x: COL_X[i] + NODE_W / 2, y: H - 6, "text-anchor": i === 0 ? "start" : (i === heads.length - 1 ? "end" : "middle") });
+    t.textContent = h;
+    svg.appendChild(t);
+  });
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>
