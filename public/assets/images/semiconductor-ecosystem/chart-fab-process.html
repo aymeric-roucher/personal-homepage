@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --grid: #e1e0d9;
+    --surface: #fcfcfb;
+    --mat: #4a3aa7;
+    --die: #2a78d6;
+    --asm: #1baf7a;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --grid: rgba(255,255,255,0.14);
+    --surface: #1a1a19;
+    --mat: #7a6ad9;
+    --die: #3987e5;
+    --asm: #199e70;
+  }
+  html, body { margin: 0; padding: 0; background: transparent; }
+  .wrap { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 12px 8px 6px; max-width: 780px; margin: 0 auto; }
+  .title { color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1.35; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 0 0 10px; }
+  .phase-label { color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin: 10px 0 5px; }
+  .flow { display: flex; flex-wrap: wrap; gap: 4px 2px; align-items: center; }
+  .step {
+    display: block; text-decoration: none; cursor: pointer;
+    border: 1px solid var(--grid); border-radius: 7px; background: var(--surface);
+    color: var(--ink); font-size: 11.5px; line-height: 1.25;
+    padding: 6px 9px 6px 11px; min-width: 76px; max-width: 150px; position: relative;
+    transition: border-color .12s ease;
+  }
+  .step .bar { position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 3px; }
+  .step.mat .bar { background: var(--mat); }
+  .step.die .bar { background: var(--die); }
+  .step.asm .bar { background: var(--asm); }
+  .step.mat:hover { border-color: var(--mat); }
+  .step.die:hover { border-color: var(--die); }
+  .step.asm:hover { border-color: var(--asm); }
+  .step .n { color: var(--muted); font-size: 10px; font-weight: 600; }
+  .step .nm { display: block; font-weight: 600; }
+  .step .loc { display: block; color: var(--muted); font-size: 10px; margin-top: 1px; }
+  .arrow { color: var(--muted); font-size: 13px; padding: 0 3px; user-select: none; }
+  .join { color: var(--muted); font-size: 10.5px; font-style: italic; padding: 0 4px; }
+  .inner { color: var(--muted); font-size: 10.5px; font-style: italic; margin: 5px 0 0 2px; }
+  .hint { color: var(--muted); font-size: 11px; margin: 12px 0 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">One B200, from quartz mine to datacenter</p>
+  <p class="sub">The eleven production stages, condensed. Click any stage to jump to its full description below.</p>
+
+  <p class="phase-label">Materials chain (months before the fab)</p>
+  <div class="flow" id="flow-mat"></div>
+
+  <p class="phase-label">Making the dies (Taiwan and Korea, 3&ndash;4 months)</p>
+  <div class="flow" id="flow-die"></div>
+  <p class="inner">inside the fab, repeated layer by layer: oxidation &rarr; photolithography &rarr; etch &rarr; ion implantation &rarr; deposition &rarr; planarization</p>
+
+  <p class="phase-label">Assemble, test, deploy (about 2 months)</p>
+  <div class="flow" id="flow-asm"></div>
+
+  <p class="hint">A wafer entering the fab today powers up in a datacenter roughly six months from now; its silicon left the quartz mine months before that.</p>
+</div>
+<script>
+(function () {
+  const steps = [
+    { row: "mat", cls: "mat", n: 1, nm: "Ultra-pure quartz", loc: "Spruce Pine, US", sep: "arrow" },
+    { row: "mat", cls: "mat", n: 2, nm: "Polysilicon", loc: "Germany, US, Japan", sep: "arrow" },
+    { row: "mat", cls: "mat", n: 3, nm: "300 mm wafers", loc: "Japan, Taiwan, Korea", sep: "plus" },
+    { row: "mat", cls: "mat", n: 4, nm: "Photomasks", loc: "blanks: Japan", sep: "plus" },
+    { row: "mat", cls: "mat", n: 5, nm: "Chemicals & gases", loc: "consumed throughout", sep: null },
+    { row: "die", cls: "die", n: 6, nm: "Logic fabrication", loc: "TSMC 4NP, Tainan", sep: "parallel" },
+    { row: "die", cls: "die", n: 7, nm: "HBM3e memory", loc: "SK Hynix, Korea", sep: null },
+    { row: "asm", cls: "asm", n: 8, nm: "CoWoS-L packaging", loc: "TSMC, Taiwan", sep: "arrow" },
+    { row: "asm", cls: "asm", n: 9, nm: "Test & burn-in", loc: "KYEC, ASE, Taiwan", sep: "arrow" },
+    { row: "asm", cls: "asm", n: 10, nm: "Rack integration", loc: "Mexico, Taiwan", sep: "arrow" },
+    { row: "asm", cls: "asm", n: 11, nm: "Logistics", loc: "air freight", sep: null }
+  ];
+
+  const rows = {
+    mat: document.getElementById("flow-mat"),
+    die: document.getElementById("flow-die"),
+    asm: document.getElementById("flow-asm")
+  };
+
+  function jump(id) {
+    const pdoc = window.parent && window.parent !== window && window.parent.document;
+    if (!pdoc) return;
+    const el = pdoc.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  steps.forEach(s => {
+    const id = "journey-stage-" + s.n;
+    const a = document.createElement("a");
+    a.className = "step " + s.cls;
+    a.href = "#" + id;
+    a.innerHTML = '<span class="bar"></span><span class="n">' + s.n + '</span><span class="nm">' + s.nm + '</span><span class="loc">' + s.loc + '</span>';
+    a.addEventListener("click", e => { e.preventDefault(); jump(id); });
+    rows[s.row].appendChild(a);
+    if (s.sep === "arrow") {
+      const sp = document.createElement("span");
+      sp.className = "arrow"; sp.textContent = "→";
+      rows[s.row].appendChild(sp);
+    } else if (s.sep === "plus") {
+      const sp = document.createElement("span");
+      sp.className = "arrow"; sp.textContent = "+";
+      rows[s.row].appendChild(sp);
+    } else if (s.sep === "parallel") {
+      const sp = document.createElement("span");
+      sp.className = "join"; sp.textContent = "in parallel:";
+      rows[s.row].appendChild(sp);
+    }
+  });
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>
