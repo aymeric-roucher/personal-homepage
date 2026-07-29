@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --halo: #fcfcfb;
+    --board: #1baf7a;
+    --substrate: #eb6834;
+    --interposer: #898781;
+    --logic: #2a78d6;
+    --hbm: #4a3aa7;
+    --basedie: #2f6bb0;
+    --ball: #b8b6ad;
+    --vrm: #55534e;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --halo: #1a1a19;
+    --board: #199e70;
+    --substrate: #d95926;
+    --interposer: #898781;
+    --logic: #3987e5;
+    --hbm: #9085e9;
+    --basedie: #5a95d8;
+    --ball: #55554f;
+    --vrm: #7b7973;
+  }
+  html, body { margin: 0; padding: 0; background: transparent; }
+  .wrap { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 12px 8px 6px; max-width: 780px; margin: 0 auto; }
+  .title { color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1.35; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 0 0 8px; }
+  svg { width: 100%; height: auto; display: block; }
+  .shade-front { fill: #000; opacity: 0.18; pointer-events: none; }
+  .shade-side { fill: #000; opacity: 0.32; pointer-events: none; }
+  .lbl { fill: var(--ink); font-size: 11.5px; font-weight: 600; paint-order: stroke; stroke: var(--halo); stroke-width: 3px; stroke-linejoin: round; cursor: pointer; }
+  .lbl:hover { fill: var(--logic); }
+  .sublbl { fill: var(--muted); font-size: 10px; paint-order: stroke; stroke: var(--halo); stroke-width: 3px; stroke-linejoin: round; }
+  .grp-lbl { fill: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.05em; }
+  .leader { stroke: var(--muted); stroke-width: 1; fill: none; opacity: 0.6; }
+  .zoom { stroke: var(--ink); stroke-width: 1.4; fill: none; stroke-dasharray: 4 3; opacity: 0.55; }
+  .tsv-line { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; opacity: 0.7; }
+  .tsv { stroke: var(--halo); stroke-width: 1.2; opacity: 0.85; }
+  .piece { cursor: pointer; }
+  .caption { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 8px 0 0; }
+  .tip { position: fixed; pointer-events: none; background: var(--ink); color: #fcfcfb; font-size: 12px; line-height: 1.35; padding: 6px 9px; border-radius: 6px; opacity: 0; transition: opacity .1s ease; max-width: 260px; z-index: 10; }
+  html.dark .tip { color: #0b0b0b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">Inside one B200 package, layer by layer</p>
+  <p class="sub">Left: the complete package, eight identical HBM stacks around two compute dies. Right: one of those stacks, pulled apart to show what a stack is made of. Hover any part for detail; click it to jump to that stage of the journey below.</p>
+  <svg id="chart" viewBox="0 130 800 242" role="img" aria-label="A B200 package with its board, substrate, interposer, two compute dies and eight HBM stacks, plus a detail view of one HBM stack exploded into its base die and eight DRAM dies"></svg>
+  <p class="caption">What NVIDIA sells as one "GPU" is this entire package: the GPU silicon proper is the two blue compute dies, stitched into a single processor by the NV-HBI bridge, and the eight purple towers around them are the HBM memory stacks. Every stack is built the same way, on its own logic base die. HBM is ordinary DRAM re-packaged for proximity: the same one-transistor-one-capacitor cells as a DDR5 stick, thinned to tens of microns, drilled with vertical copper vias and placed millimeters from the GPU. Geometry follows NVIDIA's published B200 anatomy.</p>
+  <div class="tip" id="tip"></div>
+</div>
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("chart");
+  const tip = document.getElementById("tip");
+
+  const el = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+  const poly = pts => pts.map(p => p.join(",")).join(" ");
+
+  // two isometric projections: the package, and the zoomed stack detail
+  const mkP = (ox, oy, s) => (x, y, z) => [ox + (x - y) * 0.866 * s, oy + (x + y) * 0.5 * s - z * s];
+  const P = mkP(295, 150, 0.85);     // package
+  const D = mkP(620, 300, 1.3);      // detail view
+
+  function jump(stage) {
+    const pdoc = window.parent && window.parent !== window && window.parent.document;
+    if (!pdoc) return;
+    const t = pdoc.getElementById("journey-stage-" + stage);
+    if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  const bindTip = (elem, html, stage) => {
+    const move = evt => {
+      tip.style.left = Math.min(evt.clientX + 12, window.innerWidth - 270) + "px";
+      tip.style.top = (evt.clientY - 10) + "px";
+    };
+    elem.addEventListener("mouseenter", evt => { tip.innerHTML = html; tip.style.opacity = "1"; move(evt); });
+    elem.addEventListener("mousemove", move);
+    elem.addEventListener("mouseleave", () => { tip.style.opacity = "0"; });
+    if (stage) elem.addEventListener("click", () => jump(stage));
+  };
+
+  function slab(proj, x, y, z, w, d, h, color, tipHtml, stage) {
+    const g = el("g", { class: "piece" });
+    const top = [proj(x, y, z + h), proj(x + w, y, z + h), proj(x + w, y + d, z + h), proj(x, y + d, z + h)];
+    const front = [proj(x, y + d, z + h), proj(x + w, y + d, z + h), proj(x + w, y + d, z), proj(x, y + d, z)];
+    const side = [proj(x + w, y, z + h), proj(x + w, y + d, z + h), proj(x + w, y + d, z), proj(x + w, y, z)];
+    g.appendChild(el("polygon", { points: poly(front), fill: color }));
+    g.appendChild(el("polygon", { points: poly(front), class: "shade-front" }));
+    g.appendChild(el("polygon", { points: poly(side), fill: color }));
+    g.appendChild(el("polygon", { points: poly(side), class: "shade-side" }));
+    g.appendChild(el("polygon", { points: poly(top), fill: color }));
+    if (tipHtml) bindTip(g, tipHtml, stage);
+    svg.appendChild(g);
+    return g;
+  }
+
+  // ===================== the package =====================
+  slab(P, 0, 0, 0, 300, 190, 12, "var(--board)",
+    "<b>Motherboard (Grace board)</b><br>A multilayer printed circuit board carrying one CPU and two B200 packages. Thirty-six of them plus a copper NVLink spine make a rack drawing ~120 kW, which is past what air can carry: the cold plates bolt straight onto these packages.", 10);
+
+  const vrmTip = "<b>VRM inductors</b><br>Voltage regulation: stepping the board's supply down to ~1 V while pushing ~1,000 A into the package. At that current every milliohm of path resistance burns a watt, so the modules crowd as close to the die as the layout allows, and the whole board migrates toward 800 V DC distribution to keep the currents upstream manageable. Thermal margin here is what forced NVIDIA's mid-ramp supplier switch in 2025.";
+  [8, 24, 268, 284].forEach(vx => [36, 68, 100, 132].forEach(vy => slab(P, vx, vy, 12, 12, 16, 6, "var(--vrm)", vrmTip, 10)));
+
+  const ballTip = "<b>BGA solder balls</b><br>The coarsest interconnect in the package, on roughly 1 mm pitch. Everything above exists to step the die's ~10 µm pads up to this dimension: a hundredfold fan-out achieved across a few millimetres of package thickness.";
+  for (let i = 0; i < 12; i++) {
+    const [cx, cy] = P(55 + i * 16.5, 158, 17);
+    const c = el("circle", { cx: cx, cy: cy, r: 2.8, fill: "var(--ball)", class: "piece" });
+    bindTip(c, ballTip, 8);
+    svg.appendChild(c);
+  }
+
+  slab(P, 45, 28, 22, 210, 132, 14, "var(--substrate)",
+    "<b>ABF substrate</b><br>Copper wiring alternating with insulating build-up film, eleven layers above the core and eleven below on an AI part, against three and three on an ordinary chip. It is laminated, laser-drilled and plated rather than lithographically printed, and keeping it flat through solder reflow is the hardest mechanical requirement in the package.", 8);
+
+  slab(P, 65, 44, 36, 170, 100, 8, "var(--interposer)",
+    "<b>Interposer (TSMC's CoWoS-L)</b><br>The layer that wires die to die. Instead of one continuous silicon slab, which could not exceed the reticle limit, small silicon bridges carrying ~1 µm-pitch wiring are embedded only where two dies face each other, inside a cheaper organic base. The price of mixing materials is thermal expansion mismatch: silicon, bridge, organic and substrate all grow at different rates during reflow, and the resulting warpage is what delayed Blackwell.", 8);
+
+  // eight identical HBM stacks: base die + eight DRAM dies each
+  const hbmTip = "<b>HBM3e stack</b><br>Eight DRAM dies on a logic base die: 24 GB and ~1.2 TB/s each, 192 GB and ~8 TB/s across the eight. The whole tower stays under ~0.8 mm tall, so every die is ground down to ~30-50 µm, roughly half the width of a hair, at which thickness silicon flexes like foil and has to be carried on temporary glass.";
+  const stackYs = [48, 72, 96, 120];
+  const stackXs = [75, 200];
+  function packageStack(x, y) {
+    slab(P, x, y, 44, 28, 20, 3, "var(--basedie)", hbmTip, 7);
+    const g = slab(P, x, y, 47, 28, 20, 13, "var(--hbm)", hbmTip, 7);
+    for (let k = 1; k < 4; k++) {
+      const z = 47 + k * 3.2;
+      const a = P(x, y + 20, z), b = P(x + 28, y + 20, z);
+      g.appendChild(el("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: "var(--halo)", "stroke-width": 0.7, opacity: 0.45, "pointer-events": "none" }));
+    }
+  }
+  const logicTip = "<b>Compute die (2 per package)</b><br>~800 mm² of silicon on TSMC's 4NP node, brushing the 858 mm² reticle limit, carrying on the order of 100 billion transistors. It spends 3-4 months crossing 1,000+ process steps and hundreds of exposures; at this area, defect statistics alone mean only ~60% of the dies on a wafer come out working.";
+  const hbiTip = "<b>NV-HBI die-to-die link</b><br>~10 TB/s across the seam between the two dies, carried by the silicon bridges embedded in the interposer. It is fast enough that software addresses the pair as one processor. The B200 is two dies only because a chip this large cannot be printed in a single exposure.";
+
+  // Painter's algorithm: in this projection a larger (x + y) is nearer the camera,
+  // so everything sitting on the interposer must be drawn in increasing depth order
+  // or the back stacks paint over the dies in front of them.
+  const onInterposer = [];
+  stackXs.forEach(x => stackYs.forEach(y => onInterposer.push({ d: x + y, draw: () => packageStack(x, y) })));
+  onInterposer.push({ d: 112 + 66 + 47, draw: () => slab(P, 112, 66, 44, 38, 56, 16, "var(--logic)", logicTip, 6) });
+  onInterposer.push({ d: 154 + 66 + 47, draw: () => slab(P, 154, 66, 44, 38, 56, 16, "var(--logic)", logicTip, 6) });
+  onInterposer.push({ d: 146 + 74 + 40, draw: () => slab(P, 146, 74, 60, 12, 40, 1.6, "var(--basedie)", hbiTip, 8) });
+  onInterposer.sort((a, b) => a.d - b.d).forEach(o => o.draw());
+
+  // ===================== the detail view =====================
+  // marker around the stack being magnified (back-right one)
+  const [mx, my] = P(214, 58, 52);
+  svg.appendChild(el("ellipse", { cx: mx, cy: my, rx: 31, ry: 26, fill: "none", stroke: "var(--halo)", "stroke-width": 4.5, opacity: 0.9 }));
+  svg.appendChild(el("ellipse", { cx: mx, cy: my, rx: 31, ry: 26, class: "zoom" }));
+
+  const detailTip = "<b>One HBM stack, pulled apart</b><br>All eight stacks in the package are built exactly like this.";
+  const dBase = { x: 0, y: 0, w: 28, d: 20 };
+  const dieGap = 10.5, dieH = 4.5, firstDie = 19;
+
+  slab(D, dBase.x, dBase.y, 0, dBase.w, dBase.d, 7, "var(--basedie)",
+    "<b>Logic base die</b><br>The bottom die of every stack: memory controller, test and repair logic, and the physical interface out to the GPU. It stores no bits at all, which is part of why HBM spends 3-4x the wafer area per stored bit that DDR5 does. From HBM4 on it is built on a logic node rather than a memory one.", 7);
+
+  const dieTip = "<b>DRAM die (8 per stack, 24 GB total)</b><br>The same one-transistor-one-capacitor cells as a DDR5 stick, ground down to ~30-50 µm so eight of them plus the base die fit inside the height budget. The vias punched through each die need keep-out zones around them where no memory cell can sit, so a thinned, drilled die stores less per unit area than a flat one.";
+  const bumpTip = "<b>Microbumps and underfill</b><br>Solder joints roughly 25-40 µm across on ~45 µm pitch, thousands per die, with resin wicked into the gap to hold them against thermal cycling. This bonding step is where most stack yield is lost: the dies are wired in series through the vias, so one bad joint anywhere kills the whole 24 GB stack. Hybrid bonding, direct copper-to-copper with no bumps at all, is what replaces it later.";
+  for (let k = 0; k < 8; k++) {
+    const z = firstDie + k * dieGap;
+    const g = slab(D, dBase.x, dBase.y, z, dBase.w, dBase.d, dieH, "var(--hbm)", dieTip, 7);
+    for (let t = 0; t < 4; t++) {
+      const tx = 5 + t * 6;
+      const a = D(tx, dBase.d, z), b = D(tx, dBase.d, z + dieH);
+      g.appendChild(el("line", { class: "tsv", x1: a[0], y1: a[1], x2: b[0], y2: b[1] }));
+    }
+    for (let m = 0; m < 4; m++) {
+      const [cx, cy] = D(5 + m * 6, dBase.d, z - 2.6);
+      const c = el("circle", { cx: cx, cy: cy, r: 1.5, fill: "var(--ball)", class: "piece" });
+      bindTip(c, bumpTip, 7);
+      svg.appendChild(c);
+    }
+  }
+  // dashed line showing the TSVs line up through the whole stack
+  const topZ = firstDie + 7 * dieGap + dieH;
+  svg.appendChild(el("line", {
+    class: "tsv-line",
+    x1: D(11, dBase.d, 7)[0], y1: D(11, dBase.d, 7)[1],
+    x2: D(11, dBase.d, topZ)[0], y2: D(11, dBase.d, topZ)[1]
+  }));
+
+  // zoom wedge from the marker to the detail view
+  const dTop = D(0, 0, topZ), dBot = D(0, dBase.d, 0);
+  svg.appendChild(el("line", { class: "zoom", x1: mx + 27, y1: my - 12, x2: dTop[0] - 8, y2: dTop[1] - 6 }));
+  svg.appendChild(el("line", { class: "zoom", x1: mx + 27, y1: my + 14, x2: dBot[0] - 8, y2: dBot[1] + 4 }));
+
+  // ===================== labels =====================
+  function label(txt, tx, ty, target, anchor, stage, cls) {
+    const t = el("text", { class: cls || "lbl", x: tx, y: ty, "text-anchor": anchor });
+    t.textContent = txt;
+    if (stage) t.addEventListener("click", () => jump(stage));
+    svg.appendChild(t);
+    if (!target) return;
+    const lx = anchor === "end" ? tx + 4 : tx - 4;
+    svg.appendChild(el("line", { class: "leader", x1: lx, y1: ty - 4, x2: target[0], y2: target[1] }));
+  }
+
+  // package, left column
+  label("8 HBM3e stacks", 140, 170, P(89, 58, 60), "end", 7);
+  label("2 compute dies", 140, 205, P(140, 100, 60), "end", 6);
+  label("(stitched into one GPU)", 140, 219, null, "end", 6, "sublbl");
+  label("interposer", 140, 240, P(170, 144, 40), "end", 8);
+  label("ABF substrate", 140, 264, P(200, 160, 29), "end", 8);
+  label("BGA balls", 140, 288, P(220, 158, 17), "end", 8);
+  label("motherboard", 140, 312, P(200, 190, 6), "end", 10);
+  label("VRM inductors, ~1,000 A", 470, 352, P(292, 120, 18), "start", 10);
+
+  // detail view
+  const hdr = el("text", { class: "grp-lbl", x: 560, y: 158 });
+  hdr.textContent = "ONE OF THOSE STACKS, PULLED APART";
+  svg.appendChild(hdr);
+  label("8 DRAM dies, 24 GB", 665, 196, D(28, 8, firstDie + 7 * dieGap + 2), "start", 7);
+  label("TSVs, through every die", 665, 232, D(28, 8, firstDie + 4 * dieGap + 2), "start", 7);
+  label("microbumps + underfill", 665, 268, D(28, 8, firstDie + 2 * dieGap - 2), "start", 7);
+  label("logic base die", 665, 312, D(28, 8, 3.5), "start", 7);
+  label("(the memory controller)", 665, 326, null, "start", 7, "sublbl");
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>

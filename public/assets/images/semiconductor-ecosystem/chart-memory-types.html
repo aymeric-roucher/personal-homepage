@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --muted: #52514e;
+    --grid: #e1e0d9;
+    --halo: #fcfcfb;
+    --board: #1baf7a;
+    --substrate: #eb6834;
+    --interposer: #898781;
+    --logic: #2a78d6;
+    --hbm: #4a3aa7;
+    --pcb: #2f6b4f;
+  }
+  html.dark {
+    --ink: #ffffff;
+    --muted: #c3c2b7;
+    --grid: rgba(255,255,255,0.14);
+    --halo: #1a1a19;
+    --board: #199e70;
+    --substrate: #d95926;
+    --interposer: #898781;
+    --logic: #3987e5;
+    --hbm: #9085e9;
+    --pcb: #2a7d5c;
+  }
+  html, body { margin: 0; padding: 0; background: transparent; }
+  .wrap { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 12px 8px 6px; max-width: 780px; margin: 0 auto; }
+  .title { color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1.35; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 0 0 6px; }
+  svg { width: 100%; height: auto; display: block; }
+  .shade-front { fill: #000; opacity: 0.18; pointer-events: none; }
+  .shade-side { fill: #000; opacity: 0.32; pointer-events: none; }
+  .scene-name { fill: var(--ink); font-size: 12.5px; font-weight: 700; }
+  .scene-stat { fill: var(--muted); font-size: 11px; }
+  .dim { stroke: var(--muted); stroke-width: 1.2; opacity: 0.85; }
+  .dim-lbl { fill: var(--ink); font-size: 10.5px; font-weight: 700; paint-order: stroke; stroke: var(--halo); stroke-width: 3px; stroke-linejoin: round; }
+  .part-lbl { fill: var(--ink); font-size: 10.5px; font-weight: 600; paint-order: stroke; stroke: var(--halo); stroke-width: 3px; stroke-linejoin: round; }
+  .piece { cursor: pointer; }
+  table.cmp { width: 100%; border-collapse: collapse; font-size: 11.5px; color: var(--muted); margin-top: 10px; }
+  table.cmp th, table.cmp td { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  table.cmp td.rh { color: var(--muted); font-weight: 600; }
+  .caption { color: var(--muted); font-size: 11.5px; line-height: 1.4; margin: 8px 0 0; }
+  .tip { position: fixed; pointer-events: none; background: var(--ink); color: #fcfcfb; font-size: 12px; line-height: 1.35; padding: 6px 9px; border-radius: 6px; opacity: 0; transition: opacity .1s ease; max-width: 250px; z-index: 10; }
+  html.dark .tip { color: #0b0b0b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">One DRAM cell, three packages: DIMM, GDDR, HBM</p>
+  <p class="sub">The memory cell is identical in all three. What changes is how far the dies sit from the processor and how many wires reach them, which is where all the bandwidth comes from.</p>
+  <svg id="chart" viewBox="0 80 800 208" role="img" aria-label="Isometric comparison of a DDR5 module, soldered GDDR chips and a stacked HBM package"></svg>
+  <table class="cmp">
+    <colgroup><col style="width:14%"><col style="width:28.6%"><col style="width:28.6%"><col style="width:28.6%"></colgroup>
+    <tbody>
+      <tr><td class="rh">Bus width</td><td>64 bits per module</td><td>32 bits per chip, ~384 bits total</td><td>1,024 bits per stack, 8,192 across a B200</td></tr>
+      <tr><td class="rh">Bandwidth</td><td>~50 GB/s per module</td><td>~1.8 TB/s (RTX 5090)</td><td>~1.2 TB/s per stack, ~8 TB/s per B200</td></tr>
+      <tr><td class="rh">Distance to processor</td><td>~3-5 cm, through a socket</td><td>~1-3 cm, soldered around the die</td><td>~2-5 mm, on the interposer</td></tr>
+      <tr><td class="rh">Where it is used</td><td>servers, desktops</td><td>gaming and workstation GPUs</td><td>AI accelerators</td></tr>
+    </tbody>
+  </table>
+  <p class="caption">A fourth variant, LPDDR5X, sits between them: 16-bit channels soldered about a centimetre away, reaching ~0.5 TB/s across the 480 GB of an NVIDIA Grace superchip, and it is what phones, laptops and CPU superchips run on. HBM4 doubles the per-stack bus again to 2,048 bits. The cost of that width: HBM burns 3-4x the wafer area per bit of DDR5 (TSV keep-out zones plus a logic base die), and the eight stacks are ~45% of a B200's build cost.</p>
+  <div class="tip" id="tip"></div>
+</div>
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("chart");
+  const tip = document.getElementById("tip");
+  const S = 1.0;
+
+  const el = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+  const poly = pts => pts.map(p => p.join(",")).join(" ");
+  const mkP = (ox, oy) => (x, y, z) => [ox + (x - y) * 0.866 * S, oy + (x + y) * 0.5 * S - z * S];
+
+  const bindTip = (elem, html) => {
+    const move = evt => {
+      tip.style.left = Math.min(evt.clientX + 12, window.innerWidth - 260) + "px";
+      tip.style.top = (evt.clientY - 10) + "px";
+    };
+    elem.addEventListener("mouseenter", evt => { tip.innerHTML = html; tip.style.opacity = "1"; move(evt); });
+    elem.addEventListener("mousemove", move);
+    elem.addEventListener("mouseleave", () => { tip.style.opacity = "0"; });
+  };
+
+  function slab(P, x, y, z, w, d, h, color, tipHtml) {
+    const g = el("g", { class: tipHtml ? "piece" : "" });
+    const top = [P(x, y, z + h), P(x + w, y, z + h), P(x + w, y + d, z + h), P(x, y + d, z + h)];
+    const front = [P(x, y + d, z + h), P(x + w, y + d, z + h), P(x + w, y + d, z), P(x, y + d, z)];
+    const side = [P(x + w, y, z + h), P(x + w, y + d, z + h), P(x + w, y + d, z), P(x + w, y, z)];
+    g.appendChild(el("polygon", { points: poly(front), fill: color }));
+    g.appendChild(el("polygon", { points: poly(front), class: "shade-front" }));
+    g.appendChild(el("polygon", { points: poly(side), fill: color }));
+    g.appendChild(el("polygon", { points: poly(side), class: "shade-side" }));
+    g.appendChild(el("polygon", { points: poly(top), fill: color }));
+    if (tipHtml) bindTip(g, tipHtml);
+    svg.appendChild(g);
+    return g;
+  }
+
+  function sceneLabel(cx, name) {
+    const a = el("text", { class: "scene-name", x: cx, y: 278, "text-anchor": "middle" });
+    a.textContent = name;
+    svg.appendChild(a);
+  }
+
+  // distance bracket between two screen points, drawn at an absolute y
+  function dimension(p1, p2, txt, y) {
+    svg.appendChild(el("line", { class: "dim", x1: p1[0], y1: y, x2: p2[0], y2: y }));
+    svg.appendChild(el("line", { class: "dim", x1: p1[0], y1: y - 4, x2: p1[0], y2: y + 4 }));
+    svg.appendChild(el("line", { class: "dim", x1: p2[0], y1: y - 4, x2: p2[0], y2: y + 4 }));
+    const t = el("text", { class: "dim-lbl", x: (p1[0] + p2[0]) / 2, y: y - 7, "text-anchor": "middle" });
+    t.textContent = txt;
+    svg.appendChild(t);
+  }
+
+  const memTip = "<b>DRAM die</b><br>One transistor and one capacitor per bit, the capacitor leaking so every cell is read back and rewritten every few dozen milliseconds. Identical cell technology in all three packages: only the packaging around it differs.";
+
+  // ---------- Scene A: DDR5 DIMM ----------
+  (function () {
+    const P = mkP(213, 112);
+    slab(P, 0, 0, 0, 140, 78, 5, "var(--board)", "<b>Motherboard</b><br>The DIMM plugs into a socket, so capacity is expandable to terabytes. The price is a connector and centimetres of trace, which cap how fast each wire can be driven.");
+    slab(P, 6, 18, 5, 32, 32, 9, "var(--logic)", "<b>CPU</b><br>Talks to each DIMM over 64 data wires. Widening that bus means more pins on the socket and more routing layers in the board, which is why DIMM capacity scales easily but DIMM bandwidth does not.");
+    const l1 = el("text", { class: "part-lbl", x: P(22, 50, 14)[0], y: P(22, 50, 14)[1] - 5, "text-anchor": "middle" });
+    l1.textContent = "CPU";
+    svg.appendChild(l1);
+    // the DIMM card, standing
+    slab(P, 100, 4, 5, 5, 70, 42, "var(--pcb)", "<b>DIMM circuit board</b><br>A plug-in stick: the dies sit flat and side by side in ordinary moulded packages, routed out to gold edge fingers. No thinning, no stacking, no drilling, which is why a gigabyte here costs a fraction of a gigabyte of HBM.");
+    for (let i = 0; i < 4; i++) {
+      slab(P, 105, 12 + i * 16, 14, 3, 12, 14, "var(--hbm)", memTip);
+    }
+    dimension(P(40, 30, 5), P(100, 30, 5), "~5 cm", 234);
+  })();
+
+  // ---------- Scene B: GDDR7 ----------
+  (function () {
+    const P = mkP(442, 100);
+    slab(P, 0, 0, 0, 140, 108, 5, "var(--board)", "<b>Graphics board</b><br>Memory soldered down rather than socketed: no connector and shorter traces, which is what allows ~28 Gbps per pin. The tradeoff is that capacity is fixed at manufacture.");
+    slab(P, 50, 38, 5, 38, 38, 11, "var(--logic)", "<b>GPU die</b><br>Assembles a ~384-bit bus from twelve 32-bit chips ringed around it (eight drawn here). Each extra bit of width costs pins, board area and routing layers, so the bus stops growing and the clock rate has to do the work instead.");
+    const g = el("text", { class: "part-lbl", x: P(69, 76, 16)[0], y: P(69, 76, 16)[1] - 5, "text-anchor": "middle" });
+    g.textContent = "GPU";
+    svg.appendChild(g);
+    const gTip = "<b>GDDR7 chip</b><br>The same DRAM cells in a flat package, driven at ~28 Gbps per pin with multi-level signalling to compensate for a bus a fraction of HBM's width. Pushing a bit across centimetres of board at that rate costs several times the energy of pushing it millimetres across an interposer, which is the whole reason AI accelerators moved to stacks.";
+    [[18, 34], [18, 62], [98, 34], [98, 62], [52, 8], [78, 8], [52, 88], [78, 88]].forEach(([x, y]) => {
+      slab(P, x, y, 5, 20, 16, 5, "var(--hbm)", gTip);
+    });
+    dimension(P(88, 57, 5), P(98, 57, 5), "~2 cm", 234);
+  })();
+
+  // ---------- Scene C: HBM3e ----------
+  (function () {
+    const P = mkP(670, 106);
+    slab(P, 0, 0, 0, 132, 96, 5, "var(--board)", "<b>Board</b><br>The memory has moved off the board entirely and inside the processor package, so what the board carries is power and network traffic, not memory traffic.");
+    slab(P, 8, 8, 5, 116, 80, 7, "var(--substrate)", "<b>Substrate</b><br>Fans the package's microscopic pads out to the millimetre-pitch solder balls underneath.");
+    slab(P, 16, 16, 12, 100, 64, 4, "var(--interposer)", "<b>Interposer</b><br>What makes a 1,024-bit bus per stack physically buildable: wiring at roughly a micron pitch, thousands of lines run across a few millimetres. No printed circuit board comes close to that density, which is why memory this wide has to sit inside the package.");
+    slab(P, 54, 22, 16, 26, 52, 13, "var(--logic)", "<b>GPU die</b><br>Sees 8,192 bits of memory bus across eight stacks, ~8 TB/s. A large share of the die edge is spent on memory interface circuitry.");
+    const stackTip = "<b>HBM stack</b><br>Eight to twelve DRAM dies ground to ~30-50 µm, drilled through with copper vias and stacked on a logic base die: 24 GB and ~1.2 TB/s each. The dies connect in series through those vias, so a single bad joint anywhere in the tower scraps the whole stack, which is why stacking yield rather than cell density is the hard problem here.";
+    [24, 90].forEach(x => {
+      const g2 = slab(P, x, 26, 16, 22, 20, 24, "var(--hbm)", stackTip);
+      for (let k = 1; k < 8; k++) {
+        const z = 16 + k * 3;
+        const a = P(x, 46, z), b = P(x + 22, 46, z);
+        g2.appendChild(el("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: "var(--halo)", "stroke-width": 0.7, opacity: 0.5, "pointer-events": "none" }));
+      }
+    });
+    // label last, so the stacks never paint over it
+    const g = el("text", { class: "part-lbl", x: P(67, 74, 29)[0], y: P(67, 74, 29)[1] - 4, "text-anchor": "middle" });
+    g.textContent = "GPU";
+    svg.appendChild(g);
+    dimension(P(80, 48, 16), P(90, 48, 16), "~2 mm", 234);
+  })();
+
+  sceneLabel(226, "DDR5 DIMM");
+  sceneLabel(456, "GDDR7");
+  sceneLabel(686, "HBM3e");
+})();
+</script>
+<script>(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();</script>
+<script>if(window.frameElement){const r=()=>{window.frameElement.style.height=document.documentElement.scrollHeight+'px';};if(window.ResizeObserver)new ResizeObserver(r).observe(document.documentElement);window.addEventListener('load',r);r();}</script>
+</body>
+</html>
