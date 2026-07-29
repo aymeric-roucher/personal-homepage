@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Semiconductor chokepoints, by production site</title>
+<style>
+  :root {
+    --surface: #ffffff; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --land: #f0efec; --border: #ffffff; --ring: rgba(11,11,11,0.10); --grid: #e1e0d9;
+    --materials: #eda100; --equipment: #2a78d6; --fab: #008300; --memory: #4a3aa7; --pack: #eb6834;
+  }
+  html.dark {
+    --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+    --land: #2b2b29; --border: #1a1a19; --ring: rgba(255,255,255,0.16); --grid: rgba(255,255,255,0.14);
+    --materials: #c98500; --equipment: #3987e5; --fab: #199e70; --memory: #9085e9; --pack: #d95926;
+  }
+  html, body { margin: 0; background: transparent; color: var(--ink-2);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; }
+  .wrap { padding: 6px 8px; position: relative; max-width: 1200px; margin: 0 auto; }
+  .title { color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1.35; margin: 2px 0 3px; }
+  .sub { color: var(--ink-2); font-size: 12px; line-height: 1.45; margin: 0 0 8px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 2px 2px 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-2);
+    border: 1px solid var(--ring); border-radius: 999px; padding: 2px 9px; cursor: pointer; user-select: none; background: var(--surface); }
+  .chip .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .chip.off { opacity: 0.35; }
+  svg { width: 100%; height: auto; display: block; }
+  .country { fill: var(--land); stroke: var(--border); stroke-width: 0.7; }
+  .bubble { cursor: pointer; transition: opacity .12s; }
+  .blabel { font-size: 10.5px; fill: var(--ink-2); paint-order: stroke; stroke: var(--surface); stroke-width: 2.5px; pointer-events: none; }
+  .tooltip { position: absolute; z-index: 10; width: 330px; max-width: 92vw; background: var(--surface);
+    border: 1px solid var(--ring); border-radius: 8px; box-shadow: 0 6px 24px rgba(11,11,11,0.13);
+    padding: 11px 13px; font-size: 12.5px; line-height: 1.42; display: none; pointer-events: none; color: var(--ink-2); }
+  .tt-name { color: var(--ink); font-weight: 650; font-size: 14px; }
+  .tt-hq { color: var(--muted); font-size: 11.5px; margin: 1px 0 7px; display: flex; align-items: center; gap: 6px; }
+  .tt-hq .m { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .tt-stat { display: grid; grid-template-columns: auto 1fr; gap: 1px 8px; align-items: baseline; margin-bottom: 7px; }
+  .tt-stat .lbl { color: var(--muted); font-size: 11px; }
+  .tt-stat .val { color: var(--ink); }
+  .tt-stat .val b { font-size: 15px; font-weight: 680; letter-spacing: -0.01em; }
+  .tt-stat .val .q { color: var(--muted); font-weight: 400; font-size: 12px; }
+  .tt-desc { margin-bottom: 5px; }
+  .tt-why { color: var(--muted); font-size: 11.5px; }
+  .foot { display: flex; flex-wrap: wrap; gap: 4px 16px; justify-content: space-between; font-size: 11.5px; color: var(--muted); margin-top: 8px; }
+  .sizekey { display: flex; align-items: flex-end; gap: 8px; }
+  .sizekey svg { width: auto; }
+  .note { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="title">Semiconductor companies, and how much their vanishing would delay global supply</p>
+  <p class="sub">Companies sit where they produce, not where they are registered. Circle area is annual revenue. A black ring marks the ones whose loss <b>stops</b> the chain rather than slowing it, thickening with the months the world would wait.</p>
+  <div class="legend" id="legend"></div>
+  <svg id="map" viewBox="0 0 1180 400" role="img" aria-label="World map of semiconductor chokepoints sized by revenue and ringed by months of disruption"></svg>
+  <p class="note" id="note"></p>
+  <div class="tooltip" id="tt"></div>
+</div>
+<script>
+const LAYER = {
+  materials: { label: "Materials and chemicals", hex: "#eda100", sec: "2-materials-chemicals-gases" },
+  equipment: { label: "Equipment and optics", hex: "#2a78d6", sec: "4-wafer-fab-equipment-and-its-critical-subsystems" },
+  fab: { label: "Fabrication", hex: "#008300", sec: "5-the-frontier-the-2-nm-race-and-the-physics-wall" },
+  memory: { label: "Memory", hex: "#4a3aa7", sec: "3-memory-the-supercycle-and-the-hbm-chokepoint" },
+  pack: { label: "Packaging, substrates and test", hex: "#eb6834", sec: "6-advanced-packaging-assembly-and-test" },
+};
+const CHINA = "11-chinas-indigenous-stack";
+
+// rev  = latest annual revenue in $bn of the semiconductor-related business
+//         (segment revenue where the parent is diversified). Drives circle area.
+// stop = estimated months of interrupted world leading-edge output if this site stopped.
+//         Present only where the answer is "the chain stops" rather than "the chain slows".
+const SITE = [
+  // ---- fabrication ----
+  { n: "TSMC", layer: "fab", sec: "journey-stage-6", site: "Tainan, Hsinchu, Taichung, Taiwan", lat: 23.6, lon: 120.5, rev: 90, stop: 24,
+    makes: "Every Blackwell logic die, and the CoWoS packaging that joins it to its memory",
+    why: "No second source at this node, and none for the bridge-embedded interposer. Samsung and Intel have leading nodes, but each product would need re-design, new mask sets and months of yield learning on capacity already spoken for." },
+  { n: "Samsung", layer: "fab", site: "Pyeongtaek and Hwaseong, South Korea", lat: 36.99, lon: 127.11, rev: 70, stop: 6,
+    makes: "Foundry capacity plus roughly a third of world DRAM",
+    why: "Painful but survivable: the other memory makers and TSMC absorb it over a few quarters, at brutal prices." },
+  { n: "Intel", layer: "fab", site: "Hillsboro and Chandler, United States", lat: 45.53, lon: -122.99, rev: 53,
+    makes: "18A logic, and the EMIB packaging Google's TPUs increasingly need",
+    why: "Little effect on today's AI chips, large on the plan for 2028: the only non-Asian leading-edge alternative being built." },
+  { n: "SMIC", layer: "fab", sec: "11-chinas-indigenous-stack", site: "Shanghai, China", lat: 31.23, lon: 121.47, rev: 8,
+    makes: "China's most advanced logic, DUV-only",
+    why: "Stopping it would halt Huawei's accelerator line, not the world's: nothing outside China depends on this capacity." },
+  { n: "GlobalFoundries", layer: "fab", site: "Malta, United States and Dresden", lat: 42.98, lon: -73.79, rev: 6.7,
+    makes: "Mature and specialty nodes, no leading edge",
+    why: "Serves autos and industry. Its absence would hurt carmakers long before it touched an AI datacenter." },
+  { n: "UMC", layer: "fab", site: "Hsinchu and Tainan, Taiwan", lat: 24.78, lon: 120.99, rev: 7,
+    makes: "Mature-node foundry capacity",
+    why: "The overflow valve for everything that does not need the leading edge." },
+
+  // ---- equipment and optics ----
+  { n: "ASML", layer: "equipment", site: "Veldhoven, Netherlands", lat: 51.42, lon: 5.41, rev: 32, stop: 18,
+    makes: "Every EUV scanner on earth, and ~80% of DUV",
+    why: "Installed machines keep printing for a while, then stop for want of spares, calibration and service. No new capacity anywhere until someone rebuilds a twenty-year programme." },
+  { n: "Applied Materials", layer: "equipment", site: "Santa Clara and Austin, United States", lat: 37.35, lon: -121.97, rev: 27, stop: 9,
+    makes: "Deposition and ion implantation across the whole industry",
+    why: "The broadest tool portfolio in the business. Lam and Tokyo Electron overlap on some steps, not all of them." },
+  { n: "Lam Research", layer: "equipment", site: "Fremont, United States", lat: 37.55, lon: -121.99, rev: 18, stop: 9,
+    makes: "Etch, including the deep holes 3D NAND depends on",
+    why: "High-aspect-ratio etch has no ready substitute; memory output would fall first." },
+  { n: "Tokyo Electron", layer: "equipment", site: "Nirasaki and Miyagi, Japan", lat: 35.71, lon: 138.45, rev: 15, stop: 9,
+    makes: "Coat and develop tracks, etch, deposition",
+    why: "Its tracks are physically coupled to every EUV scanner: in practice ASML and Tokyo Electron ship one machine in two boxes." },
+  { n: "KLA", layer: "equipment", site: "Milpitas, United States", lat: 37.43, lon: -121.90, rev: 12, stop: 9,
+    makes: "Metrology and defect inspection",
+    why: "Fabs would keep running and stop knowing whether the wafers are good. Yields decay quietly, which is worse than stopping." },
+  { n: "Trumpf", layer: "equipment", site: "Ditzingen, Germany", lat: 48.83, lon: 9.07, rev: 5.5, stop: 12,
+    makes: "The high-power CO2 lasers that create EUV light from tin droplets",
+    why: "Sole source for the drive laser. Existing scanners run; new ones cannot be completed." },
+  { n: "Advantest", layer: "equipment", site: "Gunma, Japan", lat: 36.39, lon: 139.06, rev: 4.8, stop: 6,
+    makes: "The testers that qualify finished AI chips",
+    why: "Teradyne covers part of the range, but AI-chip test slots are already a bottleneck." },
+  { n: "Carl Zeiss SMT", short: "Zeiss", layer: "equipment", site: "Oberkochen, Germany", lat: 48.78, lon: 10.10, rev: 3.2, stop: 18,
+    makes: "The EUV projection optics inside every ASML scanner",
+    why: "The same effect as losing ASML, one level deeper. The mirrors are the hardest objects in the chain to make and nobody else has ever made one to specification." },
+  { n: "Disco", layer: "equipment", site: "Kure, Japan", lat: 34.25, lon: 132.57, rev: 2.8, stop: 6,
+    makes: "Wafer dicing and the grinders that thin HBM dies",
+    why: "A near-monopoly on an unglamorous step every stacked memory die must pass through." },
+  { n: "Cymer", layer: "equipment", site: "San Diego, United States", lat: 32.72, lon: -117.16, rev: 2, stop: 12,
+    makes: "EUV and DUV light sources, as ASML's own subsidiary",
+    why: "The other half of the light problem, and the part that consumes spares fastest in daily operation." },
+  { n: "VAT Group", layer: "equipment", site: "Haag, Switzerland", lat: 47.05, lon: 9.49, rev: 1.3, stop: 6,
+    makes: "Roughly three-quarters of the world's vacuum valves for process chambers",
+    why: "A cheap part with no tolerance for substitution: a leaking chamber contaminates everything inside it." },
+  { n: "Besi", layer: "equipment", site: "Duiven, Netherlands", lat: 51.95, lon: 5.99, rev: 0.65, stop: 4,
+    makes: "Hybrid bonders for 3D stacking",
+    why: "Today's HBM still uses microbumps, so the damage lands on the next generation rather than this one." },
+
+  // ---- memory ----
+  { n: "SK Hynix", layer: "memory", sec: "journey-stage-7", site: "Icheon and Cheongju, South Korea", lat: 37.28, lon: 127.44, rev: 66, stop: 12,
+    makes: "Most of the HBM in every Blackwell shipped",
+    why: "Micron and Samsung together cannot cover the gap, and HBM qualification with NVIDIA runs to quarters, not weeks." },
+  { n: "Micron", layer: "memory", site: "Hiroshima, Japan and Boise", lat: 34.39, lon: 132.46, rev: 45, stop: 6,
+    makes: "HBM and leading-edge DRAM",
+    why: "The swing supplier: losing it turns a tight memory market into a rationed one." },
+  { n: "Kioxia", layer: "memory", site: "Yokkaichi and Kitakami, Japan", lat: 34.90, lon: 136.55, rev: 13,
+    makes: "NAND flash, with Western Digital",
+    why: "Storage prices spike, accelerators keep shipping." },
+  { n: "CXMT", layer: "memory", sec: "11-chinas-indigenous-stack", site: "Hefei, China", lat: 31.82, lon: 117.23, rev: 8.6,
+    makes: "Commodity DDR5 and LPDDR at scale",
+    why: "No HBM of consequence, but it is what keeps phone and PC makers supplied while the big three chase HBM." },
+  { n: "YMTC", layer: "memory", sec: "11-chinas-indigenous-stack", site: "Wuhan, China", lat: 30.59, lon: 114.31, rev: 5,
+    makes: "About an eighth of world NAND flash",
+    why: "Storage, not AI compute." },
+
+  // ---- materials ----
+  { n: "Shin-Etsu", layer: "materials", site: "Echizen and Naoetsu, Japan", lat: 35.90, lon: 136.17, rev: 17, stop: 9,
+    makes: "Silicon wafers, and EUV photoresist",
+    why: "Doubly exposed: the largest wafer supplier is also one of the handful of resist makers. Two separate shortages from one company." },
+  { n: "Wacker", layer: "materials", site: "Burghausen, Germany", lat: 48.17, lon: 12.83, rev: 6.5, stop: 4,
+    makes: "Electronic-grade polysilicon, the 11N feedstock",
+    why: "Hemlock and Tokuyama can lift output, slowly: these are chemical plants, not production lines." },
+  { n: "Merck KGaA", layer: "materials", site: "Darmstadt, Germany", lat: 49.87, lon: 8.65, rev: 4,
+    makes: "Deposition precursors and specialty electronic chemicals",
+    why: "Proprietary chemistries, but credible rivals exist across most of the catalogue." },
+  { n: "Entegris", layer: "materials", site: "Billerica, United States", lat: 42.56, lon: -71.27, rev: 3.3,
+    makes: "Filtration, CMP slurries and ultra-pure handling",
+    why: "Broad but substitutable: the pain is spread across many steps rather than concentrated in one." },
+  { n: "Air Liquide", layer: "materials", site: "France and on-site plants worldwide", lat: 48.86, lon: 2.35, rev: 3,
+    makes: "Rare and process gases piped straight into fabs",
+    why: "Gas supply is regional and rivals overlap, though the 2022 neon shock showed how fast a squeeze reaches the fab floor." },
+  { n: "JSR", layer: "materials", site: "Yokkaichi, Japan", lat: 34.97, lon: 136.62, rev: 2.8, stop: 9,
+    makes: "EUV photoresist",
+    why: "Resists are qualified per process: a fab cannot swap chemistry without re-proving the node." },
+  { n: "SUMCO", layer: "materials", site: "Imari, Japan", lat: 33.27, lon: 129.88, rev: 2.7, stop: 6,
+    makes: "The other half of Japan's wafer supply",
+    why: "Wafer plants take three years to build, and epitaxial grades were already on 6-12 month lead times." },
+  { n: "AGC", layer: "materials", site: "Yamagata, Japan", lat: 38.24, lon: 140.36, rev: 2, stop: 6,
+    makes: "EUV mask blanks, one of only two sources",
+    why: "Hoya could absorb part of the volume, at the cost of every design queue in the industry." },
+  { n: "Hoya", layer: "materials", site: "Yamanashi, Japan", lat: 35.66, lon: 138.57, rev: 1.5, stop: 9,
+    makes: "The majority of EUV mask blanks",
+    why: "No blanks means no new mask sets, so no new design enters production at the leading edge." },
+  { n: "Tokyo Ohka", layer: "materials", site: "Koriyama, Japan", lat: 37.40, lon: 140.36, rev: 1.3, stop: 6,
+    makes: "The other major EUV photoresist line",
+    why: "The same qualification trap, one supplier down." },
+  { n: "JX Nippon", layer: "materials", site: "Hitachi, Japan", lat: 36.60, lon: 140.65, rev: 1,
+    makes: "Sputtering targets, the ultra-pure metal vaporized into interconnects",
+    why: "Concentrated in Japan, but Tosoh and Honeywell make the same product." },
+  { n: "Nittobo", layer: "materials", site: "Fukushima, Japan", lat: 37.75, lon: 140.47, rev: 0.7, stop: 4,
+    makes: "T-glass, the woven stiffener that keeps large substrates flat",
+    why: "Already in shortage. Without it, big AI substrates warp during assembly." },
+  { n: "Fujimi", layer: "materials", site: "Kakamigahara, Japan", lat: 35.40, lon: 136.85, rev: 0.5,
+    makes: "CMP slurries for planarization",
+    why: "A quarter of the market, with Entegris, DuPont and Resonac able to take the rest." },
+  { n: "Ajinomoto Fine-Techno", short: "Ajinomoto", layer: "materials", site: "Gunma and Kawasaki, Japan", lat: 35.53, lon: 139.70, rev: 0.5, stop: 12,
+    makes: "The build-up film inside essentially every advanced substrate",
+    why: "The clearest revenue-to-criticality mismatch on this map. A food company's materials arm, half a billion dollars of sales, and swapping it means re-certifying every affected package through months of reliability testing." },
+  { n: "Namics", layer: "materials", site: "Niigata, Japan", lat: 37.90, lon: 139.02, rev: 0.4, stop: 6,
+    makes: "The underfill resin behind SK Hynix's HBM stacking flow",
+    why: "Sole source for the material under the world's best stacking yields: one chemical plant, most of the world's HBM." },
+  { n: "Spruce Pine quartz", short: "Spruce Pine", layer: "materials", sec: "journey-stage-1", site: "North Carolina, United States", lat: 35.91, lon: -82.06, rev: 0.3, stop: 9,
+    makes: "The ultra-pure quartz for the crucibles all silicon is grown in",
+    why: "Two companies mine one Appalachian district and no synthetic substitute is viable at volume. Crucibles are consumed continuously, so stocks buy months, not years." },
+  { n: "Chinese gallium and germanium", short: "Ga and Ge refining", layer: "materials", sec: "11-chinas-indigenous-stack", site: "Yunnan and Guangxi, China", lat: 25.04, lon: 102.72, rev: 1, stop: 4,
+    makes: "Most of the world's refined gallium and germanium",
+    why: "Not needed for silicon logic, but the base of compound semiconductors, infrared optics and radar. Western refining was dismantled and takes years to rebuild." },
+
+  // ---- packaging, substrates, test ----
+  { n: "ASE Technology", short: "ASE", layer: "pack", site: "Kaohsiung, Taiwan", lat: 22.63, lon: 120.30, rev: 19,
+    makes: "The largest outsourced assembly and test operation",
+    why: "Takes the overflow TSMC's own packaging cannot hold. Losing it slows the chain rather than stopping it." },
+  { n: "Amkor", layer: "pack", site: "Philippines, Korea, Vietnam", lat: 14.60, lon: 121.00, rev: 6.3,
+    makes: "The largest non-Asian-owned assembly network",
+    why: "Mostly mature packaging today, and the Arizona plant that would matter is not in volume yet." },
+  { n: "Unimicron", layer: "pack", site: "Taoyuan, Taiwan", lat: 24.99, lon: 121.30, rev: 3.5,
+    makes: "The volume share of advanced substrates",
+    why: "Costs the industry its cheapest substrate capacity in an already-tight market." },
+  { n: "Ibiden", layer: "pack", site: "Ogaki, Japan", lat: 35.36, lon: 136.61, rev: 2.5, stop: 6,
+    makes: "The premium flip-chip substrates under NVIDIA and Intel parts",
+    why: "Substrate lines are slow to build and every product is qualified to its supplier." },
+  { n: "Shinko", layer: "pack", site: "Nagano, Japan", lat: 36.65, lon: 138.18, rev: 1.5,
+    makes: "High-density substrates",
+    why: "Second source to Ibiden, so the pain is shared rather than fatal." },
+  { n: "KYEC", layer: "pack", sec: "journey-stage-9", site: "Hsinchu, Taiwan", lat: 24.80, lon: 120.97, rev: 1.2,
+    makes: "Final test for NVIDIA's accelerators, exclusively",
+    why: "Test capacity is transferable in principle, though sockets and programmes for 2-4 kW parts are not sitting idle elsewhere." },
+];
+
+const svg = document.getElementById('map'), tt = document.getElementById('tt'), legendEl = document.getElementById('legend');
+const hidden = new Set(); let pinned = null;
+function el(tag, a) { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const k in a) n.setAttribute(k, a[k]); return n; }
+const W = 1180;
+let H = 400;
+
+// Equirectangular, gently compressed in x, and cropped to the band where this
+// industry actually exists: no site on this map sits outside it, so the empty
+// oceans are not worth the pixels.
+const KX = 0.82, LAT_MAX = 62, LAT_MIN = 2, LON_MIN = -128, LON_MAX = 148;
+const raw = (lat, lon) => [lon * KX, -lat];
+let SC = 1, TX = 0, TY = 0;
+function fit() {
+  const [xa] = raw(0, LON_MIN), [xb] = raw(0, LON_MAX);
+  const ya = -LAT_MAX, yb = -LAT_MIN;
+  SC = (W - 16) / (xb - xa);
+  H = Math.round((yb - ya) * SC + 16);
+  TX = 8 - xa * SC; TY = 8 - ya * SC;
+  document.getElementById('map').setAttribute('viewBox', `0 0 ${W} ${H}`);
+}
+const px = (lat, lon) => { const [x, y] = raw(lat, lon); return [x * SC + TX, y * SC + TY]; };
+const radius = (rev) => Math.max(3.2, 2.5 * Math.sqrt(rev));
+const ringWidth = (stop) => 0.42 * stop;
+
+fetch('world.geo.json').then(r => r.json()).then(geo => {
+  fit();
+  const gL = el('g', {}); svg.appendChild(gL);
+  for (const f of geo.features) { const ps = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates; let d = '';
+    for (const poly of ps) for (const ring of poly) { ring.forEach(([lon, lat], i) => { const [x, y] = px(lat, lon); d += (i ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1); }); d += 'Z'; }
+    gL.appendChild(el('path', { d, class: 'country' })); }
+
+  const nodes = SITE.map((co, i) => { const [x, y] = px(co.lat, co.lon); const j = i * 2.4;
+    const r = radius(co.rev), ring = co.stop ? ringWidth(co.stop) : 0;
+    // the ring sits entirely outside the disc, so it adds its full width to the footprint
+    return { co, x: x + Math.cos(j) * 1.5, y: y + Math.sin(j) * 1.5, ax: x, ay: y, r, ring, rr: r + ring }; });
+  for (let it = 0; it < 300; it++) {
+    for (const n of nodes) { const k = n.rr >= 14 ? 0.14 : 0.05; n.x += (n.ax - n.x) * k; n.y += (n.ay - n.y) * k; }
+    for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) { const A2 = nodes[i], B = nodes[j];
+      let dx = B.x - A2.x, dy = B.y - A2.y, dist = Math.hypot(dx, dy); if (dist < 0.01) { dx = 1; dy = 0; dist = 0.01; }
+      const gap = A2.rr + B.rr + 2.2; if (dist < gap) { const p = gap - dist, ma = A2.rr*A2.rr, mb = B.rr*B.rr; dx/=dist; dy/=dist;
+        A2.x -= dx*p*(mb/(ma+mb)); A2.y -= dy*p*(mb/(ma+mb)); B.x += dx*p*(ma/(ma+mb)); B.y += dy*p*(ma/(ma+mb)); } }
+    for (const n of nodes) { n.x = Math.max(n.rr+1, Math.min(W-n.rr-1, n.x)); n.y = Math.max(n.rr+1, Math.min(H-n.rr-1, n.y)); }
+  }
+
+  const gB = el('g', {}); svg.appendChild(gB); const gT = el('g', {}); svg.appendChild(gT);
+  nodes.sort((a, b) => b.rr - a.rr);
+  for (const n of nodes) { const co = n.co;
+    const m = el('g', { class: 'bubble' });
+    const disc = el('circle', { cx: n.x.toFixed(1), cy: n.y.toFixed(1), r: n.r.toFixed(1) });
+    disc.style.fill = `var(--${co.layer})`; disc.style.fillOpacity = 0.82;
+    disc.style.stroke = 'var(--surface)'; disc.style.strokeWidth = '1';
+    m.appendChild(disc);
+    // stroke centred on r + ring/2 so the band spans r to r + ring: outside the disc, never over it
+    if (n.ring) {
+      const halo = el('circle', { cx: n.x.toFixed(1), cy: n.y.toFixed(1), r: (n.r + n.ring / 2).toFixed(1) });
+      halo.style.fill = 'none'; halo.style.stroke = 'var(--ink)';
+      halo.style.strokeWidth = n.ring.toFixed(1); halo.style.strokeOpacity = 0.88;
+      m.appendChild(halo);
+    }
+    m.addEventListener('mouseenter', (e) => { if (!pinned) show(co, e); });
+    m.addEventListener('mousemove', (e) => { if (!pinned) place(e); });
+    m.addEventListener('mouseleave', () => { if (!pinned) hide(); });
+    m.addEventListener('click', (e) => { e.stopPropagation(); jump(co.sec || LAYER[co.layer].sec); });
+    n.m = m; gB.appendChild(m); }
+
+  // Label as many as fit, trying four sides per node. Critical sites get first claim on
+  // the space, since their second line is the point of the chart.
+  const placed = [];
+  // Chain-stopping sites get first claim on the space; the rest fill whatever is left.
+  const order = nodes.slice().sort((a, b) => (b.co.stop || 0) - (a.co.stop || 0) || b.co.rev - a.co.rev);
+  const hits = (b, p) => !(b.x2 < p.x1 || b.x1 > p.x2 || b.y2 < p.y1 || b.y1 > p.y2);
+  const free = (b, self) => !placed.some(p => hits(b, p))
+    && !nodes.some(m => m !== self && hits(b, { x1: m.x - m.rr, x2: m.x + m.rr, y1: m.y - m.rr, y2: m.y + m.rr }));
+
+  for (const n of order) { const co = n.co;
+    const txt = co.short || co.n;
+    const w = txt.length * 5.6, h = 14;
+    const cands = [
+      { a: 'start', x: n.x + n.rr + 4, y: n.y + 3.5 },
+      { a: 'end', x: n.x - n.rr - 4, y: n.y + 3.5 },
+      { a: 'middle', x: n.x, y: n.y - n.rr - 5 },
+      { a: 'middle', x: n.x, y: n.y + n.rr + 12 },
+      { a: 'start', x: n.x + n.rr * 0.7 + 4, y: n.y - n.rr - 3 },
+      { a: 'end', x: n.x - n.rr * 0.7 - 4, y: n.y - n.rr - 3 },
+      { a: 'start', x: n.x + n.rr * 0.7 + 4, y: n.y + n.rr + 11 },
+      { a: 'end', x: n.x - n.rr * 0.7 - 4, y: n.y + n.rr + 11 },
+    ];
+    // First pass: a position clear of every other bubble and label. If the neighbourhood is
+    // too crowded for that, fall back to merely avoiding other labels.
+    let hit = null;
+    for (const strict of [true, false]) {
+      for (const c of cands) {
+        const x1 = c.a === 'start' ? c.x : (c.a === 'end' ? c.x - w : c.x - w / 2);
+        const box = { x1, x2: x1 + w, y1: c.y - 10, y2: c.y - 10 + h };
+        if (box.x1 < 2 || box.x2 > W - 2 || box.y1 < 2 || box.y2 > H - 2) continue;
+        const ok = strict ? free(box, n) : !placed.some(p => hits(box, p));
+        if (ok) { hit = { c, box }; break; }
+      }
+      if (hit) break;
+    }
+    if (!hit) continue;
+    placed.push(hit.box);
+    const t = el('text', { x: hit.c.x.toFixed(1), y: hit.c.y.toFixed(1), class: 'blabel', 'text-anchor': hit.c.a });
+    t.textContent = txt; gT.appendChild(t); }
+
+  document.body.addEventListener('click', () => { pinned = null; hide(); });
+  tt.addEventListener('click', (e) => e.stopPropagation());
+
+  for (const key in LAYER) { const rg = LAYER[key]; const chip = document.createElement('span'); chip.className = 'chip';
+    chip.innerHTML = `<span class="dot" style="background:${rg.hex}"></span>` + rg.label;
+    chip.addEventListener('click', () => { hidden.has(key) ? hidden.delete(key) : hidden.add(key); chip.classList.toggle('off', hidden.has(key));
+      for (const n of nodes) { const off = hidden.has(n.co.layer); n.m.style.opacity = off ? 0.06 : 1; n.m.style.pointerEvents = off ? 'none' : 'auto'; } });
+    legendEl.appendChild(chip); }
+
+});
+
+function jump(sec) {
+  const pdoc = window.parent && window.parent !== window && window.parent.document;
+  if (!pdoc || !sec) return;
+  const t = pdoc.getElementById(sec);
+  if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function show(co, e) {
+  tt.innerHTML = `<div class="tt-name">${co.n}</div>
+    <div class="tt-hq"><span class="m" style="background:var(--${co.layer})"></span>${co.site}</div>
+    <div class="tt-stat"><span class="lbl">Revenue</span><span class="val"><b>~\$${co.rev}B</b> <span class="q">a year</span></span>
+      <span class="lbl">If it stops</span><span class="val">${co.stop ? `<b>the world waits ~${co.stop} months</b>` : `<span class="q">the chain slows, it does not stop</span>`}</span></div>
+    <div class="tt-desc"><b>Makes:</b> ${co.makes}</div>
+    <div class="tt-why">${co.why}</div>
+    <div class="tt-why" style="margin-top:6px">Click to read the section that covers it.</div>`;
+  tt.style.display = 'block'; place(e); }
+function place(e) { const w = document.querySelector('.wrap').getBoundingClientRect(); const x = e.clientX - w.left, y = e.clientY - w.top;
+  const ww = tt.offsetWidth, hh = tt.offsetHeight; let l = x + 14, t = y + 10; if (l + ww > w.width - 4) l = x - ww - 14; if (l < 4) l = 4; if (t + hh > w.height - 4) t = Math.max(4, y - hh - 10);
+  tt.style.left = l + 'px'; tt.style.top = t + 'px'; }
+function hide() { tt.style.display = 'none'; }
+
+document.getElementById('note').innerHTML = "Revenue counts the semiconductor business only, so Ajinomoto's materials arm rather than its food sales. The months are our estimates, and they turn on whether a qualified second source exists, how much inventory the chain holds, and how long re-qualification takes: never on the price of the part. The design layer is absent because losing Synopsys or Arm stops the next generation of chips, not the ones already taped out.";
+
+// Size the iframe to the CONTENT, not to documentElement.scrollHeight: when the frame is
+// taller than the content, scrollHeight returns the frame height and the box never shrinks.
+if (window.frameElement) {
+  const wrap = document.querySelector('.wrap');
+  const resize = () => { window.frameElement.style.height = Math.ceil(wrap.getBoundingClientRect().height + 14) + 'px'; };
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(wrap);
+  window.addEventListener('load', resize);
+  setTimeout(resize, 300);
+  setTimeout(resize, 1200);
+}
+(function(){var p=window.parent&&window.parent.document&&window.parent.document.documentElement;function s(){if(p)document.documentElement.classList.toggle('dark',p.classList.contains('dark'));}s();if(p&&window.MutationObserver){new MutationObserver(s).observe(p,{attributes:true,attributeFilter:['class']});}})();
+</script>
+</body>
+</html>
