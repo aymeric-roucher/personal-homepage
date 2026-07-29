@@ -85,7 +85,7 @@ const TableOfContents = ({ content }: TableOfContentsProps) => {
 
   return (
     <div className="sticky top-4">
-      <div className="bg-background/90 backdrop-blur border rounded-lg p-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
+      <div className="py-1 max-h-[calc(100vh-2rem)] overflow-y-auto">
         <nav className="space-y-1">
           {tocItems.map((item, index) => {
             const isActive = activeId === item.id;
